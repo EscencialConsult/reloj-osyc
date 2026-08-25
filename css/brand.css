@@ -1,0 +1,75 @@
+/* ═══════════════════════════════════════════════
+   BRAND.CSS — RUNAS Café  (tema claro crema + terracota)
+   Para cambiar colores o logos: editá SOLO este archivo.
+   Paleta: terracota #d26918 · crema #f5e9d0 · blanco · texto espresso
+   ═══════════════════════════════════════════════ */
+:root {
+  /* — Neutros / base — */
+  --one-black:      #efe2c6;   /* (pista de scrollbar) */
+  --one-ink:        #f5e9d0;   /* fondo página (crema) */
+  --one-ink-light:  #ecdcbd;   /* crema más profundo */
+  --one-white:      #3a2a1a;   /* TEXTO principal (espresso) */
+
+  /* — Acento principal (terracota del logo) — */
+  --one-cyan:       #d26918;   /* acento primario */
+  --one-cyan-light: #e79a52;   /* acento claro */
+
+  /* — Acentos secundarios (armonizados con la marca) — */
+  --one-pink:       #c0562e;   /* siena */
+  --one-pink-light: #d47a4f;
+  --one-gold:       #b9822b;   /* ámbar legible sobre crema */
+  --one-gold-light: #d9a24a;
+  --one-slate:      #7a6449;   /* texto atenuado */
+  --one-mist:       #5a4632;   /* texto/bordes marrón */
+  --one-purple:     #6f4fb0;
+
+  --color-success:      #16a34a;
+  --color-success-text: #15803d;
+  --color-danger:       #dc2626;
+  --color-danger-text:  #b91c1c;
+
+  /* — Colores de área (oscurecidos para legibilidad sobre crema) — */
+  --area-administracion:   #b85e14;
+  --area-comercial:        #a83b7e;
+  --area-rrhh:             #9a7414;
+  --area-marketing:        #c23d78;
+  --area-academico:        #6f4fb0;
+  --area-innovacion:       #1f8f5f;
+  --area-maestranza:       #c2560f;
+
+  --font-title: "Exo 2", system-ui, sans-serif;
+  --font-body:  "Exo 2", system-ui, sans-serif;
+
+  /* — Vidrio / superficies — */
+  --glass-bg:          rgba(255,255,255,.66);
+  --glass-border:      rgba(120,82,40,.16);
+  --glass-blur:        14px;
+
+  --bg-gradient:
+    radial-gradient(1200px 700px at 70% 25%, rgba(210,105,24,.10), transparent 55%),
+    radial-gradient(900px  600px at 15% 65%, rgba(210,105,24,.06), transparent 55%),
+    radial-gradient(700px  500px at 50% 90%, rgba(228,199,106,.12), transparent 60%),
+    linear-gradient(180deg, #f7ecd4, #f1e2c4);
+
+  --radius-lg:   16px;
+  --radius-md:   12px;
+  --radius-sm:   8px;
+  --radius-pill: 999px;
+}
+
+/* Textos con degradé de marca → todos en terracota */
+.brand-gc { background: linear-gradient(90deg,#d26918,#e79a52); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.brand-gp { background: linear-gradient(90deg,#c2560f,#d47a4f); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.brand-gg { background: linear-gradient(90deg,#b9822b,#d9a24a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+.brand-mark {
+  width:36px; height:36px; border-radius:50%;
+  background-image: url('../img/one-iconocolor.png');
+  background-size:contain; background-repeat:no-repeat; background-position:center;
+  background-color:rgba(210,105,24,.10);
+  border:1px solid rgba(210,105,24,.30);
+  box-shadow:0 0 20px rgba(210,105,24,.14);
+  flex-shrink:0;
+}
+.brand-name { font-family:var(--font-title); font-weight:800; font-size:16px; letter-spacing:.04em; }
+.brand-sub  { font-size:10px; color:#7a6449; letter-spacing:.04em; display:block; margin-top:1px; }

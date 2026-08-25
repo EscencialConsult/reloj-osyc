@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Runas Café — Acceso</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/brand.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    body { min-height: 100vh; min-height: 100dvh; }
+    .wrap { max-width: 420px; margin: 0 auto; padding: 40px 20px calc(30px + env(safe-area-inset-bottom)); position: relative; z-index: 1; }
+    .logo { text-align: center; margin: 10px 0 26px; }
+    .logo img { height: 88px; margin: 0 auto 10px; display: block; }
+    .logo .sub { font-size: 12px; color: #3a2a1a; letter-spacing: .04em; }
+    .ficha-cta {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; min-height: 66px; border-radius: 18px; text-decoration: none;
+      background: linear-gradient(135deg, #d26918, #e79a52); color: #fff;
+      font-family: var(--font-title); font-size: 18px; font-weight: 800;
+      box-shadow: 0 10px 28px rgba(210, 105, 24, .28); transition: transform .12s, box-shadow .2s;
+    }
+    .ficha-cta:active { transform: scale(.98); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 26px 2px 16px; color: #5a4632; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: rgba(120, 82, 40, .18); }
+    .card { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); border-radius: 18px; padding: 22px 20px; box-shadow: 0 8px 30px rgba(120, 82, 40, .07); }
+    .lbl { font-size: 11px; font-weight: 700; color: #3a2a1a; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .inp { min-height: 48px; font-size: 16px !important; }
+    .err { display: none; margin-top: 12px; text-align: center; font-size: 13px; color: var(--color-danger-text); font-weight: 700; }
+    .top-brand { display: flex; align-items: center; gap: 10px; padding: 16px 20px; position: relative; z-index: 1; }
+    .top-brand .brand-mark { width: 34px; height: 34px; }
+    .top-brand-txt { font-family: var(--font-title); font-weight: 800; font-size: 15px; color: #3a2a1a; line-height: 1.15; }
+    .top-brand-txt span { color: #d26918; }
+    .wrap { padding-top: 20px; }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+
+  <header class="top-brand">
+    <div class="brand-mark"></div>
+    <div class="top-brand-txt">Sistema de Horarios <span>Runas Café</span></div>
+  </header>
+
+  <div class="wrap">
+
+    <div class="logo">
+      <img src="img/one-logocolor.png" alt="Runas Café" onerror="this.style.display='none'" />
+      <div class="sub">Sistema de fichaje y horarios</div>
+    </div>
+
+    <!-- Empleados -->
+    <a href="fichar.html" class="ficha-cta">📍 Fichar mi ingreso / salida</a>
+
+    <div class="divider">Acceso administrador</div>
+
+    <!-- Admin -->
+    <div class="card">
+      <div style="margin-bottom:12px;">
+        <label class="lbl">Email</label>
+        <input class="inp" type="email" id="aU" autocomplete="username" placeholder="admin@runas.com"
+          onkeydown="if(event.key==='Enter')document.getElementById('aP').focus()" />
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="lbl">Contraseña</label>
+        <input class="inp" type="password" id="aP" autocomplete="current-password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')loginAdmin()" />
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;min-height:48px;font-size:16px;" id="btnLogin" onclick="loginAdmin()">Ingresar al panel →</button>
+      <div class="err" id="loginErr"></div>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js?v=8"></script>
+  <script src="js/auth.js?v=8"></script>
+  <script>
+    async function loginAdmin() {
+      const u = document.getElementById('aU').value.trim();
+      const p = document.getElementById('aP').value.trim();
+      const err = document.getElementById('loginErr');
+      err.style.display = 'none';
+      if (!u || !p) { err.textContent = 'Completá email y contraseña'; err.style.display = ''; return; }
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true; btn.textContent = 'Ingresando…';
+      const ok = await Auth.loginAdmin(u, p);
+      btn.disabled = false; btn.textContent = 'Ingresar al panel →';
+      if (ok) window.location.href = 'admin.html';
+      else { err.textContent = 'Email o contraseña incorrectos'; err.style.display = ''; }
+    }
+
+    // Si ya hay sesión de admin activa, entrar directo al panel
+    (async () => {
+      try {
+        const { data: { session } } = await SB.auth.getSession();
+        if (session) {
+          const { data: isAdmin } = await SB.rpc('es_admin');
+          if (isAdmin) window.location.href = 'admin.html';
+        }
+      } catch (_) {}
+    })();
+  </script>
+</body>
+
+</html>

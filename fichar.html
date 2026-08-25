@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Runas · Fichaje</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#d26918" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/brand.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    body { min-height: 100vh; min-height: 100dvh; }
+    .wrap { max-width: 440px; margin: 0 auto; padding: 24px 18px calc(24px + env(safe-area-inset-bottom)); position: relative; z-index: 1; }
+    .logo { text-align: center; margin: 8px 0 22px; }
+    .logo img { height: 74px; margin: 0 auto; display: block; }
+    .card { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(14px); border-radius: 18px; padding: 24px 20px; box-shadow: 0 8px 30px rgba(120, 82, 40, .08); }
+    .lbl { font-size: 11px; font-weight: 700; color: #8a7052; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .inp { min-height: 50px; font-size: 16px !important; }
+    .fichar-btn {
+      width: 100%; min-height: 96px; border: none; border-radius: 22px; cursor: pointer;
+      background: linear-gradient(135deg, #d26918, #e79a52); color: #fff;
+      font-family: var(--font-title); font-size: 22px; font-weight: 800; letter-spacing: .02em;
+      box-shadow: 0 10px 30px rgba(210, 105, 24, .32); transition: transform .12s, box-shadow .2s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .fichar-btn:active { transform: scale(.97); }
+    .fichar-btn:disabled { opacity: .6; cursor: default; }
+    .clock { text-align: center; margin: 4px 0 20px; }
+    .clock .h { font-family: var(--font-title); font-size: 46px; font-weight: 800; color: #3a2a1a; line-height: 1; letter-spacing: .02em; }
+    .clock .d { font-size: 13px; color: #8a7052; margin-top: 6px; text-transform: capitalize; }
+    .result { margin-top: 18px; border-radius: 14px; padding: 16px 18px; text-align: center; font-weight: 700; display: none; animation: fadeUp .3s ease both; }
+    .result.ok { background: rgba(22, 163, 74, .12); border: 1px solid rgba(22, 163, 74, .35); color: var(--color-success-text); }
+    .result.err { background: rgba(220, 38, 38, .1); border: 1px solid rgba(220, 38, 38, .32); color: var(--color-danger-text); }
+    .hello { text-align: center; margin-bottom: 4px; }
+    .hello .n { font-size: 20px; font-weight: 800; color: #3a2a1a; }
+    .hello .s { font-size: 12px; color: #8a7052; }
+    .foot { text-align: center; margin-top: 22px; }
+    .link-btn { background: none; border: none; color: #8a7052; font-size: 13px; text-decoration: underline; cursor: pointer; }
+    .spin { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, .4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="wrap">
+
+    <div class="logo">
+      <img src="img/one-logocolor.png" alt="Runas" onerror="this.style.display='none'" />
+    </div>
+
+    <!-- ══ LOGIN ══ -->
+    <div id="vLogin" class="card" style="display:none;">
+      <h2 style="font-size:19px;font-weight:800;text-align:center;margin-bottom:4px;">Ingresá para fichar</h2>
+      <p style="font-size:13px;color:#8a7052;text-align:center;margin-bottom:18px;">Con tu email y tu DNI</p>
+      <div style="margin-bottom:12px;">
+        <label class="lbl">Email</label>
+        <input class="inp" type="email" id="fEmail" autocomplete="username" placeholder="tuemail@runas.com"
+          onkeydown="if(event.key==='Enter')document.getElementById('fPass').focus()" />
+      </div>
+      <div style="margin-bottom:18px;">
+        <label class="lbl">DNI</label>
+        <input class="inp" type="password" id="fPass" inputmode="numeric" autocomplete="current-password" placeholder="Tu DNI (sin puntos)"
+          onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;min-height:50px;font-size:16px;" id="btnLogin" onclick="doLogin()">Ingresar →</button>
+      <div id="loginErr" style="display:none;margin-top:12px;text-align:center;font-size:13px;color:var(--color-danger-text);font-weight:700;"></div>
+    </div>
+
+    <!-- ══ FICHAJE ══ -->
+    <div id="vFichar" style="display:none;">
+      <div class="hello">
+        <div class="n" id="empNombre">—</div>
+        <div class="s">Listo para fichar</div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="clock">
+          <div class="h" id="clkH">--:--</div>
+          <div class="d" id="clkD">—</div>
+        </div>
+        <button class="fichar-btn" id="btnFichar" onclick="doFichar()">📍 Fichar</button>
+        <div id="fResult" class="result"></div>
+      </div>
+      <div class="foot">
+        <button class="link-btn" onclick="doLogout()">Cerrar sesión</button>
+      </div>
+    </div>
+
+    <div id="vLoading" style="text-align:center;padding:40px;color:#8a7052;">Cargando…</div>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js?v=8"></script>
+  <script>
+    // Si el QR de la sucursal trae ?sede=<id>, se ficha contra esa sede; si no, se autodetecta por GPS.
+    const _sedeParam = new URLSearchParams(location.search).get('sede') || null;
+    const _DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const _MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+    function _show(v) {
+      ['vLogin','vFichar','vLoading'].forEach(id => document.getElementById(id).style.display = id === v ? '' : 'none');
+    }
+
+    function _tickClock() {
+      const d = new Date();
+      const el = document.getElementById('clkH');
+      if (el) el.textContent = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const ed = document.getElementById('clkD');
+      if (ed) ed.textContent = `${_DIAS[d.getDay()]} ${d.getDate()} de ${_MESES[d.getMonth()]}`;
+    }
+    setInterval(_tickClock, 1000);
+
+    async function init() {
+      _show('vLoading');
+      const { data: { session } } = await SB.auth.getSession();
+      if (session) enterFichaje(session);
+      else _show('vLogin');
+    }
+
+    function enterFichaje(session) {
+      const nombre = session.user?.user_metadata?.nombre || session.user?.email || 'Empleado';
+      document.getElementById('empNombre').textContent = 'Hola, ' + nombre + ' 👋';
+      _tickClock();
+      _show('vFichar');
+    }
+
+    async function doLogin() {
+      const email = document.getElementById('fEmail').value.trim().toLowerCase();
+      const dni = document.getElementById('fPass').value.trim();
+      const err = document.getElementById('loginErr');
+      err.style.display = 'none';
+      if (!email || !dni) { err.textContent = 'Completá email y DNI'; err.style.display = ''; return; }
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true; btn.textContent = 'Ingresando…';
+      const { data, error } = await SB.auth.signInWithPassword({ email, password: dni });
+      btn.disabled = false; btn.textContent = 'Ingresar →';
+      if (error || !data?.session) { err.textContent = 'Email o DNI incorrectos'; err.style.display = ''; return; }
+      enterFichaje(data.session);
+    }
+
+    async function doLogout() {
+      try { await SB.auth.signOut(); } catch (_) {}
+      document.getElementById('fEmail').value = '';
+      document.getElementById('fPass').value = '';
+      _show('vLogin');
+    }
+
+    function _result(ok, msg) {
+      const r = document.getElementById('fResult');
+      r.className = 'result ' + (ok ? 'ok' : 'err');
+      r.innerHTML = msg;
+      r.style.display = '';
+    }
+
+    function doFichar() {
+      const btn = document.getElementById('btnFichar');
+      const r = document.getElementById('fResult');
+      r.style.display = 'none';
+      if (!navigator.geolocation) { _result(false, 'Tu teléfono no permite ubicación.'); return; }
+      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Ubicando…';
+
+      navigator.geolocation.getCurrentPosition(async pos => {
+        const { latitude, longitude, accuracy } = pos.coords;
+        btn.innerHTML = '<span class="spin"></span> Registrando…';
+        const { data, error } = await SB.rpc('fichar', {
+          p_sede_id: _sedeParam, p_lat: latitude, p_lng: longitude, p_accuracy: accuracy, p_tipo: null
+        });
+        btn.disabled = false; btn.innerHTML = '📍 Fichar';
+        if (error) {
+          console.error('fichar RPC error:', error);
+          _result(false, 'Error: ' + (error.message || 'desconocido') + (error.hint ? ' — ' + error.hint : ''));
+          return;
+        }
+        if (data?.ok) {
+          const icon = data.tipo === 'entrada' ? '✅' : '👋';
+          _result(true, `${icon} <div style="font-size:18px;margin-top:4px;">${data.tipo === 'entrada' ? 'Ingreso' : 'Salida'} registrada</div>`
+            + `<div style="font-size:14px;font-weight:600;margin-top:6px;">${data.sede || ''} · ${data.hora || ''}</div>`);
+        } else {
+          _result(false, data?.msg || 'No se pudo fichar.');
+        }
+      }, err => {
+        btn.disabled = false; btn.innerHTML = '📍 Fichar';
+        const msg = err.code === 1
+          ? 'Necesitás permitir la ubicación para fichar. Activala y probá de nuevo.'
+          : 'No pudimos obtener tu ubicación. Salí a un lugar más abierto y reintentá.';
+        _result(false, msg);
+      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+    init();
+  </script>
+</body>
+
+</html>

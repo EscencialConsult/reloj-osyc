@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Runas Café — Admin · Horarios</title>
+  <link rel="icon" type="image/png" href="img/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/brand.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    .tab-ic { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vertical-align: -2px; margin-right: 5px; }
+    .no-areas .area-only { display: none !important; }
+    .wnav-sm {
+      background: rgba(120,82,40,.07);
+      border: 1px solid rgba(198, 201, 215, .18);
+      color: var(--one-white);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+
+    .wnav-sm:hover:not([disabled]) {
+      background: rgba(107, 225, 227, .15);
+      border-color: rgba(107, 225, 227, .35);
+    }
+
+    .wnav-sm[disabled] {
+      opacity: .28;
+      cursor: not-allowed;
+    }
+
+    .op30 {
+      opacity: .28;
+    }
+
+    .week-pill {
+      background: rgba(107, 225, 227, .1);
+      border: 1px solid rgba(107, 225, 227, .22);
+      color: var(--one-cyan);
+      padding: 5px 15px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 12px;
+    }
+
+    .area-card {
+      background: rgba(120,82,40,.048);
+      border: 1px solid rgba(198, 201, 215, .1);
+      border-radius: 14px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .2s, transform .15s, box-shadow .15s;
+    }
+
+    .area-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .22);
+    }
+
+    .edit-pcard {
+      background: rgba(120,82,40,.04);
+      border: 1px solid rgba(198, 201, 215, .09);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .ht-edit {
+      background: rgba(120,82,40,.07);
+      border: 1px solid rgba(198, 201, 215, .15);
+      color: var(--one-white);
+      padding: 6px 3px;
+      border-radius: 7px;
+      font-family: var(--font-title);
+      font-size: 13px;
+      font-weight: 800;
+      width: 100%;
+      text-align: center;
+      transition: border-color .15s, background .15s;
+    }
+
+    .ht-edit:focus {
+      outline: none;
+      border-color: rgba(107, 225, 227, .55);
+      background: rgba(107, 225, 227, .05);
+    }
+
+    .ht-edit::placeholder {
+      color: rgba(198, 201, 215, .18);
+      font-weight: 400;
+      font-size: 10px;
+    }
+
+    .ht-edit.v {
+      border-color: rgba(107, 225, 227, .3);
+      color: var(--one-cyan);
+    }
+
+    .ht-gold {
+      border-color: rgba(228, 199, 106, .2) !important;
+    }
+
+    .ht-gold.v {
+      border-color: rgba(228, 199, 106, .4) !important;
+      color: var(--one-gold) !important;
+    }
+
+    .sp-block {
+      display: none;
+      flex-direction: column;
+      gap: 3px;
+      margin-top: 4px;
+      padding-top: 5px;
+      border-top: 1px dashed rgba(228, 199, 106, .2);
+    }
+
+    .sp-block.sp-show {
+      display: flex;
+    }
+
+    .btn-split-sm {
+      background: rgba(120,82,40,.05);
+      border: 1px solid rgba(198, 201, 215, .15) !important;
+      color: rgba(198, 201, 215, .5);
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-family: var(--font-title);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-split-sm:hover {
+      background: rgba(228, 199, 106, .1);
+      border-color: rgba(228, 199, 106, .28) !important;
+      color: var(--one-gold);
+    }
+
+    .btn-split-sm.on {
+      background: rgba(228, 199, 106, .13);
+      border-color: rgba(228, 199, 106, .35) !important;
+      color: var(--one-gold);
+    }
+
+    .btn-ant {
+      background: linear-gradient(135deg, rgba(107, 225, 227, .18), rgba(228, 199, 106, .12));
+      border: 1px solid rgba(107, 225, 227, .3) !important;
+      color: var(--one-cyan);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-family: var(--font-title);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .btn-ant:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 16px rgba(107, 225, 227, .14);
+    }
+
+    .sp {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(107, 225, 227, .28);
+      border-top-color: var(--one-cyan);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    @media(max-width:640px) {
+      .areas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="app-wrap">
+
+    <header class="app-header no-print">
+      <div class="app-header__inner">
+        <div class="app-header__brand">
+          <div class="brand-mark"></div>
+          <div>
+            <div class="brand-name">Runas <span class="brand-gc">Café</span></div>
+            <span class="brand-sub">Panel administrador</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;">
+          <span class="badge badge-pink"><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;vertical-align:-2px;margin-right:3px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin</span>
+          <a href="index.html" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;">← Inicio</a>
+          <button class="btn btn-ghost" onclick="Auth.logout();window.location.href='index.html';"
+            style="font-size:12px;padding:6px 12px;">Salir</button>
+        </div>
+      </div>
+    </header>
+
+    <main style="max-width:1280px;margin:0 auto;padding:20px 16px 80px;">
+
+      <!-- TABS -->
+      <div
+        style="display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;align-items:center;justify-content:space-between;"
+        class="no-print">
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <button class="tab-btn active" id="at-dash" onclick="switchTab('dash')"><svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Dashboard</button>
+          <button class="tab-btn" id="at-reg" onclick="switchTab('reg')"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Registros</button>
+
+          <button class="tab-btn" id="at-per" onclick="switchTab('per')"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Personal</button>
+          <button class="tab-btn" id="at-lid" style="display:none;" onclick="switchTab('lid')"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Líderes</button>
+          <button class="tab-btn" id="at-hsem" onclick="switchTab('hsem')"><svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Horarios Semanales</button>
+          <button class="tab-btn" id="at-act" onclick="switchTab('act'); Actividad.start();">
+            <svg class="tab-ic" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Actividad
+            <span id="actBadge"
+              style="display:none;background:#c0562e;color:#3a2a1a;border-radius:99px;font-size:9px;font-weight:800;padding:1px 6px;margin-left:4px;vertical-align:middle;"></span>
+          </button>
+          <button class="tab-btn" id="at-cfg" onclick="switchTab('cfg')"><svg class="tab-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div id="btnCsvWrap" style="display:none;">
+            <button class="btn btn-gold" onclick="Registros.exportCSV()"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>CSV</button>
+          </div>
+          <div id="btnPdfWrap">
+            <button class="btn btn-primary" onclick="abrirInforme()"
+              style="background:linear-gradient(135deg,rgba(111,79,176,.28),rgba(210,105,24,.15));border-color:rgba(111,79,176,.5)!important;"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DASHBOARD ══ -->
+      <div id="tab-dash" class="fade-in">
+        <div class="glass no-print" style="padding:13px 17px;margin-bottom:14px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;">
+            <div style="flex:1;min-width:135px;">
+              <label class="lbl">Período</label>
+              <select class="inp" id="dPer" onchange="Dashboard._changeDPer()">
+                <option value="hoy">Hoy</option>
+                <option value="ayer">Ayer</option>
+                <option value="semana" selected>Esta semana</option>
+                <option value="semana_ant">Semana anterior</option>
+                <option value="mes">Este mes</option>
+                <option value="mes_ant">Mes anterior</option>
+                <option value="anio">Este año</option>
+                <option value="dia_especifico">Día específico...</option>
+                <option value="todos">Todos</option>
+              </select>
+            </div>
+            <div id="dCDiaEsp" style="display:none;flex:1;min-width:135px;">
+              <label class="lbl">Elegir día</label>
+              <input class="inp" type="date" id="dDiaEsp" onchange="Dashboard.load()" />
+            </div>
+            <div style="flex:1;min-width:135px;" class="area-only">
+              <label class="lbl">Área</label>
+              <select class="inp" id="dArea" onchange="Dashboard.load()">
+                <option value="">Todas</option>
+                <option>ADMINISTRACION</option>
+                <option>COMERCIAL</option>
+                <option>RECURSOS HUMANOS</option>
+                <option>MARKETING</option>
+                <option>ACADEMICO / GT</option>
+                <option>INNOVACION Y DESARROLLO</option>
+                <option>MAESTRANZA</option>
+                <option>PASANTIAS</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:135px;">
+              <label class="lbl">Persona</label>
+              <input class="inp" type="text" id="dPersona" placeholder="Buscar por nombre..."
+                oninput="Dashboard.load()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px;margin-bottom:14px;">
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Total
+              registros</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;" class="brand-gc" id="kT">—</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">
+              Personas</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;color:var(--one-purple);" id="kP">—</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Prom.
+              tardanza</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;" id="kTd">—</div>
+            <div style="font-size:10px;color:rgba(58,42,26,.4);margin-top:2px;" id="kTdSub"></div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Prom.
+              Hs/día</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;" class="brand-gg" id="kH">—</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">
+              Puntuales</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;color:var(--color-success-text);" id="kPunt">—
+            </div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Con
+              tardanza</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;color:var(--color-danger-text);" id="kTarde">—
+            </div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Con hs
+              extra</div>
+            <div style="font-size:32px;font-weight:800;margin-top:4px;color:var(--one-gold);" id="kExtra">—</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:13px;margin-bottom:13px;">
+          <div class="glass area-only" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">Registros por
+              área</div>
+            <div class="chart-wrap"><canvas id="chartArea"></canvas></div>
+          </div>
+          <div class="glass area-only" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">Puntualidad por
+              área</div>
+            <div class="chart-wrap"><canvas id="chartPunt"></canvas></div>
+          </div>
+          <div class="glass" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">Registros por día
+            </div>
+            <div class="chart-wrap"><canvas id="chartDia"></canvas></div>
+          </div>
+        </div>
+
+        <!-- TOP TARDANZAS + TOP EXTRA side by side -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:13px;margin-bottom:13px;">
+          <div class="glass" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">🕐 Top tardanzas
+            </div>
+            <input type="hidden" id="topTardMode" value="total">
+            <input type="hidden" id="topExtraMode" value="total">
+            <div id="topTard" style="display:flex;flex-direction:column;gap:7px;"></div>
+          </div>
+          <div class="glass" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">⏰ Top horas extra
+              post-salida</div>
+            <div id="topExtra" style="display:flex;flex-direction:column;gap:7px;"></div>
+          </div>
+          <div class="glass area-only" style="padding:17px 19px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:13px;color:rgba(58,42,26,.8);">Resumen por área
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="tbl" style="font-size:12px;">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Reg.</th>
+                    <th>Prom. tard.</th>
+                    <th>Puntuales</th>
+                  </tr>
+                </thead>
+                <tbody id="tbArea"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ REGISTROS ══ -->
+      <div id="tab-reg" style="display:none;">
+        <div class="glass no-print" style="padding:13px 15px;margin-bottom:13px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:end;">
+            <div><label class="lbl">Período</label>
+              <select class="inp" id="fPer" onchange="Registros.changePer()">
+                <option value="hoy">Hoy</option>
+                <option value="ayer">Ayer</option>
+                <option value="semana">Esta semana</option>
+                <option value="semana_ant">Semana anterior</option>
+                <option value="mes" selected>Este mes</option>
+                <option value="mes_ant">Mes anterior</option>
+                <option value="anio">Este año</option>
+                <option value="dia_especifico">Día específico...</option>
+                <option value="custom">Personalizado</option>
+                <option value="todos">Todos</option>
+              </select>
+            </div>
+            <div id="fCDiaEsp" style="display:none;"><label class="lbl">Elegir día</label><input class="inp" type="date"
+                id="fDiaEsp" onchange="Registros.load()" /></div>
+            <div id="fCDes" style="display:none;"><label class="lbl">Desde</label><input class="inp" type="date"
+                id="fDes" onchange="Registros.load()" /></div>
+            <div id="fCHas" style="display:none;"><label class="lbl">Hasta</label><input class="inp" type="date"
+                id="fHas" onchange="Registros.load()" /></div>
+            <div class="area-only"><label class="lbl">Área</label>
+              <select class="inp" id="fArea" onchange="Registros.load()">
+                <option value="">Todas</option>
+                <option>ADMINISTRACION</option>
+                <option>COMERCIAL</option>
+                <option>RECURSOS HUMANOS</option>
+                <option>MARKETING</option>
+                <option>ACADEMICO / GT</option>
+                <option>INNOVACION Y DESARROLLO</option>
+                <option>MAESTRANZA</option>
+                <option>PASANTIAS</option>
+              </select>
+            </div>
+            <div><label class="lbl">Estado Salida</label>
+              <select class="inp" id="fSalida" onchange="Registros.render()">
+                <option value="todas">Todos</option>
+                <option value="con_salida">Con Salida</option>
+                <option value="sin_salida">Sin Salida</option>
+              </select>
+            </div>
+            <div><label class="lbl">Buscar</label><input class="inp" type="text" id="fBusq" placeholder="Nombre..."
+                oninput="Registros.render()" /></div>
+          </div>
+        </div>
+        <div class="glass tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th class="area-only">Área</th>
+                <th>Nombre</th>
+                <th class="hide-mobile">Rol</th>
+                <th>Fecha</th>
+                <th class="hide-mobile">Horario plan.</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Hs.</th>
+                <th>Tardanza</th>
+                <th class="hide-mobile">Obs.</th>
+                <th class="no-print"></th>
+              </tr>
+            </thead>
+            <tbody id="tbR">
+              <tr>
+                <td colspan="12" style="text-align:center;padding:40px;color:rgba(58,42,26,.28);">Cargando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ══ PAGINACIÓN ══ -->
+        <div
+          style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;padding:16px;flex-wrap:wrap;"
+          id="paginacion"></div>
+      </div>
+
+      <!-- ══ PERSONAL ══ -->
+      <div id="tab-per" style="display:none;">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <h3 style="font-size:17px;font-weight:800;">Personal <span class="brand-gp">registrado</span></h3>
+            <p style="font-size:12px;color:rgba(58,42,26,.45);margin-top:1px;" id="pCnt"></p>
+          </div>
+          <button class="btn btn-primary no-print" onclick="Personal.openNew()">+ Agregar persona</button>
+        </div>
+        <div class="glass tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Rol / Puesto</th>
+                <th>Estado</th>
+                <th class="no-print"></th>
+              </tr>
+            </thead>
+            <tbody id="tbP"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ LÍDERES ══ -->
+
+      <div id="tab-lid" style="display:none;">
+        <div
+          style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <h3 style="font-size:17px;font-weight:800;">Líderes <span class="brand-gc">de área</span></h3>
+            <p style="font-size:12px;color:rgba(58,42,26,.45);margin-top:1px;">Usuarios que pueden acceder al panel
+              Lider.html para cargar horarios semanales</p>
+          </div>
+          <button class="btn btn-primary no-print" onclick="Lideres.openNew()">+ Agregar líder</button>
+        </div>
+        <!-- VENTANA DE CARGA -->
+        <div class="glass" style="padding:20px;margin-bottom:18px;">
+          <div
+            style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+            <div>
+              <div style="font-size:15px;font-weight:800;">🗓 Ventana de carga de líderes</div>
+              <div style="font-size:12px;color:rgba(58,42,26,.45);margin-top:3px;">
+                Días habilitados para que los líderes guarden horarios. Sin tilde = solo lectura.
+              </div>
+            </div>
+            <button onclick="CfgVentana.guardar()" style="background:linear-gradient(135deg,rgba(210,105,24,.22),rgba(210,105,24,.1));
+        border:1px solid rgba(210,105,24,.4)!important;color:var(--one-cyan);
+        padding:8px 20px;border-radius:999px;font-family:var(--font-title);
+        font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">
+              ✓ Guardar
+            </button>
+          </div>
+          <div id="cfgDias" style="display:block;"></div>
+          <div id="cfgStatus" style="margin-top:10px;font-size:12px;color:rgba(58,42,26,.4);"></div>
+        </div>
+        <div class="glass tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Usuario</th>
+                <th>Áreas asignadas</th>
+                <th>Estado</th>
+                <th class="no-print"></th>
+              </tr>
+            </thead>
+            <tbody id="tbLid">
+              <tr>
+                <td colspan="6" style="text-align:center;padding:40px;color:rgba(58,42,26,.28);">Cargando...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ HORARIOS SEMANALES ══ -->
+      <div id="tab-hsem" style="display:none;">
+        <div
+          style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:17px;font-weight:800;">Horarios <span class="brand-gc">Semanales</span></h3>
+            <div style="font-size:12px;color:rgba(58,42,26,.45);margin-top:2px;" id="hsemTitulo"></div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:11px;color:rgba(58,42,26,.4);">Tipos:</span>
+            <span
+              style="background:rgba(210,105,24,.1);border:1px solid rgba(210,105,24,.22);color:var(--one-cyan);padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">🕐
+              Fijo</span>
+            <span
+              style="background:rgba(111,79,176,.1);border:1px solid rgba(111,79,176,.22);color:var(--one-purple);padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">🔄
+              Flex</span>
+            <span
+              style="background:rgba(185,130,43,.1);border:1px solid rgba(185,130,43,.22);color:var(--one-gold);padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">🛡
+              Guardia 1h</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">
+              Personas plan.</div>
+            <div style="font-size:30px;font-weight:800;margin-top:4px;" class="brand-gc" id="hsKP">—</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Áreas
+              activas</div>
+            <div style="font-size:30px;font-weight:800;margin-top:4px;color:var(--one-purple);" id="hsKA">—</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Flex /
+              Guardia</div>
+            <div style="font-size:30px;font-weight:800;margin-top:4px;color:var(--one-gold);" id="hsKE">—</div>
+            <div style="font-size:10px;color:rgba(58,42,26,.3);margin-top:2px;">personas esta sem.</div>
+          </div>
+          <div class="stat-card-lg">
+            <div style="font-size:10px;color:rgba(58,42,26,.5);text-transform:uppercase;letter-spacing:.06em;">Total
+              hs plan.</div>
+            <div style="font-size:30px;font-weight:800;margin-top:4px;color:var(--color-success-text);" id="hsKH">—
+            </div>
+          </div>
+        </div>
+        <div class="glass no-print"
+          style="padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;"
+          id="hsemNavBar"></div>
+        <div class="areas-grid" id="hsemAreaGrid"></div>
+        <div style="margin-top:16px;">
+          <button class="btn btn-ghost" style="font-size:12px;padding:6px 16px;" onclick="toggleTabla()">
+            <span id="btnTablaLbl">Ver tabla detallada</span>
+          </button>
+          <button class="btn btn-gold" style="font-size:12px;padding:6px 16px;display:none;" id="btnDescImg"
+            onclick="HorariosSem.descargarImagen()">📸 Descargar imagen</button>
+          <div id="hsemTablaWrap" style="display:none;margin-top:10px;">
+            <div class="glass tbl-wrap">
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>Área</th>
+                    <th>Nombre</th>
+                    <th>Lun</th>
+                    <th>Mar</th>
+                    <th>Mié</th>
+                    <th>Jue</th>
+                    <th>Vie</th>
+                    <th>Sáb</th>
+                    <th>Dom</th>
+                    <th>Hs/sem</th>
+                    <th class="hide-mobile">Obs</th>
+                    <th class="no-print"></th>
+                  </tr>
+                </thead>
+                <tbody id="tbHsem">
+                  <tr>
+                    <td colspan="11" style="text-align:center;padding:30px;color:rgba(58,42,26,.28);">—</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TAB: ACTIVIDAD ══════ -->
+      <div id="tab-act" style="display:none;">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <h3 style="font-size:17px;font-weight:800;">Actividad <span
+                style="background:linear-gradient(90deg,#c0562e,#d47a4f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">en
+                tiempo real</span></h3>
+            <div
+              style="display:flex;align-items:center;gap:5px;background:rgba(120,82,40,.05);border:1px solid rgba(58,42,26,.12);border-radius:99px;padding:4px 10px;">
+              <span id="actDot"
+                style="width:7px;height:7px;border-radius:50%;background:#b91c1c;transition:background .4s;"></span>
+              <span id="actStatus"
+                style="font-size:11px;font-weight:700;color:rgba(58,42,26,.55);">Conectando...</span>
+            </div>
+          </div>
+          <button onclick="Actividad.clear()"
+            style="background:rgba(120,82,40,.055);border:1px solid rgba(58,42,26,.14);color:rgba(58,42,26,.6);padding:7px 14px;border-radius:99px;font-size:12px;font-weight:700;cursor:pointer;">🗑
+            Limpiar vista</button>
+        </div>
+        <div
+          style="background:rgba(210,105,24,.06);border:1px solid rgba(210,105,24,.14);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:rgba(58,42,26,.62);line-height:1.6;">
+          📡 <strong style="color:rgba(210,105,24,.8);">Actualización automática</strong> —
+          Cuando cualquier admin guarda, edita o elimina un registro, aparece aquí al instante para todos los admins
+          conectados.
+        </div>
+        <div id="actFeed" style="display:flex;flex-direction:column;gap:8px;">
+          <div style="text-align:center;padding:48px 16px;color:rgba(58,42,26,.3);">
+            <div style="font-size:32px;margin-bottom:10px;">🔔</div>
+            <div style="font-size:13px;">Hacé click en la pestaña para ver la actividad.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CONFIGURACIÓN ══ -->
+      <div id="tab-cfg" style="display:none;">
+        <h3 style="font-size:17px;font-weight:800;margin-bottom:4px;">Configuración <span class="brand-gc">del sistema</span></h3>
+        <p style="font-size:12px;color:rgba(58,42,26,.45);margin-bottom:16px;">Activá solo las funciones que tu empresa usa. Todo lo demás sigue funcionando igual.</p>
+        <div class="glass" style="padding:6px 22px;max-width:660px;">
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid rgba(58,42,26,.08);cursor:pointer;">
+            <div>
+              <div style="font-size:14px;font-weight:800;"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Usar áreas / sectores</div>
+              <div style="font-size:12px;color:rgba(58,42,26,.5);margin-top:2px;">Agrupá al personal por área (ej: Barra, Cocina, Salón). Apagado = un solo grupo con todo el personal.</div>
+            </div>
+            <input type="checkbox" id="cfgUsaAreas" onchange="Config.toggle('usa_areas', this.checked)" style="width:20px;height:20px;cursor:pointer;accent-color:#d26918;flex-shrink:0;" />
+          </label>
+          <label style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;cursor:pointer;">
+            <div>
+              <div style="font-size:14px;font-weight:800;"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Usar líderes</div>
+              <div style="font-size:12px;color:rgba(58,42,26,.5);margin-top:2px;">Habilitá usuarios líderes que cargan los horarios de su área. Apagado = solo el administrador.</div>
+            </div>
+            <input type="checkbox" id="cfgUsaLideres" onchange="Config.toggle('usa_lideres', this.checked)" style="width:20px;height:20px;cursor:pointer;accent-color:#d26918;flex-shrink:0;" />
+          </label>
+        </div>
+
+        <!-- Administrador de áreas (solo visible si "Usar áreas" está activo) -->
+        <div id="cfgAreasWrap" class="glass" style="display:none;padding:18px 22px;max-width:660px;margin-top:16px;">
+          <div style="font-size:14px;font-weight:800;margin-bottom:3px;"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Áreas / sectores de la empresa</div>
+          <div style="font-size:12px;color:rgba(58,42,26,.5);margin-bottom:14px;">Creá las áreas que usa tu empresa (ej: Barra, Cocina, Salón). Se usan para agrupar personal, horarios y líderes.</div>
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input class="inp" type="text" id="cfgAreaNueva" placeholder="Nombre del área (ej: Barra)" style="flex:1;"
+              onkeydown="if(event.key==='Enter')Config.addArea()" />
+            <button class="btn btn-primary" onclick="Config.addArea()" style="padding:8px 18px;">+ Agregar</button>
+          </div>
+          <div id="cfgAreasList"></div>
+        </div>
+
+        <!-- Plantillas de horario -->
+        <div class="glass" style="padding:18px 22px;max-width:660px;margin-top:16px;">
+          <div style="font-size:14px;font-weight:800;margin-bottom:3px;"><svg class="tab-ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Plantillas de horario</div>
+          <div style="font-size:12px;color:rgba(58,42,26,.5);margin-bottom:14px;">Creá horarios reutilizables (ej: Corrido 09→18, Cortado 09→13 / 17→21, Media jornada). Después los aplicás con un clic en el editor de horarios.</div>
+          <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px;">
+            <input class="inp" type="text" id="cfgTplNom" placeholder="Nombre (ej: Horario cortado)" />
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span style="font-size:11px;color:rgba(58,42,26,.5);font-weight:700;min-width:64px;">1er turno:</span>
+              <input class="inp" type="text" id="cfgTplE" placeholder="09:00" style="width:80px;text-align:center;" />
+              <span style="color:rgba(58,42,26,.3);">→</span>
+              <input class="inp" type="text" id="cfgTplS" placeholder="13:00" style="width:80px;text-align:center;" />
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+              <span style="font-size:11px;color:rgba(58,42,26,.5);font-weight:700;min-width:64px;">2do turno:</span>
+              <input class="inp" type="text" id="cfgTplE2" placeholder="(opcional)" style="width:80px;text-align:center;" />
+              <span style="color:rgba(58,42,26,.3);">→</span>
+              <input class="inp" type="text" id="cfgTplS2" placeholder="(opcional)" style="width:80px;text-align:center;" />
+              <span style="font-size:11px;color:rgba(58,42,26,.4);">← solo para horario cortado</span>
+            </div>
+            <button class="btn btn-primary" onclick="Config.addPlantilla()" style="padding:8px 18px;justify-self:start;">+ Agregar plantilla</button>
+          </div>
+          <div id="cfgTplList"></div>
+        </div>
+
+        <!-- Sucursales y QR de fichaje -->
+        <div class="glass" style="padding:18px 22px;max-width:660px;margin-top:16px;">
+          <div style="font-size:14px;font-weight:800;margin-bottom:3px;"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Sucursales y QR de fichaje</div>
+          <div style="font-size:12px;color:rgba(58,42,26,.5);margin-bottom:14px;">Cada sucursal tiene su QR para imprimir: el empleado lo escanea y ficha. Poné la dirección web donde publiques la app para que los QR apunten bien.</div>
+          <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:14px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:220px;">
+              <label class="lbl">URL donde está publicada la app</label>
+              <input class="inp" type="text" id="cfgBaseUrl" placeholder="https://runas.tudominio.com" />
+            </div>
+            <button class="btn btn-ghost" onclick="Sedes.saveBase()" style="padding:9px 16px;">Guardar URL</button>
+          </div>
+          <div id="cfgSedesList"></div>
+        </div>
+      </div>
+
+    </main>
+
+
+    <footer class="app-footer no-print">
+      <img src="img/one-logoletra.png" alt="ONE" class="footer-logo"
+        onerror="this.replaceWith(document.createTextNode('Runas Café'))" />
+      <span style="opacity:.3;">·</span><span>© 2026</span><span style="opacity:.3;">·</span>
+      <span>Desarrollado por <strong style="color:#d26918;">ONE</strong></span>
+    </footer>
+  </div>
+
+
+
+  <!-- MODAL PERSONAL -->
+  <div class="modal-overlay" id="mPers" style="display:none;" onclick="if(event.target===this)Personal.closeModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:16px;font-weight:800;" id="mPT">Agregar Persona</h3><button class="modal-close"
+          onclick="Personal.closeModal()">✕</button>
+      </div>
+      <input type="hidden" id="mpId" />
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div><label class="lbl">Nombre completo *</label><input class="inp" type="text" id="mpN"
+            placeholder="Nombre y apellido" /></div>
+        <div><label class="lbl">Rol / Cargo</label><input class="inp" type="text" id="mpR"
+            placeholder="Ej: Barista, Cajero..." /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div><label class="lbl">Email (login app)</label><input class="inp" type="email" id="mpE"
+              placeholder="empleado@runas.com" autocomplete="off" /></div>
+          <div><label class="lbl">DNI (contraseña)</label><input class="inp" type="text" id="mpD"
+              placeholder="Sin puntos" autocomplete="off" /></div>
+        </div>
+        <div style="font-size:11px;color:#8a7052;margin-top:-4px;">
+          💡 Si cargás email + DNI, se le crea el <strong>acceso a la app de fichaje</strong> (entra con su email y su DNI). Dejalos vacíos si esta persona no ficha desde el celular.
+        </div>
+        <div id="mpAWrap" style="display:none;">
+          <label class="lbl">Área / Sector</label>
+          <select class="inp" id="mpA"><option value="">— Sin área —</option></select>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="mpAc" checked
+            style="width:15px;height:15px;cursor:pointer;accent-color:var(--one-cyan);" /><label for="mpAc"
+            style="font-size:14px;cursor:pointer;">Persona activa</label></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-ghost" onclick="Personal.closeModal()" style="flex:1;">Cancelar</button>
+        <button class="btn btn-primary" onclick="Personal.save()" style="flex:1;justify-content:center;padding:10px;"
+          id="btnSP">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDITAR REGISTRO -->
+  <div class="modal-overlay" id="mReg" style="display:none;" onclick="if(event.target===this)Registros.closeModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:16px;font-weight:800;">Editar Registro</h3><button class="modal-close"
+          onclick="Registros.closeModal()">✕</button>
+      </div>
+      <input type="hidden" id="erId" />
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+          <div><label class="lbl">Área *</label>
+            <select class="inp" id="erA" onchange="Registros._onAreaChange(this.value)">
+              <option value="">Seleccionar...</option>
+              <option>ADMINISTRACION</option>
+              <option>COMERCIAL</option>
+              <option>RECURSOS HUMANOS</option>
+              <option>MARKETING</option>
+              <option>ACADEMICO / GT</option>
+              <option>INNOVACION Y DESARROLLO</option>
+              <option>MAESTRANZA</option>
+              <option>PASANTIAS</option>
+            </select>
+          </div>
+          <div><label class="lbl">Nombre *</label>
+            <select class="inp" id="erN">
+              <option value="">Seleccioná área primero</option>
+            </select>
+          </div>
+        </div>
+        <div><label class="lbl">Fecha *</label><input class="inp" type="date" id="erF" /></div>
+        <div><label class="lbl">Horario planificado</label><input class="inp" type="text" id="erT"
+            placeholder="Ej: 09:00 → 17:00 / Flex / Guardia" /></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+          <div><label class="lbl">Entrada real</label><input class="time-inp" type="time" id="erE" /></div>
+          <div><label class="lbl">Salida real</label><input class="time-inp" type="time" id="erS" /></div>
+        </div>
+        <!-- 2° turno -->
+        <div
+          style="padding:10px 12px;background:rgba(185,130,43,.06);border:1px solid rgba(185,130,43,.2);border-radius:10px;">
+          <div
+            style="font-size:9px;font-weight:800;color:rgba(185,130,43,.7);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;">
+            ✂ 2° Turno (opcional)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+            <div><label class="lbl">Entrada 2°</label><input class="time-inp" type="time" id="erE2" /></div>
+            <div><label class="lbl">Salida 2°</label><input class="time-inp" type="time" id="erS2" /></div>
+          </div>
+        </div>
+        <div><label class="lbl">Observaciones</label><input class="inp" type="text" id="erO" placeholder="Notas..." />
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-ghost" onclick="Registros.closeModal()" style="flex:1;">Cancelar</button>
+        <button class="btn btn-primary" onclick="Registros.save()"
+          style="flex:1;justify-content:center;padding:10px;">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL EDITOR HORARIOS POR ÁREA -->
+  <div class="modal-overlay" id="mHsem" style="display:none;" onclick="if(event.target===this)HorariosSem.closeModal()">
+    <div class="modal-box-lg" style="max-width:1000px;">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size:16px;font-weight:800;">Horarios <span class="brand-gc">— </span><span
+              id="mhAreaTitle">—</span></h3>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:6px;flex-wrap:wrap;">
+            <span class="badge badge-cyan" style="font-size:12px;" id="mhSemLabel"></span>
+            <button class="btn-ant" id="btnCopiarAnt" onclick="HorariosSem.copiarAntModal()" style="display:none;">⟳
+              Copiar semana anterior</button>
+          </div>
+        </div>
+        <button class="modal-close" onclick="HorariosSem.closeModal()">✕</button>
+      </div>
+      <div style="margin-bottom:13px;">
+        <label class="lbl">Observación general del área (opcional)</label>
+        <input class="inp" id="mhAreaObs" type="text" placeholder="Notas de la semana..." />
+      </div>
+      <div id="mhPersonasBody"
+        style="max-height:58vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding-right:2px;">
+        <div style="text-align:center;padding:30px;color:rgba(58,42,26,.3);"><span class="sp"></span></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="HorariosSem.delArea()" style="flex-shrink:0;">🗑 Eliminar
+          semana</button>
+        <button class="btn btn-ghost" onclick="HorariosSem.closeModal()" style="flex:1;">Cancelar</button>
+        <button class="btn btn-primary" onclick="HorariosSem.saveArea()" id="btnSHsem"
+          style="flex:2;justify-content:center;padding:12px;font-size:15px;">✓ Guardar área completa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL LÍDERES -->
+  <div class="modal-overlay" id="mLid" style="display:none;" onclick="if(event.target===this)Lideres.closeModal()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="font-size:16px;font-weight:800;" id="mLidT">Agregar Líder</h3>
+        <button class="modal-close" onclick="Lideres.closeModal()">✕</button>
+      </div>
+      <input type="hidden" id="mlId" />
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div><label class="lbl">Nombre completo *</label><input class="inp" type="text" id="mlNombre"
+            placeholder="Ej: Marcela González" /></div>
+        <div><label class="lbl">Usuario (para login en Lider.html) *</label><input class="inp" type="text"
+            id="mlUsuario" placeholder="Ej: MARCELA" style="text-transform:uppercase;"
+            oninput="this.value=this.value.toUpperCase()" /></div>
+        <div><label class="lbl">Contraseña *</label><input class="inp" type="text" id="mlPassword"
+            placeholder="Ej: MARCELA (por defecto igual al usuario)" /></div>
+        <div>
+          <label class="lbl">Áreas asignadas *</label>
+          <div id="mlAreasCheck"
+            style="display:flex;flex-direction:column;gap:7px;margin-top:6px;padding:10px;background:rgba(120,82,40,.04);border:1px solid rgba(58,42,26,.12);border-radius:10px;"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;"><input type="checkbox" id="mlActivo" checked
+            style="width:15px;height:15px;cursor:pointer;accent-color:var(--one-cyan);" /><label for="mlActivo"
+            style="font-size:14px;cursor:pointer;">Líder activo</label></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px;">
+        <button class="btn btn-ghost" onclick="Lideres.closeModal()" style="flex:1;">Cancelar</button>
+        <button class="btn btn-primary" onclick="Lideres.save()" style="flex:1;justify-content:center;padding:10px;"
+          id="btnSLid">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- MODAL QR SUCURSAL -->
+  <div class="modal-overlay" id="qrModal" style="display:none;" onclick="if(event.target===this)Sedes.closeQR()">
+    <div class="modal-box" style="text-align:center;max-width:340px;">
+      <div class="modal-header">
+        <h3 id="qrSedeName" style="font-size:16px;font-weight:800;">Sucursal</h3>
+        <button class="modal-close" onclick="Sedes.closeQR()">✕</button>
+      </div>
+      <div id="qrHolder" style="display:flex;justify-content:center;padding:14px;background:#fff;border-radius:12px;"></div>
+      <div id="qrUrl" style="font-size:10px;color:rgba(58,42,26,.4);margin-top:10px;word-break:break-all;"></div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="Sedes.printQR()"><svg class="tab-ic" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Imprimir</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="js/supabase.js?v=12"></script>
+  <script src="js/features.js?v=12"></script>
+  <script src="js/utils.js?v=12"></script>
+  <script src="js/auth.js?v=12"></script>
+  <script src="js/personal.js?v=12"></script>
+  <script src="js/registros.js?v=12"></script>
+  <script src="js/dashboard.js?v=12"></script>
+  <script src="js/horarios-sem.js?v=12"></script>
+  <script src="js/actividad.js?v=12"></script>
+  <script>
+    const TABS = ['dash', 'reg', 'per', 'lid', 'hsem', 'act', 'cfg'];
+    let _hsemOk = false;
+
+    function switchTab(t) {
+      TABS.forEach(x => {
+        document.getElementById('tab-' + x).style.display = x === t ? '' : 'none';
+        document.getElementById('at-' + x).classList.toggle('active', x === t);
+      });
+      const btnPdf = document.getElementById('btnPdfWrap');
+      const btnCsv = document.getElementById('btnCsvWrap');
+      if (btnPdf) btnPdf.style.display = t === 'dash' ? '' : 'none';
+      if (btnCsv) btnCsv.style.display = t === 'reg' ? '' : 'none';
+      if (t === 'hsem' && !_hsemOk) { _hsemOk = true; HorariosSem.init(); }
+      if (t === 'lid') { Lideres.load(); CfgVentana.load(); }
+      if (t === 'cfg') { Config.render(); Sedes.load(); }
+    }
+
+    function toggleTabla() {
+      const w = document.getElementById('hsemTablaWrap');
+      const lbl = document.getElementById('btnTablaLbl');
+      const img = document.getElementById('btnDescImg');
+      const show = w.style.display === 'none';
+      w.style.display = show ? '' : 'none';
+      if (img) img.style.display = show ? '' : 'none';
+      lbl.textContent = show ? 'Ocultar tabla' : 'Ver tabla detallada';
+      if (show) HorariosSem._renderTabla();
+    }
+
+    function abrirInforme() {
+      const per = document.getElementById('dPer')?.value || 'semana';
+      const area = document.getElementById('dArea')?.value || '';
+      let url = 'informe.html?per=' + encodeURIComponent(per);
+      if (area) url += '&area=' + encodeURIComponent(area);
+      window.location.href = url;
+    }
+
+    // ── MÓDULO LÍDERES ──
+    const Lideres = (() => {
+      let _data = [];
+      let _editId = null;
+
+      // Dibuja los checkboxes de áreas desde las áreas de la empresa (AREAS)
+      function _renderAreaChecks(selected) {
+        const cont = document.getElementById('mlAreasCheck');
+        if (!cont) return;
+        const sel = selected || [];
+        if (!AREAS.length) {
+          cont.innerHTML = '<div style="font-size:12px;color:rgba(58,42,26,.45);">No hay áreas creadas. Andá a ⚙️ Configuración para crear las áreas de tu empresa.</div>';
+          return;
+        }
+        cont.innerHTML = AREAS.map(a => `
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+            <input type="checkbox" value="${a}" ${sel.includes(a) ? 'checked' : ''} style="accent-color:#d26918;width:15px;height:15px;" />
+            <span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:50%;background:${areaColor(a)};"></span>${a}</span>
+          </label>`).join('');
+      }
+
+      async function load() {
+        const tbody = document.getElementById('tbLid');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:rgba(58,42,26,.28);"><span class="sp"></span></td></tr>';
+        const { data, error } = await SB.from('lideres').select('*').order('nombre');
+        if (error) {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--color-danger-text);">Error al cargar líderes</td></tr>';
+          return;
+        }
+        _data = data || [];
+        _render();
+      }
+
+      function _render() {
+        const tbody = document.getElementById('tbLid');
+        if (!tbody) return;
+        if (!_data.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:rgba(58,42,26,.28);">Sin líderes registrados — agregá el primero</td></tr>';
+          return;
+        }
+        tbody.innerHTML = _data.map((l, i) => {
+          const areas = (l.areas || []).map(a =>
+            `<span style="background:${areaColor(a)}22;border:1px solid ${areaColor(a)}44;color:${areaColor(a)};padding:1px 8px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap;">${a}</span>`
+          ).join(' ');
+          const est = l.activo
+            ? '<span class="badge badge-green">Activo</span>'
+            : '<span class="badge badge-gray">Inactivo</span>';
+          return `<tr>
+        <td style="color:rgba(58,42,26,.4);">${i + 1}</td>
+        <td style="font-weight:700;">${l.nombre}</td>
+        <td><code style="background:rgba(210,105,24,.1);color:var(--one-cyan);padding:2px 8px;border-radius:6px;font-size:12px;">${l.usuario}</code></td>
+        <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${areas}</div></td>
+        <td>${est}</td>
+        <td class="no-print">
+          <div style="display:flex;gap:5px;">
+            <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="Lideres.openEdit('${l.id}')">✏ Editar</button>
+            <button class="btn btn-danger" style="font-size:11px;padding:4px 10px;" onclick="Lideres.del('${l.id}')">🗑</button>
+          </div>
+        </td>
+      </tr>`;
+        }).join('');
+      }
+
+      function openNew() {
+        _editId = null;
+        document.getElementById('mLidT').textContent = 'Agregar Líder';
+        document.getElementById('mlId').value = '';
+        document.getElementById('mlNombre').value = '';
+        document.getElementById('mlUsuario').value = '';
+        document.getElementById('mlPassword').value = '';
+        document.getElementById('mlActivo').checked = true;
+        _renderAreaChecks([]);
+        document.getElementById('mLid').style.display = '';
+        document.getElementById('mlNombre').focus();
+      }
+
+      function openEdit(id) {
+        const l = _data.find(x => x.id === id);
+        if (!l) return;
+        _editId = id;
+        document.getElementById('mLidT').textContent = 'Editar Líder';
+        document.getElementById('mlId').value = id;
+        document.getElementById('mlNombre').value = l.nombre;
+        document.getElementById('mlUsuario').value = l.usuario;
+        document.getElementById('mlPassword').value = l.password || '';
+        document.getElementById('mlActivo').checked = l.activo !== false;
+        _renderAreaChecks(l.areas || []);
+        document.getElementById('mLid').style.display = '';
+      }
+
+      function closeModal() { document.getElementById('mLid').style.display = 'none'; }
+
+      async function save() {
+        const nombre = document.getElementById('mlNombre').value.trim();
+        const usuario = document.getElementById('mlUsuario').value.trim().toUpperCase();
+        const password = document.getElementById('mlPassword').value.trim() || usuario;
+        const activo = document.getElementById('mlActivo').checked;
+        const areas = [...document.querySelectorAll('#mlAreasCheck input[type=checkbox]:checked')].map(c => c.value);
+
+        if (!nombre || !usuario) {
+          showToast('Completá nombre y usuario', 'err'); return;
+        }
+
+        const btn = document.getElementById('btnSLid');
+        btn.disabled = true; btn.textContent = '⏳';
+
+        const payload = { nombre, usuario, password, areas, activo };
+        let error;
+        if (_editId) {
+          ({ error } = await SB.from('lideres').update(payload).eq('id', _editId));
+        } else {
+          ({ error } = await SB.from('lideres').insert(payload));
+        }
+
+        btn.disabled = false; btn.textContent = 'Guardar';
+        if (error) { showToast('Error: ' + error.message, 'err'); return; }
+        showToast(_editId ? '✓ Líder actualizado' : '✓ Líder creado');
+        closeModal();
+        load();
+      }
+
+      async function del(id) {
+        const l = _data.find(x => x.id === id);
+        if (!(await confirmDialog(`¿Eliminar a ${l?.nombre}?`))) return;
+        const { error } = await SB.from('lideres').delete().eq('id', id);
+        if (error) { showToast('Error: ' + error.message, 'err'); return; }
+        showToast('✓ Eliminado');
+        load();
+      }
+
+      return { load, openNew, openEdit, closeModal, save, del };
+    })();
+
+    // ── CONFIGURACIÓN (interruptores + administrador de áreas) ──
+    const Config = (() => {
+      function render() {
+        const f = Features.get();
+        const a = document.getElementById('cfgUsaAreas');
+        const l = document.getElementById('cfgUsaLideres');
+        if (a) a.checked = !!f.usa_areas;
+        if (l) l.checked = !!f.usa_lideres;
+        renderAreas();
+        renderPlantillas();
+      }
+      function renderAreas() {
+        const cont = document.getElementById('cfgAreasList');
+        if (!cont) return;
+        if (!AREAS.length) {
+          cont.innerHTML = '<div style="font-size:12px;color:rgba(58,42,26,.35);padding:6px 0;">Todavía no hay áreas. Agregá la primera arriba.</div>';
+          return;
+        }
+        cont.innerHTML = AREAS.map((a, i) => `
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border:1px solid rgba(58,42,26,.1);border-radius:9px;margin-bottom:6px;background:rgba(255,255,255,.5);">
+            <span style="display:flex;align-items:center;gap:8px;">
+              <span style="width:11px;height:11px;border-radius:50%;background:${areaColor(a)};display:inline-block;"></span>
+              <strong style="font-size:13px;">${a}</strong>
+            </span>
+            <span style="display:flex;gap:5px;">
+              <button class="btn btn-ghost" style="padding:3px 9px;font-size:11px;" onclick="Config.editArea(${i})">✏</button>
+              <button class="btn btn-danger" onclick="Config.delArea(${i})">✕</button>
+            </span>
+          </div>`).join('');
+      }
+      async function _saveAreas(arr) {
+        const ok = await Features.saveAreas(arr);
+        if (!ok) { showToast('No se pudo guardar', 'err'); return false; }
+        renderAreas();
+        applyFeatures();
+        return true;
+      }
+      async function addArea() {
+        const inp = document.getElementById('cfgAreaNueva');
+        const name = (inp.value || '').trim();
+        if (!name) return;
+        if (AREAS.some(a => a.toLowerCase() === name.toLowerCase())) { showToast('Esa área ya existe', 'err'); return; }
+        if (await _saveAreas([...AREAS, name])) { inp.value = ''; showToast('Área agregada ✓'); }
+      }
+      async function editArea(i) {
+        const actual = AREAS[i]; if (actual == null) return;
+        const nuevo = (prompt('Nuevo nombre del área:', actual) || '').trim();
+        if (!nuevo || nuevo === actual) return;
+        if (AREAS.some((a, j) => j !== i && a.toLowerCase() === nuevo.toLowerCase())) { showToast('Esa área ya existe', 'err'); return; }
+        const arr = AREAS.slice(); arr[i] = nuevo;
+        if (await _saveAreas(arr)) showToast('Área actualizada ✓');
+      }
+      async function delArea(i) {
+        const a = AREAS[i]; if (a == null) return;
+        if (!(await confirmDialog(`¿Eliminar el área "${a}"? El personal que la tenga quedará sin área.`))) return;
+        const arr = AREAS.slice(); arr.splice(i, 1);
+        if (await _saveAreas(arr)) showToast('Área eliminada');
+      }
+      // ── Plantillas de horario ──
+      function _fmt(v) {
+        v = (v || '').trim(); if (!v) return '';
+        v = v.replace(/[.,]/, ':');
+        let [h, m] = v.includes(':') ? v.split(':') : [v, '0'];
+        h = parseInt(h, 10); m = parseInt(m, 10);
+        if (isNaN(h)) return ''; if (isNaN(m)) m = 0;
+        if (h < 0 || h > 23 || m < 0 || m > 59) return '';
+        return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+      }
+      function renderPlantillas() {
+        const cont = document.getElementById('cfgTplList');
+        if (!cont) return;
+        if (!PLANTILLAS.length) { cont.innerHTML = '<div style="font-size:12px;color:rgba(58,42,26,.35);padding:6px 0;">Todavía no hay plantillas.</div>'; return; }
+        cont.innerHTML = PLANTILLAS.map((t, i) => {
+          const turno = `${t.e || ''}${t.s ? ' → ' + t.s : ''}${t.e2 ? '  |  ' + t.e2 + (t.s2 ? ' → ' + t.s2 : '') : ''}`;
+          return `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;border:1px solid rgba(58,42,26,.1);border-radius:9px;margin-bottom:6px;background:rgba(255,255,255,.5);">
+            <span><strong style="font-size:13px;">${t.nombre}</strong> <span style="font-size:12px;color:#d26918;font-weight:700;margin-left:6px;">${turno}</span></span>
+            <button class="btn btn-danger" onclick="Config.delPlantilla(${i})">✕</button>
+          </div>`;
+        }).join('');
+      }
+      async function addPlantilla() {
+        const nom = (document.getElementById('cfgTplNom').value || '').trim();
+        const e = _fmt(document.getElementById('cfgTplE').value);
+        const s = _fmt(document.getElementById('cfgTplS').value);
+        const e2 = _fmt(document.getElementById('cfgTplE2').value);
+        const s2 = _fmt(document.getElementById('cfgTplS2').value);
+        if (!nom) { showToast('Ponele un nombre a la plantilla', 'err'); return; }
+        if (!e) { showToast('Cargá al menos la entrada del 1er turno', 'err'); return; }
+        const ok = await Features.savePlantillas([...PLANTILLAS, { nombre: nom, e, s, e2, s2 }]);
+        if (!ok) { showToast('No se pudo guardar', 'err'); return; }
+        ['cfgTplNom', 'cfgTplE', 'cfgTplS', 'cfgTplE2', 'cfgTplS2'].forEach(id => document.getElementById(id).value = '');
+        renderPlantillas(); showToast('Plantilla agregada ✓');
+      }
+      async function delPlantilla(i) {
+        const t = PLANTILLAS[i]; if (!t) return;
+        if (!(await confirmDialog(`¿Eliminar la plantilla "${t.nombre}"?`))) return;
+        const arr = PLANTILLAS.slice(); arr.splice(i, 1);
+        if (await Features.savePlantillas(arr)) { renderPlantillas(); showToast('Plantilla eliminada'); }
+      }
+
+      async function toggle(key, val) {
+        const ok = await Features.save({ [key]: val });
+        if (!ok) { showToast('No se pudo guardar', 'err'); render(); return; }
+        applyFeatures();
+        showToast('Configuración guardada ✓');
+      }
+      return { render, toggle, addArea, editArea, delArea, addPlantilla, delPlantilla };
+    })();
+
+    // Aplica la visibilidad según los interruptores activos
+    function applyFeatures() {
+      const f = Features.get();
+      const lidBtn = document.getElementById('at-lid');
+      if (lidBtn) lidBtn.style.display = f.usa_lideres ? '' : 'none';
+      const areasWrap = document.getElementById('cfgAreasWrap');
+      if (areasWrap) areasWrap.style.display = f.usa_areas ? '' : 'none';
+      // Oculta todo lo de "áreas" (Dashboard/Registros) si no se usan, y llena los filtros con las áreas de la empresa
+      document.body.classList.toggle('no-areas', !f.usa_areas);
+      ['dArea', 'fArea'].forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">Todas</option>' + AREAS.map(a => `<option${a === cur ? ' selected' : ''}>${a}</option>`).join('');
+      });
+    }
+
+    // ── SUCURSALES + QR de fichaje ──
+    const Sedes = (() => {
+      let _sedes = [];
+      let _base = '';
+      async function load() {
+        try {
+          const { data } = await SB.from('configuracion').select('valor').eq('id', 'app_base_url').maybeSingle();
+          _base = (data && typeof data.valor === 'string' && data.valor) ? data.valor : window.location.origin;
+        } catch (_) { _base = window.location.origin; }
+        const inp = document.getElementById('cfgBaseUrl'); if (inp && !inp.value) inp.value = _base;
+        const { data } = await SB.from('sedes').select('*').order('nombre');
+        _sedes = data || [];
+        _render();
+      }
+      function _render() {
+        const cont = document.getElementById('cfgSedesList'); if (!cont) return;
+        if (!_sedes.length) { cont.innerHTML = '<div style="font-size:12px;color:rgba(58,42,26,.35);padding:6px 0;">No hay sucursales cargadas.</div>'; return; }
+        cont.innerHTML = _sedes.map(s => `
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:1px solid rgba(58,42,26,.1);border-radius:9px;margin-bottom:6px;background:rgba(255,255,255,.5);">
+            <div>
+              <div style="font-size:13px;font-weight:800;">${s.nombre} ${s.activo ? '' : '<span style="color:var(--color-danger-text);font-size:11px;">(inactiva)</span>'}</div>
+              <div style="font-size:11px;color:rgba(58,42,26,.45);">${s.direccion || ''} · radio ${s.radio_m} m</div>
+            </div>
+            <button class="btn btn-primary" style="padding:6px 12px;font-size:12px;" onclick="Sedes.showQR('${s.id}')"><svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="15" y="15" width="2.5" height="2.5"/><rect x="18.5" y="18.5" width="2.5" height="2.5"/></svg>Ver QR</button>
+          </div>`).join('');
+      }
+      async function saveBase() {
+        const v = (document.getElementById('cfgBaseUrl').value || '').trim().replace(/\/$/, '');
+        const { error } = await SB.from('configuracion').upsert({ id: 'app_base_url', valor: v });
+        if (error) { showToast('No se pudo guardar', 'err'); return; }
+        _base = v || window.location.origin; showToast('URL guardada ✓');
+      }
+      function _fichaUrl(id) {
+        const base = ((document.getElementById('cfgBaseUrl').value || _base || window.location.origin).trim()).replace(/\/$/, '');
+        return base + '/fichar.html?sede=' + id;
+      }
+      function showQR(id) {
+        const s = _sedes.find(x => x.id === id); if (!s) return;
+        const url = _fichaUrl(id);
+        const holder = document.getElementById('qrHolder'); holder.innerHTML = '';
+        new QRCode(holder, { text: url, width: 240, height: 240, colorDark: '#3a2a1a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+        document.getElementById('qrSedeName').textContent = s.nombre;
+        document.getElementById('qrUrl').textContent = url;
+        document.getElementById('qrModal').style.display = '';
+      }
+      function closeQR() { document.getElementById('qrModal').style.display = 'none'; }
+      function printQR() {
+        const holder = document.getElementById('qrHolder');
+        const img = holder.querySelector('img'); const canvas = holder.querySelector('canvas');
+        const dataUrl = img ? img.src : (canvas ? canvas.toDataURL('image/png') : '');
+        const name = document.getElementById('qrSedeName').textContent;
+        const w = window.open('', '_blank');
+        w.document.write(`<html><head><title>QR ${name}</title></head>
+          <body style="text-align:center;font-family:'Exo 2',system-ui,sans-serif;padding:40px;color:#3a2a1a;">
+          <div style="font-size:30px;font-weight:800;color:#d26918;">Runas Café</div>
+          <div style="font-size:20px;font-weight:700;margin:6px 0 22px;">${name}</div>
+          <img src="${dataUrl}" style="width:340px;height:340px;"/>
+          <div style="font-size:22px;font-weight:800;margin-top:22px;">📍 Escaneá para fichar</div>
+          <div style="font-size:14px;color:#8a7052;margin-top:8px;">Ingreso y salida · Runas Café</div>
+          </body></html>`);
+        w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (_) {} }, 400);
+      }
+      return { load, saveBase, showQR, closeQR, printQR };
+    })();
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const ok = await Auth.requireAdmin();
+      if (!ok) return;
+      await Features.load();
+      await Features.loadAreas();
+      await Features.loadPlantillas();
+      applyFeatures();
+      Dashboard.load();
+      Registros.load();
+      Personal.load();
+    });
+
+
+  </script>
+</body>
+
+</html>
