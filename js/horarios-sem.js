@@ -178,7 +178,8 @@ function _hsPersona(p) {
   function _renderAreaGrid() {
     const grid = document.getElementById('hsemAreaGrid');
     if (!grid) return;
-    if (!_usaAreas()) { _renderInlineEditor(grid); return; }  // sin áreas → editor directo en pantalla
+    if (!_usaAreas()) { grid.style.display = 'block'; _renderInlineEditor(grid); return; }  // sin áreas → editor a todo el ancho
+    grid.style.display = '';  // modo áreas → vuelve a la grilla de tarjetas
 
     const byArea = {};
     allData.forEach(row => { byArea[row.area] = row; });
