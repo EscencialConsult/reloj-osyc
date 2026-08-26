@@ -1293,16 +1293,49 @@
         const img = holder.querySelector('img'); const canvas = holder.querySelector('canvas');
         const dataUrl = img ? img.src : (canvas ? canvas.toDataURL('image/png') : '');
         const name = document.getElementById('qrSedeName').textContent;
+        const logoUrl = location.origin + '/img/one-logocolor.png';
         const w = window.open('', '_blank');
-        w.document.write(`<html><head><title>QR ${name}</title></head>
-          <body style="text-align:center;font-family:'Exo 2',system-ui,sans-serif;padding:40px;color:#3a2a1a;">
-          <div style="font-size:30px;font-weight:800;color:#d26918;">Runas Café</div>
-          <div style="font-size:20px;font-weight:700;margin:6px 0 22px;">${name}</div>
-          <img src="${dataUrl}" style="width:340px;height:340px;"/>
-          <div style="font-size:22px;font-weight:800;margin-top:22px;">📍 Escaneá para fichar</div>
-          <div style="font-size:14px;color:#8a7052;margin-top:8px;">Ingreso y salida · Runas Café</div>
-          </body></html>`);
-        w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (_) {} }, 400);
+        w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>QR ${name} — Runas Café</title>
+<style>
+@page{size:A4 portrait;margin:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{font-family:'Segoe UI',system-ui,sans-serif;}
+.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18mm 14mm;background:radial-gradient(circle at 50% 0%,#faf0d8,#f1e1bf);}
+.card{position:relative;background:#fff;border-radius:30px;max-width:560px;width:100%;overflow:hidden;box-shadow:0 26px 64px rgba(120,82,40,.18);}
+.strip{height:11px;background:linear-gradient(90deg,#d26918,#e79a52,#b9822b);}
+.body{padding:32px 46px 36px;text-align:center;}
+.logo{width:74px;height:74px;border-radius:50%;background:#f7ecd4;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:2px solid #efdcbb;}
+.logo img{width:48px;height:48px;object-fit:contain;}
+.brand{font-size:22px;font-weight:800;color:#d26918;letter-spacing:.02em;}
+.sede{font-size:36px;font-weight:800;color:#3a2a1a;margin:16px 0 4px;line-height:1.03;}
+.sub{font-size:11px;color:#b98a3f;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:26px;}
+.frame{display:inline-block;padding:16px;border:3px solid #d26918;border-radius:24px;background:#fff;box-shadow:0 8px 22px rgba(210,105,24,.14);}
+.frame img{width:288px;height:288px;display:block;}
+.cta{font-size:26px;font-weight:800;color:#3a2a1a;margin-top:26px;}
+.steps{display:flex;flex-direction:column;gap:12px;margin:20px auto 0;max-width:390px;text-align:left;}
+.step{display:flex;align-items:center;gap:13px;font-size:15px;color:#5a4632;font-weight:600;}
+.step .n{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#d26918,#e79a52);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 3px 9px rgba(210,105,24,.32);}
+.foot{margin-top:28px;padding-top:16px;border-top:1px dashed #e6d3b0;font-size:11px;color:#a08a6e;letter-spacing:.1em;font-weight:600;}
+</style></head><body>
+<div class="page"><div class="card">
+<div class="strip"></div>
+<div class="body">
+<div class="logo"><img src="${logoUrl}" onerror="this.parentNode.style.display='none'"/></div>
+<div class="brand">Runas Café</div>
+<div class="sede">${name}</div>
+<div class="sub">Fichaje de ingreso y salida</div>
+<div class="frame"><img src="${dataUrl}"/></div>
+<div class="cta">📍 Escaneá para fichar</div>
+<div class="steps">
+<div class="step"><span class="n">1</span> Escaneá este código con la cámara del celular</div>
+<div class="step"><span class="n">2</span> Iniciá sesión (solo la primera vez)</div>
+<div class="step"><span class="n">3</span> Tocá "Fichar" — ¡listo!</div>
+</div>
+<div class="foot">RUNAS CAFÉ · SISTEMA DE FICHAJE</div>
+</div>
+</div></div>
+</body></html>`);
+        w.document.close(); w.focus(); setTimeout(() => { try { w.print(); } catch (_) {} }, 500);
       }
       return { load, saveBase, showQR, closeQR, printQR };
     })();
