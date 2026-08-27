@@ -54,7 +54,7 @@ async function onPersonaChange() {
   const plan = await getHorarioPlanificado(nombre, getFechaActual());
   horarioPlan = plan;
 
-  // ✅ Buscar si existe un registro del MISMO DÍA para cargar datos previos
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Buscar si existe un registro del MISMO DÍA para cargar datos previos
   const { data: regHoy } = await SB.from('registros')
     .select('*')
     .eq('nombre', nombre)
@@ -73,38 +73,38 @@ async function onPersonaChange() {
   el.style.display = 'flex'; // forzar visible
 
   if (!plan) {
-    el.innerHTML = '<span style="color:rgba(58,42,26,.45);">Sin horario planificado — podés ingresar igualmente.</span>';
+    el.innerHTML = '<span style="color:rgba(30,47,69,.45);">Sin horario planificado — podés ingresar igualmente.</span>';
     document.getElementById('btnAgregar2do').style.display = '';
     document.getElementById('turno2Wrap').style.display = 'none';
     return;
   }
   if (plan.tipo === 'flex') {
     el.classList.add('plan-flex');
-    el.innerHTML = '<span style="color:rgba(58,42,26,.6);">Planificado:</span>'
-      + '<strong style="color:var(--one-purple);margin-left:5px;">🔄 Flex</strong>'
-      + '<span style="font-size:10px;color:rgba(58,42,26,.35);margin-left:4px;">Sin hora fija</span>';
+    el.innerHTML = '<span style="color:rgba(30,47,69,.6);">Planificado:</span>'
+      + '<strong style="color:var(--one-purple);margin-left:5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</strong>'
+      + '<span style="font-size:10px;color:rgba(30,47,69,.35);margin-left:4px;">Sin hora fija</span>';
     document.getElementById('btnAgregar2do').style.display = 'none';
     document.getElementById('turno2Wrap').style.display = 'none';
     return;
   } else if (plan.tipo === 'guardia') {
     el.classList.add('plan-guardia');
-    el.innerHTML = '<span style="color:rgba(58,42,26,.6);">Planificado:</span>'
-      + '<strong style="color:var(--one-gold);margin-left:5px;">🛡 Guardia</strong>'
-      + '<span style="font-size:10px;color:rgba(58,42,26,.35);margin-left:4px;">1h computable</span>';
+    el.innerHTML = '<span style="color:rgba(30,47,69,.6);">Planificado:</span>'
+      + '<strong style="color:var(--one-gold);margin-left:5px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia</strong>'
+      + '<span style="font-size:10px;color:rgba(30,47,69,.35);margin-left:4px;">1h computable</span>';
     document.getElementById('btnAgregar2do').style.display = 'none';
     document.getElementById('turno2Wrap').style.display = 'none';
     return;
   } else {
     // Horario normal — mostrar horario y si es partido
     const esCortado = !!(plan.entrada2 || plan.salida2);
-    let html = '<span style="color:rgba(58,42,26,.6);">Planificado:</span>'
+    let html = '<span style="color:rgba(30,47,69,.6);">Planificado:</span>'
       + '<strong style="color:var(--one-cyan);margin-left:5px;">' + plan.entrada + '</strong>'
-      + (plan.salida ? '<span style="color:rgba(58,42,26,.4);font-size:11px;"> → </span><strong>' + plan.salida + '</strong>' : '');
+      + (plan.salida ? '<span style="color:rgba(30,47,69,.4);font-size:11px;"> → </span><strong>' + plan.salida + '</strong>' : '');
     if (esCortado) {
-      html += '<span style="color:rgba(185,130,43,.6);margin-left:8px;font-size:11px;">✂</span>'
+      html += '<span style="color:rgba(63,106,160,.6);margin-left:8px;font-size:11px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></span>'
         + '<strong style="color:var(--one-gold);margin-left:4px;font-size:11px;">'
         + (plan.entrada2 || '?') + (plan.salida2 ? ' → ' + plan.salida2 : '') + '</strong>'
-        + '<span style="font-size:10px;color:rgba(185,130,43,.5);margin-left:4px;">turno partido</span>';
+        + '<span style="font-size:10px;color:rgba(63,106,160,.5);margin-left:4px;">turno partido</span>';
     }
     el.innerHTML = html;
 
@@ -148,10 +148,10 @@ async function onPersonaChange() {
     // Para flex y guardia no hay tardanza calculable
     if (horarioPlan?.tipo === 'flex') {
       it.style.color = 'var(--one-purple)';
-      it.textContent = ent ? '🔄 Horario Flex — sin tardanza calculada' : '';
+      it.textContent = ent ? 'Horario Flex — sin tardanza calculada' : '';
     } else if (horarioPlan?.tipo === 'guardia') {
       it.style.color = 'var(--one-gold)';
-      it.textContent = ent ? '🛡 Guardia — 1h computable' : '';
+      it.textContent = ent ? 'Guardia — 1h computable' : '';
     } else if (ent && horarioPlan?.entrada) {
       // Horario normal: calcular tardanza
       const diff = calcTardVsPlan(horarioPlan.entrada, ent);
@@ -159,7 +159,7 @@ async function onPersonaChange() {
       it.style.color = info.color;
       it.textContent = info.text;
     } else if (ent) {
-      it.style.color = 'rgba(58,42,26,.5)';
+      it.style.color = 'rgba(30,47,69,.5)';
       it.textContent = 'Sin planificación para comparar';
     } else {
       it.textContent = '';
@@ -229,7 +229,7 @@ async function guardarRegistro() {
     obsFinal = (obs ? obs + ' | ' : '') + '2° turno: ' + t2str;
   }
 
-  // ✅ NUEVA LÓGICA: Buscar si existe, UPDATE si existe, INSERT si no
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVA LÓGICA: Buscar si existe, UPDATE si existe, INSERT si no
   
   // 1. Buscar si ya existe registro para esta persona este día
   const { data: existing } = await SB
@@ -269,7 +269,7 @@ async function guardarRegistro() {
   }
 
   btn.disabled = false;
-  document.getElementById('lBIco').textContent = '✅';
+  document.getElementById('lBIco').textContent = '';
   document.getElementById('lBTxt').textContent = 'Guardar registro';
 
   if (error) { 
@@ -320,9 +320,9 @@ function _renderQueue() {
     document.getElementById('lQList').innerHTML = sessionQueue.slice(0,12).map(r => {
       let tb = '';
       if (r.plan?.tipo === 'flex') {
-        tb = `<span class="badge badge-purple" style="font-size:10px;">🔄 Flex</span>`;
+        tb = `<span class="badge badge-purple" style="font-size:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</span>`;
       } else if (r.plan?.tipo === 'guardia') {
-        tb = `<span class="badge badge-gold" style="font-size:10px;">🛡 Guardia</span>`;
+        tb = `<span class="badge badge-gold" style="font-size:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia</span>`;
       } else if (r.tardanza !== null) {
         tb = r.tardanza <= 0
           ? `<span class="badge badge-green" style="font-size:10px;">✓ ${Math.abs(r.tardanza)}m antes</span>`
@@ -332,13 +332,13 @@ function _renderQueue() {
       let planTxt = '';
       if (r.plan?.tipo === 'flex')    planTxt = `<span style="font-size:11px;color:var(--one-purple);">Flex</span>`;
       else if (r.plan?.tipo === 'guardia') planTxt = `<span style="font-size:11px;color:var(--one-gold);">Guardia</span>`;
-      else if (r.plan?.entrada)       planTxt = `<span style="font-size:11px;color:rgba(58,42,26,.5);">${r.plan.entrada}</span>`;
+      else if (r.plan?.entrada)       planTxt = `<span style="font-size:11px;color:rgba(30,47,69,.5);">${r.plan.entrada}</span>`;
       return `<div class="queue-row">
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <span style="color:${areaColor(r.area)};font-size:11px;font-weight:800;">${r.area.split(' ')[0]}</span>
           <span style="font-weight:700;font-size:14px;">${r.nombre}</span>
           ${planTxt}
-          <span style="font-size:13px;color:rgba(58,42,26,.6);">${r.ent}${r.sal?' → '+r.sal:''}</span>
+          <span style="font-size:13px;color:rgba(30,47,69,.6);">${r.ent}${r.sal?' → '+r.sal:''}</span>
           ${hb}${tb}
         </div>
         <span style="color:var(--color-success-text);font-size:15px;flex-shrink:0;">✓</span>

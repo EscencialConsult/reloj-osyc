@@ -18,7 +18,7 @@ const Registros = (() => {
     const per = document.getElementById('fPer').value;
     const area = document.getElementById('fArea').value;
 
-    // ✅ Manejar períodos especiales correctamente
+    // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Manejar períodos especiales correctamente
     let desde, hasta;
     if (per === 'custom') {
       desde = document.getElementById('fDes')?.value || '';
@@ -63,7 +63,7 @@ const Registros = (() => {
       return true;
     });
 
-    // ✅ NUEVO: Verificar si el filtro es "día específico"
+    // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVO: Verificar si el filtro es "día específico"
     const isDiaEspecifico = per === 'dia_especifico';
 
     let paginatedRows, totalPages;
@@ -83,7 +83,7 @@ const Registros = (() => {
 
     const tbody = document.getElementById('tbR');
     if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:rgba(58,42,26,.28);">Sin registros</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="12" style="text-align:center;padding:40px;color:rgba(30,47,69,.28);">Sin registros</td></tr>`;
       _renderPagination(0);
       return;
     }
@@ -104,8 +104,8 @@ const Registros = (() => {
         if (planEnt.match(/^\d{2}:\d{2}$/)) diff = calcTardVsPlan(planEnt, r.hora_entrada.slice(0, 5));
       }
       let tardCell;
-      if (esFlex) tardCell = '<span class="badge badge-purple">🔄 Flex</span>';
-      else if (esGuardia) tardCell = '<span class="badge badge-gold">🛡 Guardia</span>';
+      if (esFlex) tardCell = '<span class="badge badge-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</span>';
+      else if (esGuardia) tardCell = '<span class="badge badge-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia</span>';
       else tardCell = tardBadge(diff);
 
       // OBSERVACIONES
@@ -114,15 +114,15 @@ const Registros = (() => {
         const preview = r.observaciones.length > 22 ? r.observaciones.slice(0, 22) + '…' : r.observaciones;
         const safeObs = r.observaciones.replace(/\\/g, '\\\\').replace(/`/g, '\\`');
         obsCell = `<div style="display:flex;align-items:center;gap:5px;">
-          <span style="color:rgba(58,42,26,.55);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;">${preview}</span>
+          <span style="color:rgba(30,47,69,.55);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;">${preview}</span>
           <button onclick="Registros.showObs(\`${safeObs}\`)" title="Ver completo"
-            style="flex-shrink:0;background:rgba(210,105,24,.12);border:1px solid rgba(210,105,24,.25);color:#d26918;border-radius:6px;padding:2px 6px;font-size:10px;cursor:pointer;font-weight:700;line-height:1.4;">👁</button>
+            style="flex-shrink:0;background:rgba(44,110,180,.12);border:1px solid rgba(44,110,180,.25);color:#2c6eb4;border-radius:6px;padding:2px 6px;font-size:10px;cursor:pointer;font-weight:700;line-height:1.4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>`;
       } else {
-        obsCell = `<span style="color:rgba(58,42,26,.25);">—</span>`;
+        obsCell = `<span style="color:rgba(30,47,69,.25);">—</span>`;
       }
 
-      // ✅ Calcular índice correcto para la tabla
+      // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Calcular índice correcto para la tabla
       let rowNumber;
       if (paginatedRows.length === rows.length) {
         // SIN PAGINACIÓN: Usar índice directo
@@ -134,19 +134,19 @@ const Registros = (() => {
       }
 
       return `<tr>
-        <td style="color:rgba(58,42,26,.3);font-size:11px;">${rowNumber}</td>
+        <td style="color:rgba(30,47,69,.3);font-size:11px;">${rowNumber}</td>
         <td class="area-only"><span style="color:${col};font-weight:800;font-size:11px;">${r.area.split(' / ')[0]}</span></td>
         <td style="font-weight:700;">${r.nombre}</td>
-        <td class="hide-mobile" style="color:rgba(58,42,26,.58);font-size:12px;">${r.rol || '—'}</td>
+        <td class="hide-mobile" style="color:rgba(30,47,69,.58);font-size:12px;">${r.rol || '—'}</td>
         <td style="white-space:nowrap;">${fmtDate(r.fecha)}</td>
-        <td class="hide-mobile" style="font-size:12px;color:rgba(58,42,26,.6);">${turno || '—'}</td>
+        <td class="hide-mobile" style="font-size:12px;color:rgba(30,47,69,.6);">${turno || '—'}</td>
         <td style="font-weight:700;">${r.hora_entrada?.slice(0, 5) || '—'}</td>
-        <td style="color:rgba(58,42,26,.62);">${r.hora_salida?.slice(0, 5) || '—'}</td>
+        <td style="color:rgba(30,47,69,.62);">${r.hora_salida?.slice(0, 5) || '—'}</td>
         <td><span class="badge badge-cyan">${hs !== null ? fmtHs(hs) : '—'}</span></td>
         <td>${tardCell}</td>
         <td class="hide-mobile">${obsCell}</td>
         <td class="no-print"><div style="display:flex;gap:4px;">
-          <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="Registros.openEdit('${r.id}')">✏</button>
+          <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="Registros.openEdit('${r.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
           <button class="btn btn-danger" onclick="Registros.del('${r.id}')">✕</button>
         </div></td>
       </tr>`;
@@ -155,7 +155,7 @@ const Registros = (() => {
     _renderPagination(totalPages);
   }
 
-  // ✅ PAGINACIÓN: Renderizar números de página
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> PAGINACIÓN: Renderizar números de página
   function _renderPagination(totalPages) {
     const paginationEl = document.getElementById('paginacion');
     if (!paginationEl) return;
@@ -175,7 +175,7 @@ const Registros = (() => {
     // Números de página
     for (let i = 1; i <= totalPages; i++) {
       if (i === currentPage) {
-        html += `<button class="btn btn-primary" style="padding:6px 12px;font-size:12px;min-width:40px;background:rgba(210,105,24,.25);border-color:#d26918;color:#d26918;font-weight:700;">${i}</button>`;
+        html += `<button class="btn btn-primary" style="padding:6px 12px;font-size:12px;min-width:40px;background:rgba(44,110,180,.25);border-color:#2c6eb4;color:#2c6eb4;font-weight:700;">${i}</button>`;
       } else {
         html += `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;min-width:40px;" onclick="Registros.goToPage(${i})">${i}</button>`;
       }
@@ -189,7 +189,7 @@ const Registros = (() => {
     paginationEl.innerHTML = html;
   }
 
-  // ✅ NUEVA FUNCIÓN: Ir a página específica
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVA FUNCIÓN: Ir a página específica
   function goToPage(page) {
     currentPage = page;
     render();
@@ -204,13 +204,13 @@ const Registros = (() => {
     overlay.id = 'obsPopup';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
     overlay.innerHTML = `
-      <div style="background:#fffdf8;border:1px solid rgba(210,105,24,.22);border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fu .2s ease both;">
+      <div style="background:#fffdf8;border:1px solid rgba(44,110,180,.22);border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fu .2s ease both;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;">
-          <div style="font-size:12px;font-weight:700;color:rgba(210,105,24,.7);text-transform:uppercase;letter-spacing:.07em;">💬 Observación completa</div>
-          <button onclick="document.getElementById('obsPopup').remove()" style="background:none;border:none;color:rgba(58,42,26,.5);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+          <div style="font-size:12px;font-weight:700;color:rgba(44,110,180,.7);text-transform:uppercase;letter-spacing:.07em;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Observación completa</div>
+          <button onclick="document.getElementById('obsPopup').remove()" style="background:none;border:none;color:rgba(30,47,69,.5);font-size:20px;cursor:pointer;line-height:1;">✕</button>
         </div>
-        <div style="background:rgba(120,82,40,.05);border:1px solid rgba(58,42,26,.1);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.6;color:rgba(58,42,26,.88);word-break:break-word;">${text}</div>
-        <button onclick="document.getElementById('obsPopup').remove()" style="margin-top:16px;width:100%;padding:10px;border-radius:10px;background:rgba(210,105,24,.12);border:1px solid rgba(210,105,24,.28);color:#d26918;font-weight:700;font-size:13px;cursor:pointer;">Cerrar</button>
+        <div style="background:rgba(44,74,110,.05);border:1px solid rgba(30,47,69,.1);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.6;color:rgba(30,47,69,.88);word-break:break-word;">${text}</div>
+        <button onclick="document.getElementById('obsPopup').remove()" style="margin-top:16px;width:100%;padding:10px;border-radius:10px;background:rgba(44,110,180,.12);border:1px solid rgba(44,110,180,.28);color:#2c6eb4;font-weight:700;font-size:13px;cursor:pointer;">Cerrar</button>
       </div>`;
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
     document.body.appendChild(overlay);
@@ -354,7 +354,7 @@ const Registros = (() => {
     });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }));
-    a.download = `Runas_registros_${today()}.csv`;
+    a.download = `OSYC_registros_${today()}.csv`;
     a.click(); showToast('CSV descargado ✓');
   }
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Runas Café — Líder · Horarios</title>
+  <title>OSYC — Líder · Horarios</title>
   <link rel="icon" type="image/png" href="img/favicon.png"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,45 +12,45 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-    .login-card{background:rgba(120,82,40,.06);border:1px solid rgba(58,42,26,.15);backdrop-filter:blur(22px);border-radius:22px;padding:36px 30px 30px;width:100%;max-width:370px;animation:fadeUp .4s ease both;}
+    .login-card{background:rgba(44,74,110,.06);border:1px solid rgba(30,47,69,.15);backdrop-filter:blur(22px);border-radius:22px;padding:36px 30px 30px;width:100%;max-width:370px;animation:fadeUp .4s ease both;}
     .lg-brand{display:flex;align-items:center;gap:12px;margin-bottom:26px;}
     .lg-brand .brand-mark{width:44px;height:44px;}
     .fld{margin-bottom:14px;}
-    .fld label{font-size:10px;font-weight:700;color:rgba(58,42,26,.55);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;display:block;}
+    .fld label{font-size:10px;font-weight:700;color:rgba(30,47,69,.55);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;display:block;}
 
-    .app-header{position:sticky;top:0;z-index:50;background:rgba(245,233,208,.7);backdrop-filter:blur(22px);border-bottom:1px solid rgba(58,42,26,.09);padding:12px 20px;}
+    .app-header{position:sticky;top:0;z-index:50;background:rgba(244,247,251,.7);backdrop-filter:blur(22px);border-bottom:1px solid rgba(30,47,69,.09);padding:12px 20px;}
     .app-header__inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
     .app-header__brand{display:flex;align-items:center;gap:11px;}
     .main-wrap{max-width:1100px;margin:0 auto;padding:20px 16px 110px;}
 
-    .week-bar{background:rgba(120,82,40,.055);border:1px solid rgba(58,42,26,.13);border-radius:14px;padding:13px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .week-bar{background:rgba(44,74,110,.055);border:1px solid rgba(30,47,69,.13);border-radius:14px;padding:13px 18px;margin-bottom:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
     .week-label{font-size:15px;font-weight:800;color:var(--one-cyan);flex:1;}
-    .wnav{background:rgba(120,82,40,.07);border:1px solid rgba(58,42,26,.18);color:var(--one-white);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
-    .wnav:hover{background:rgba(210,105,24,.15);border-color:rgba(210,105,24,.35);}
+    .wnav{background:rgba(44,74,110,.07);border:1px solid rgba(30,47,69,.18);color:var(--one-white);width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+    .wnav:hover{background:rgba(44,110,180,.15);border-color:rgba(44,110,180,.35);}
 
-    .copy-banner{background:linear-gradient(135deg,rgba(210,105,24,.1),rgba(185,130,43,.08));border:1px solid rgba(210,105,24,.28);border-radius:14px;padding:13px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-    .btn-copy{background:linear-gradient(135deg,rgba(210,105,24,.22),rgba(185,130,43,.15));border:1px solid rgba(210,105,24,.38)!important;color:var(--one-cyan);padding:9px 20px;border-radius:999px;font-family:var(--font-title);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap;}
-    .btn-copy:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(210,105,24,.18);}
+    .copy-banner{background:linear-gradient(135deg,rgba(44,110,180,.1),rgba(63,106,160,.08));border:1px solid rgba(44,110,180,.28);border-radius:14px;padding:13px 18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .btn-copy{background:linear-gradient(135deg,rgba(44,110,180,.22),rgba(63,106,160,.15));border:1px solid rgba(44,110,180,.38)!important;color:var(--one-cyan);padding:9px 20px;border-radius:999px;font-family:var(--font-title);font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .btn-copy:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(44,110,180,.18);}
 
     /* Leyenda de tipos */
     .tipo-leyenda{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;padding:10px 14px;
-      background:rgba(120,82,40,.03);border:1px solid rgba(58,42,26,.08);border-radius:10px;
-      font-size:11px;color:rgba(58,42,26,.5);align-items:center;}
-    .tipo-leyenda strong{color:rgba(58,42,26,.8);}
+      background:rgba(44,74,110,.03);border:1px solid rgba(30,47,69,.08);border-radius:10px;
+      font-size:11px;color:rgba(30,47,69,.5);align-items:center;}
+    .tipo-leyenda strong{color:rgba(30,47,69,.8);}
     .tip-c{color:var(--one-cyan);}
     .tip-p{color:var(--one-purple);}
     .tip-g{color:var(--one-gold);}
 
     .cards-grid{display:flex;flex-direction:column;gap:10px;}
-    .pcard{background:rgba(120,82,40,.048);border:1px solid rgba(58,42,26,.11);border-radius:14px;overflow:hidden;}
-    .pcard-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(58,42,26,.07);}
+    .pcard{background:rgba(44,74,110,.048);border:1px solid rgba(30,47,69,.11);border-radius:14px;overflow:hidden;}
+    .pcard-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(30,47,69,.07);}
     .pcard-name{font-size:15px;font-weight:800;}
-    .pcard-rol{font-size:11px;color:rgba(58,42,26,.4);margin-top:1px;}
+    .pcard-rol{font-size:11px;color:rgba(30,47,69,.4);margin-top:1px;}
     .pcard-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-    .tot-badge{display:inline-flex;align-items:center;padding:3px 11px;border-radius:999px;background:rgba(210,105,24,.11);border:1px solid rgba(210,105,24,.2);color:var(--one-cyan);font-size:12px;font-weight:800;}
-    .btn-split{background:rgba(120,82,40,.05);border:1px solid rgba(58,42,26,.16)!important;color:rgba(58,42,26,.55);padding:5px 12px;border-radius:999px;font-family:var(--font-title);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
-    .btn-split:hover{background:rgba(185,130,43,.1);border-color:rgba(185,130,43,.3)!important;color:var(--one-gold);}
-    .btn-split.on{background:rgba(185,130,43,.14);border-color:rgba(185,130,43,.38)!important;color:var(--one-gold);}
+    .tot-badge{display:inline-flex;align-items:center;padding:3px 11px;border-radius:999px;background:rgba(44,110,180,.11);border:1px solid rgba(44,110,180,.2);color:var(--one-cyan);font-size:12px;font-weight:800;}
+    .btn-split{background:rgba(44,74,110,.05);border:1px solid rgba(30,47,69,.16)!important;color:rgba(30,47,69,.55);padding:5px 12px;border-radius:999px;font-family:var(--font-title);font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;}
+    .btn-split:hover{background:rgba(63,106,160,.1);border-color:rgba(63,106,160,.3)!important;color:var(--one-gold);}
+    .btn-split.on{background:rgba(63,106,160,.14);border-color:rgba(63,106,160,.38)!important;color:var(--one-gold);}
 
     .pcard-body{padding:12px 16px 14px;}
     .dias-grid{display:grid;grid-template-columns:repeat(5,1fr) 0.75fr 0.75fr;gap:6px;}
@@ -58,26 +58,26 @@
     @media(max-width:440px){.dias-grid{grid-template-columns:repeat(2,1fr) 0.75fr 0.75fr;}}
 
     /* Sábado y domingo — mismo tamaño, solo label diferente color */
-    .dia-col-fds .dia-lbl{color:rgba(185,130,43,.6);}
-    .dia-col-fds .dia-fecha{color:rgba(185,130,43,.3);}
+    .dia-col-fds .dia-lbl{color:rgba(63,106,160,.6);}
+    .dia-col-fds .dia-fecha{color:rgba(63,106,160,.3);}
 
     .dia-col{display:flex;flex-direction:column;gap:3px;}
-    .dia-lbl{font-size:10px;font-weight:800;color:rgba(58,42,26,.5);text-align:center;text-transform:uppercase;letter-spacing:.05em;}
-    .dia-fecha{font-size:9px;color:rgba(58,42,26,.28);text-align:center;margin-bottom:3px;}
+    .dia-lbl{font-size:10px;font-weight:800;color:rgba(30,47,69,.5);text-align:center;text-transform:uppercase;letter-spacing:.05em;}
+    .dia-fecha{font-size:9px;color:rgba(30,47,69,.28);text-align:center;margin-bottom:3px;}
 
     /* ── CELDA DE HORARIO ── */
     .dia-cell{position:relative;}
 
     /* Input hora normal */
-    .ht{background:rgba(120,82,40,.07);border:1px solid rgba(58,42,26,.16);color:var(--one-white);
+    .ht{background:rgba(44,74,110,.07);border:1px solid rgba(30,47,69,.16);color:var(--one-white);
       padding:7px 4px;border-radius:8px;font-family:var(--font-title);font-size:14px;font-weight:800;
       width:100%;text-align:center;transition:border-color .15s,background .15s;}
-    .ht:focus{outline:none;border-color:rgba(210,105,24,.55);background:rgba(210,105,24,.06);}
-    .ht::placeholder{color:rgba(58,42,26,.2);font-weight:400;font-size:11px;}
-    .ht.v{border-color:rgba(210,105,24,.3);color:var(--one-cyan);}
+    .ht:focus{outline:none;border-color:rgba(44,110,180,.55);background:rgba(44,110,180,.06);}
+    .ht::placeholder{color:rgba(30,47,69,.2);font-weight:400;font-size:11px;}
+    .ht.v{border-color:rgba(44,110,180,.3);color:var(--one-cyan);}
     .ht.err{border-color:rgba(220,38,38,.5)!important;color:var(--color-danger-text)!important;}
     .ht-split{font-size:12px!important;padding:5px 2px!important;}
-    .ht-split.v{border-color:rgba(185,130,43,.4)!important;color:var(--one-gold)!important;}
+    .ht-split.v{border-color:rgba(63,106,160,.4)!important;color:var(--one-gold)!important;}
 
     /* Badge de tipo especial — reemplaza los inputs cuando es flex/guardia */
     .tipo-badge{width:100%;border-radius:8px;padding:7px 4px;font-family:var(--font-title);
@@ -86,48 +86,48 @@
       transition:all .2s;min-height:36px;}
     .tipo-badge-flex{background:rgba(111,79,176,.18);border:1px solid rgba(111,79,176,.4)!important;color:var(--one-purple);}
     .tipo-badge-flex:hover{background:rgba(111,79,176,.28);}
-    .tipo-badge-guardia{background:rgba(185,130,43,.18);border:1px solid rgba(185,130,43,.4)!important;color:var(--one-gold);}
-    .tipo-badge-guardia:hover{background:rgba(185,130,43,.28);}
+    .tipo-badge-guardia{background:rgba(63,106,160,.18);border:1px solid rgba(63,106,160,.4)!important;color:var(--one-gold);}
+    .tipo-badge-guardia:hover{background:rgba(63,106,160,.28);}
     .tipo-badge-licencia{background:rgba(37,99,235,.18);border:1px solid rgba(37,99,235,.4)!important;color:#2563eb;}
     .tipo-badge-licencia:hover{background:rgba(37,99,235,.28);}
 
     /* Input de tipo — para editar el tipo del día completo */
-    .tipo-inp{background:rgba(120,82,40,.07);border:1px solid rgba(58,42,26,.16);color:var(--one-white);
+    .tipo-inp{background:rgba(44,74,110,.07);border:1px solid rgba(30,47,69,.16);color:var(--one-white);
       padding:5px 3px;border-radius:8px;font-family:var(--font-title);font-size:11px;font-weight:800;
       width:100%;text-align:center;transition:border-color .15s,background .15s;
       display:none;}/* se usa como fallback */
 
-    .sep{font-size:9px;color:rgba(58,42,26,.22);text-align:center;line-height:1.2;}
+    .sep{font-size:9px;color:rgba(30,47,69,.22);text-align:center;line-height:1.2;}
 
-    .split-sec{display:none;flex-direction:column;gap:3px;margin-top:5px;padding-top:6px;border-top:1px dashed rgba(185,130,43,.25);}
+    .split-sec{display:none;flex-direction:column;gap:3px;margin-top:5px;padding-top:6px;border-top:1px dashed rgba(63,106,160,.25);}
     .split-sec.show{display:flex;}
-    .split-lbl{font-size:9px;color:rgba(185,130,43,.55);text-align:center;font-weight:700;letter-spacing:.04em;margin-bottom:1px;}
+    .split-lbl{font-size:9px;color:rgba(63,106,160,.55);text-align:center;font-weight:700;letter-spacing:.04em;margin-bottom:1px;}
 
-    .obs-inp{background:rgba(120,82,40,.04);border:1px solid rgba(58,42,26,.1);color:var(--one-white);padding:7px 10px;border-radius:8px;font-family:var(--font-body);font-size:12px;width:100%;margin-top:10px;}
-    .obs-inp:focus{outline:none;border-color:rgba(210,105,24,.3);}
-    .obs-inp::placeholder{color:rgba(58,42,26,.25);}
+    .obs-inp{background:rgba(44,74,110,.04);border:1px solid rgba(30,47,69,.1);color:var(--one-white);padding:7px 10px;border-radius:8px;font-family:var(--font-body);font-size:12px;width:100%;margin-top:10px;}
+    .obs-inp:focus{outline:none;border-color:rgba(44,110,180,.3);}
+    .obs-inp::placeholder{color:rgba(30,47,69,.25);}
 
-    .guard-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(245,233,208,.93);backdrop-filter:blur(18px);border-top:1px solid rgba(58,42,26,.1);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
-    .ginfo{font-size:12px;color:rgba(58,42,26,.4);}
+    .guard-bar{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(244,247,251,.93);backdrop-filter:blur(18px);border-top:1px solid rgba(30,47,69,.1);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .ginfo{font-size:12px;color:rgba(30,47,69,.4);}
     .ginfo strong{color:var(--one-white);}
     .gstatus{font-size:11px;margin-top:2px;}
     .btn-save{background:linear-gradient(135deg,rgba(22,163,74,.28),rgba(22,163,74,.13));border:1px solid rgba(22,163,74,.48)!important;color:var(--color-success-text);padding:12px 30px;border-radius:999px;font-family:var(--font-title);font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
     .btn-save:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(22,163,74,.18);}
     .btn-save:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 
-    .sp{display:inline-block;width:14px;height:14px;border:2px solid rgba(210,105,24,.3);border-top-color:var(--one-cyan);border-radius:50%;animation:spin .7s linear infinite;}
+    .sp{display:inline-block;width:14px;height:14px;border:2px solid rgba(44,110,180,.3);border-top-color:var(--one-cyan);border-radius:50%;animation:spin .7s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .no-data{text-align:center;padding:40px;color:rgba(58,42,26,.3);font-size:14px;}
-    #loadOvl{position:fixed;inset:0;z-index:200;background:rgba(245,233,208,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+    .no-data{text-align:center;padding:40px;color:rgba(30,47,69,.3);font-size:14px;}
+    #loadOvl{position:fixed;inset:0;z-index:200;background:rgba(244,247,251,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
     #loadOvl.h{display:none;}
-    .lovlsp{width:36px;height:36px;border:3px solid rgba(210,105,24,.2);border-top-color:var(--one-cyan);border-radius:50%;animation:spin .8s linear infinite;}
+    .lovlsp{width:36px;height:36px;border:3px solid rgba(44,110,180,.2);border-top-color:var(--one-cyan);border-radius:50%;animation:spin .8s linear infinite;}
   </style>
 </head>
 <body>
 <div class="bg-layer" aria-hidden="true"></div>
 <div class="app-wrap">
 
-<div id="loadOvl"><div class="lovlsp"></div><div style="font-size:13px;color:rgba(58,42,26,.55);">Cargando...</div></div>
+<div id="loadOvl"><div class="lovlsp"></div><div style="font-size:13px;color:rgba(30,47,69,.55);">Cargando...</div></div>
 
 <!-- LOGIN -->
 <div id="vLogin" style="display:none;">
@@ -136,8 +136,8 @@
       <div class="lg-brand">
         <div class="brand-mark"></div>
         <div>
-          <div style="font-family:var(--font-title);font-weight:800;font-size:17px;">Runas <span class="brand-gc">Café</span></div>
-          <span style="font-size:11px;color:rgba(58,42,26,.45);">Panel de líderes de área</span>
+          <div style="font-family:var(--font-title);font-weight:800;font-size:17px;"><span class="brand-gc">OSYC</span></div>
+          <span style="font-size:11px;color:rgba(30,47,69,.45);">Panel de líderes de área</span>
         </div>
       </div>
       <div class="fld"><label>Usuario</label>
@@ -153,7 +153,7 @@
       </div>
       <button class="btn btn-success" style="width:100%;justify-content:center;" onclick="login()">Ingresar →</button>
       <div style="margin-top:16px;text-align:center;">
-        <a href="Lider.html" style="font-size:12px;color:rgba(58,42,26,.3);">← Actualizar</a>
+        <a href="Lider.html" style="font-size:12px;color:rgba(30,47,69,.3);">← Actualizar</a>
       </div>
     </div>
   </div>
@@ -164,15 +164,15 @@
 
   <!-- SELECTOR DE ÁREA -->
   <div id="selectorAreaWrap" style="display:none;min-height:100vh;align-items:center;justify-content:center;padding:20px;">
-    <div style="background:rgba(120,82,40,.06);border:1px solid rgba(58,42,26,.15);backdrop-filter:blur(22px);border-radius:22px;padding:36px 30px 30px;width:100%;max-width:420px;animation:fadeUp .4s ease both;">
+    <div style="background:rgba(44,74,110,.06);border:1px solid rgba(30,47,69,.15);backdrop-filter:blur(22px);border-radius:22px;padding:36px 30px 30px;width:100%;max-width:420px;animation:fadeUp .4s ease both;">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
         <div class="brand-mark"></div>
         <div>
-          <div style="font-family:var(--font-title);font-weight:800;font-size:17px;">Runas <span class="brand-gc">Café</span></div>
-          <span id="selectorNombre" style="font-size:11px;color:rgba(58,42,26,.45);">Seleccioná el área a cargar</span>
+          <div style="font-family:var(--font-title);font-weight:800;font-size:17px;"><span class="brand-gc">OSYC</span></div>
+          <span id="selectorNombre" style="font-size:11px;color:rgba(30,47,69,.45);">Seleccioná el área a cargar</span>
         </div>
       </div>
-      <div style="font-size:11px;font-weight:700;color:rgba(58,42,26,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">¿Qué área querés cargar?</div>
+      <div style="font-size:11px;font-weight:700;color:rgba(30,47,69,.4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">¿Qué área querés cargar?</div>
       <div id="selectorAreaBtns" style="display:flex;flex-direction:column;gap:10px;"></div>
       <div style="margin-top:18px;text-align:center;">
         <button class="btn btn-ghost" onclick="logout()" style="font-size:12px;padding:6px 16px;opacity:.6;">Salir</button>
@@ -186,8 +186,8 @@
       <div class="app-header__brand">
         <div class="brand-mark"></div>
         <div>
-          <div style="font-family:var(--font-title);font-weight:800;font-size:16px;">Runas <span class="brand-gc">Café</span></div>
-          <span style="font-size:10px;color:rgba(58,42,26,.45);" id="hdrSub">Panel líderes</span>
+          <div style="font-family:var(--font-title);font-weight:800;font-size:16px;"><span class="brand-gc">OSYC</span></div>
+          <span style="font-size:10px;color:rgba(30,47,69,.45);" id="hdrSub">Panel líderes</span>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -210,15 +210,15 @@
     <!-- COPIAR SEMANA ANTERIOR -->
     <div class="copy-banner" id="copyBanner" style="display:none;">
       <div>
-        <div style="font-size:13px;font-weight:700;">📋 Hay horarios de la semana anterior guardados</div>
-        <div style="font-size:11px;color:rgba(58,42,26,.45);margin-top:2px;" id="copyBannerSub"></div>
+        <div style="font-size:13px;font-weight:700;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Hay horarios de la semana anterior guardados</div>
+        <div style="font-size:11px;color:rgba(30,47,69,.45);margin-top:2px;" id="copyBannerSub"></div>
       </div>
       <button class="btn-copy" onclick="copiarAnterior()">⟳ Copiar semana anterior</button>
     </div>
 
     <!-- LEYENDA DE TIPOS -->
     <div class="tipo-leyenda">
-      <span>💡 En cada campo podés escribir:</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.3h6c0-1 .4-1.8 1-2.3A7 7 0 0 0 12 2z"/></svg> En cada campo podés escribir:</span>
       <span class="tip-c">09:00 → hora normal (Colocar siempre horario en ARG)</span>
       <span style="opacity:.3">·</span>
       <span class="tip-p"><strong>flex</strong> o <strong>f</strong> → Horario flexible</span>
@@ -227,7 +227,7 @@
       <span style="opacity:.3">·</span>
       <span style="color:#2563eb;"><strong>licencia</strong> o <strong>lic</strong> → Licencia (0h, ausencia avisada)</span>
       <span style="opacity:.3">·</span>
-      <span style="color:rgba(58,42,26,.4);">Click en la casilla para quitarlo </span>
+      <span style="color:rgba(30,47,69,.4);">Click en la casilla para quitarlo </span>
     </div>
 
     <!-- OBS ÁREA -->
@@ -245,10 +245,10 @@
   <div class="guard-bar">
     <div>
       <div class="ginfo">Área: <strong id="gbArea">—</strong> · Semana <strong id="gbSem">—</strong></div>
-      <div class="gstatus" id="gbSt" style="color:rgba(58,42,26,.35);"></div>
+      <div class="gstatus" id="gbSt" style="color:rgba(30,47,69,.35);"></div>
     </div>
 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <button onclick="descargarImagen()" style="background:rgba(185,130,43,.15);border:1px solid rgba(185,130,43,.35)!important;color:var(--one-gold);padding:12px 20px;border-radius:999px;font-family:var(--font-title);font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">📸 Imagen</button>
+      <button onclick="descargarImagen()" style="background:rgba(63,106,160,.15);border:1px solid rgba(63,106,160,.35)!important;color:var(--one-gold);padding:12px 20px;border-radius:999px;font-family:var(--font-title);font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> Imagen</button>
       <button class="btn-save" id="btnSave" onclick="guardar()">
         <span id="sIco">✓</span> <span id="sTxt">Guardar horarios</span>
       </button>
@@ -280,13 +280,13 @@ function _getLider(usuario) {
   return LIDERES_CACHE[usuario.toUpperCase()] || null;
 }
 const ACOLOR = {
-  'ADMINISTRACION':'#d26918',
-  'COMERCIAL':'#c0562e',
-  'RECURSOS HUMANOS':'#b9822b',
+  'ADMINISTRACION':'#2c6eb4',
+  'COMERCIAL':'#2c6eb4',
+  'RECURSOS HUMANOS':'#3f6aa0',
   'MARKETING':'#c23d78',
-  'ACADEMICO / GT':'#6f4fb0',
+  'ACADEMICO / GT':'#3457a8',
   'INNOVACION Y DESARROLLO':'#1f8f5f',
-  'MAESTRANZA':'#c2560f',
+  'MAESTRANZA':'#1f4e79',
   'PASANTIAS':'#2563eb'  // ← Sin coma al final si es el último
 };
 const DIAS=['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
@@ -391,7 +391,7 @@ function abrirPanel() {
   document.getElementById('vLogin').style.display = 'none';
   document.getElementById('vPanel').style.display = 'block';
   const { areas, nombre } = sess;
-  document.getElementById('hdrSub').textContent = `Hola, ${nombre} 👋`;
+  document.getElementById('hdrSub').textContent = `Hola, ${nombre} `;
 
   // Si ya tenemos un área activa restaurada de sesión, usarla directo
   if (areaActual && areas.includes(areaActual)) {
@@ -409,7 +409,7 @@ function mostrarSelectorArea() {
   document.getElementById('panelHorarios').style.display = 'none';
   const btnContainer = document.getElementById('selectorAreaBtns');
   btnContainer.innerHTML = areas.map(a => {
-    const col = ACOLOR[a] || '#7a6449';
+    const col = ACOLOR[a] || '#5b6b80';
     return `<button onclick="setAreaActual('${a}')"
       style="background:${col}18;border:2px solid ${col}44;color:${col};padding:18px 24px;border-radius:14px;font-family:var(--font-title);font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;text-align:left;width:100%;"
       onmouseover="this.style.borderColor='${col}';this.style.background='${col}28'"
@@ -420,7 +420,7 @@ function mostrarSelectorArea() {
 function setAreaActual(area) {
   areaActual = area;
   sessionStorage.setItem('lsArea', area);
-  const col = ACOLOR[area] || '#7a6449';
+  const col = ACOLOR[area] || '#5b6b80';
   const b = document.getElementById('hdrBadge');
   b.textContent = area;
   b.style.cssText = `background:${col}22;border:1px solid ${col}44;color:${col};padding:3px 10px;border-radius:999px;font-size:11px;font-weight:800;`;
@@ -472,12 +472,12 @@ function _mostrarBannerFueraVentana() {
   banner.innerHTML = `
     <div style="background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.28);border-radius:14px;
       padding:14px 20px;margin-bottom:12px;display:flex;align-items:center;gap:12px;">
-      <span style="font-size:22px;flex-shrink:0;">🔒</span>
+      <span style="font-size:22px;flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
       <div>
         <div style="font-size:14px;font-weight:800;color:var(--color-danger-text);">
           Fuera del horario de carga
         </div>
-        <div style="font-size:12px;color:rgba(58,42,26,.55);margin-top:3px;">
+        <div style="font-size:12px;color:rgba(30,47,69,.55);margin-top:3px;">
 Hoy es <strong>${diaStr}</strong>. Fuera del horario habilitado para carga.
 Podés ver los horarios pero no modificarlos.
         </div>
@@ -503,7 +503,7 @@ function _quitarBannerFueraVentana() {
 async function actuSem() {
   semD = getLun(hoy(), offSem);
   semH = getSab(semD);
-  document.getElementById('wkLabel').textContent = `📅 ${fmt(semD)} al ${fmtL(semH)}`;
+  document.getElementById('wkLabel').textContent = `${fmt(semD)} al ${fmtL(semH)}`;
   document.getElementById('gbSem').textContent = `${fmt(semD)} al ${fmt(semH)}`;
   document.getElementById('gbArea').textContent = areaActual;
   cargar();
@@ -633,11 +633,11 @@ function renderCards() {
       let celda;
 
       if (tipo === 'flex') {
-        celda = `<button class="tipo-badge tipo-badge-flex" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Flex">🔄 Flex</button>`;
+        celda = `<button class="tipo-badge tipo-badge-flex" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Flex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</button>`;
       } else if (tipo === 'guardia') {
-        celda = `<button class="tipo-badge tipo-badge-guardia" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Guardia">🛡 Guard.</button>`;
+        celda = `<button class="tipo-badge tipo-badge-guardia" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Guardia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guard.</button>`;
       } else if (tipo === 'licencia') {
-        celda = `<button class="tipo-badge tipo-badge-licencia" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Licencia">📋 Lic.</button>`;
+        celda = `<button class="tipo-badge tipo-badge-licencia" onclick="quitarTipo(${i},'${d}')" title="Click para quitar Licencia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Lic.</button>`;
       } else {
         celda = `
           <input class="ht ${r[d+'_e']?'v':''}" type="text" maxlength="8"
@@ -652,14 +652,14 @@ function renderCards() {
           <button onclick="togSplitDia(${i},'${d}')" title="${spDia?'Quitar 2° turno':'Agregar 2° turno'}"
             style="width:100%;margin-top:3px;padding:3px 2px;border-radius:6px;border:1px dashed;
               font-size:9px;font-weight:800;cursor:pointer;transition:all .15s;
-              background:${spDia?'rgba(185,130,43,.15)':'rgba(120,82,40,.04)'};
-              border-color:${spDia?'rgba(185,130,43,.5)':'rgba(58,42,26,.18)'};
-              color:${spDia?'var(--one-gold)':'rgba(58,42,26,.35)'};">
-            ${spDia?'✂ ×':'✂'}
+              background:${spDia?'rgba(63,106,160,.15)':'rgba(44,74,110,.04)'};
+              border-color:${spDia?'rgba(63,106,160,.5)':'rgba(30,47,69,.18)'};
+              color:${spDia?'var(--one-gold)':'rgba(30,47,69,.35)'};">
+            ${spDia?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg> ×':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>'}
           </button>
           ${spDia ? `
-          <div style="margin-top:4px;padding-top:5px;border-top:1px dashed rgba(185,130,43,.25);">
-            <div style="font-size:8px;color:rgba(185,130,43,.5);text-align:center;font-weight:700;margin-bottom:2px;">2°</div>
+          <div style="margin-top:4px;padding-top:5px;border-top:1px dashed rgba(63,106,160,.25);">
+            <div style="font-size:8px;color:rgba(63,106,160,.5);text-align:center;font-weight:700;margin-bottom:2px;">2°</div>
             <input class="ht ht-split ${r[d+'_e2']?'v':''}" type="text" maxlength="8"
               placeholder="—" value="${r[d+'_e2']}"
               oninput="updCelda(${i},'${d}_e2',this)"
@@ -684,12 +684,12 @@ function renderCards() {
         <div><div class="pcard-name">${r.nombre}</div><div class="pcard-rol">${r.rol || '—'}</div></div>
 <div class="pcard-meta" style="display:flex;align-items:center;gap:6px;">
   <button onclick="togVacaciones(${i})"
-    style="background:${r.vacaciones ? 'rgba(22,163,74,.18)' : 'rgba(120,82,40,.05)'};
-           border:1px solid ${r.vacaciones ? 'rgba(22,163,74,.45)' : 'rgba(58,42,26,.18)'} !important;
-           color:${r.vacaciones ? 'var(--color-success-text)' : 'rgba(58,42,26,.35)'};
+    style="background:${r.vacaciones ? 'rgba(22,163,74,.18)' : 'rgba(44,74,110,.05)'};
+           border:1px solid ${r.vacaciones ? 'rgba(22,163,74,.45)' : 'rgba(30,47,69,.18)'} !important;
+           color:${r.vacaciones ? 'var(--color-success-text)' : 'rgba(30,47,69,.35)'};
            padding:4px 11px;border-radius:999px;font-size:11px;font-weight:800;
            cursor:pointer;transition:all .2s;">
-    🏖 Vac.
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg> Vac.
   </button>
   <span class="tot-badge" id="tot${i}">${tot > 0 ? fmtHs(tot) : '—'}</span>
 </div>
@@ -698,22 +698,22 @@ function renderCards() {
   ${r.vacaciones ? `
     <div style="background:rgba(22,163,74,.07);border:1px solid rgba(22,163,74,.2);
       border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:8px;">
-      <span style="font-size:28px;">🏖</span>
+      <span style="font-size:28px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg></span>
       <div style="flex:1;">
         <div style="font-size:13px;font-weight:800;color:var(--color-success-text);margin-bottom:8px;">
           Vacaciones esta semana
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <label style="font-size:11px;color:rgba(58,42,26,.5);white-space:nowrap;">Hs de vacaciones:</label>
+          <label style="font-size:11px;color:rgba(30,47,69,.5);white-space:nowrap;">Hs de vacaciones:</label>
           <input type="number" min="0" max="60" step="0.5"
             value="${r.vacaciones_hs || ''}"
             placeholder="ej: 41"
             oninput="updVacHs(${i}, this.value)"
-            style="background:rgba(120,82,40,.07);border:1px solid rgba(22,163,74,.35);
+            style="background:rgba(44,74,110,.07);border:1px solid rgba(22,163,74,.35);
               color:var(--color-success-text);padding:6px 10px;border-radius:8px;
               font-family:var(--font-title);font-size:16px;font-weight:800;
               width:90px;text-align:center;"/>
-          <span style="font-size:11px;color:rgba(58,42,26,.4);">hs semanales</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.4);">hs semanales</span>
         </div>
         <div style="font-size:10px;color:rgba(22,163,74,.45);margin-top:6px;">
           ✓ Sin tardanzas · Sin horas extra · Computa como horas trabajadas
@@ -738,7 +738,7 @@ function updCelda(i, k, inp) {
   if (tipo) {
     // Ya reconoció un tipo especial — resaltar el input provisionalmente
     const _col = tipo === 'flex' ? 'var(--one-purple)' : tipo === 'guardia' ? 'var(--one-gold)' : '#2563eb';
-    const _bor = tipo === 'flex' ? 'rgba(111,79,176,.5)' : tipo === 'guardia' ? 'rgba(185,130,43,.5)' : 'rgba(37,99,235,.5)';
+    const _bor = tipo === 'flex' ? 'rgba(111,79,176,.5)' : tipo === 'guardia' ? 'rgba(63,106,160,.5)' : 'rgba(37,99,235,.5)';
     inp.style.color = _col;
     inp.style.borderColor = _bor;
   } else {
@@ -790,7 +790,7 @@ function setTipoDia(i, d, tipo) {
   dirty();
   // Re-render solo la card afectada
   renderCards();
-  const _lbl = { flex: '🔄 Flex', guardia: '🛡 Guardia', licencia: '📋 Licencia' }[tipo] || tipo;
+  const _lbl = { flex: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex', guardia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia', licencia: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Licencia' }[tipo] || tipo;
   toast(`✓ ${_lbl} aplicado a ${rows[i].nombre} — ${d}`);
 }
 
@@ -825,7 +825,7 @@ function togVacaciones(i) {
   dirty();
   renderCards();
   toast(rows[i].vacaciones
-    ? `🏖 ${rows[i].nombre} — vacaciones esta semana`
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg> ${rows[i].nombre} — vacaciones esta semana`
     : `✓ ${rows[i].nombre} — vuelve a horario normal`);
 }
 
@@ -848,7 +848,7 @@ function updTot(i) {
 function dirty(msg) {
   const el = document.getElementById('gbSt');
   el.textContent = msg || '● Cambios sin guardar';
-  el.style.color = msg ? 'rgba(58,42,26,.6)' : 'var(--one-gold)';
+  el.style.color = msg ? 'rgba(30,47,69,.6)' : 'var(--one-gold)';
 }
 
 /* ── GUARDAR ── */
@@ -856,7 +856,7 @@ async function guardar() {
   if (!semD || !sess) { toast('Error de sesión', 'err'); return; }
   // Verificar ventana de carga
   if (!verificarVentana()) {
-    toast('🔒 Fuera del horario de carga — solo Jue, Vie y Sáb hasta las 12:00 hs', 'err');
+    toast('Fuera del horario de carga — solo Jue, Vie y Sáb hasta las 12:00 hs', 'err');
     return;
   }
   const btn = document.getElementById('btnSave');
@@ -902,13 +902,13 @@ async function guardar() {
   }
 
   btn.disabled = false;
-  document.getElementById('sIco').textContent = error ? '⚠' : '✓';
+  document.getElementById('sIco').textContent = error ? '' : '✓';
   document.getElementById('sTxt').textContent  = 'Guardar horarios';
 
   if (error) {
     console.error(error);
     toast('Error al guardar: ' + error.message, 'err');
-    document.getElementById('gbSt').textContent = '⚠ Error al guardar';
+    document.getElementById('gbSt').textContent = 'Error al guardar';
     document.getElementById('gbSt').style.color = 'var(--color-danger-text)';
   } else {
     // Sincronizar turno en registros existentes de esta semana
@@ -979,13 +979,13 @@ function descargarImagen() {
 
   const DLAN = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
 const ACOLOR = {
-  'ADMINISTRACION':'#d26918',
-  'COMERCIAL':'#c0562e',
-  'RECURSOS HUMANOS':'#b9822b',
+  'ADMINISTRACION':'#2c6eb4',
+  'COMERCIAL':'#2c6eb4',
+  'RECURSOS HUMANOS':'#3f6aa0',
   'MARKETING':'#c23d78',
-  'ACADEMICO / GT':'#6f4fb0',
+  'ACADEMICO / GT':'#3457a8',
   'INNOVACION Y DESARROLLO':'#1f8f5f',
-  'MAESTRANZA':'#c2560f',
+  'MAESTRANZA':'#1f4e79',
   'PASANTIAS':'#2563eb'  // ← Sin coma al final si es el último
 };
 
@@ -1028,7 +1028,7 @@ const ACOLOR = {
   const ctx     = canvas.getContext('2d');
   ctx.scale(scale, scale);
 
-  const ac = ACOLOR[areaActual] || '#d26918';
+  const ac = ACOLOR[areaActual] || '#2c6eb4';
 
   // ── Fondo ──
   ctx.fillStyle = '#fffdf8';
@@ -1039,7 +1039,7 @@ const ACOLOR = {
   ctx.fillRect(0, 0, 4, totalH);
 
   // ── Zona título ──
-  ctx.fillStyle = 'rgba(120,82,40,.04)';
+  ctx.fillStyle = 'rgba(44,74,110,.04)';
   ctx.fillRect(0, 0, totalW, titleH);
 
   // Título principal
@@ -1048,15 +1048,15 @@ const ACOLOR = {
   ctx.fillText(`${areaActual}`, pad, 24);
 
   // Subtítulo
-  ctx.fillStyle = 'rgba(58,42,26,.55)';
+  ctx.fillStyle = 'rgba(30,47,69,.55)';
   ctx.font = `13px "Segoe UI", system-ui, sans-serif`;
   ctx.fillText(`Semana ${fmt(semD)} al ${fmtL(semH)}`, pad, 44);
 
   // Logo derecho
-  ctx.fillStyle = 'rgba(58,42,26,.3)';
+  ctx.fillStyle = 'rgba(30,47,69,.3)';
   ctx.font = `bold 11px "Segoe UI", system-ui, sans-serif`;
   ctx.textAlign = 'right';
-  ctx.fillText('Runas Café', totalW - pad, 24);
+  ctx.fillText('OSYC', totalW - pad, 24);
   ctx.textAlign = 'left';
 
   // Separador título / tabla
@@ -1066,7 +1066,7 @@ const ACOLOR = {
 
   // ── Fila de headers ──
   const hdrY = titleH;
-  ctx.fillStyle = 'rgba(120,82,40,.07)';
+  ctx.fillStyle = 'rgba(44,74,110,.07)';
   ctx.fillRect(0, hdrY, totalW, hdrH);
 
   const hdrCols = [
@@ -1076,14 +1076,14 @@ const ACOLOR = {
     { lbl:'OBS',     x: pad + colN + colD*7 + colHs },
   ];
 
-  ctx.fillStyle = 'rgba(58,42,26,.5)';
+  ctx.fillStyle = 'rgba(30,47,69,.5)';
   ctx.font = `bold 10px "Segoe UI", system-ui, sans-serif`;
   ctx.letterSpacing = '0.06em';
   hdrCols.forEach(c => ctx.fillText(c.lbl, c.x + 8, hdrY + hdrH*0.65));
   ctx.letterSpacing = '0';
 
   // Línea bajo headers
-  ctx.strokeStyle = 'rgba(58,42,26,.12)';
+  ctx.strokeStyle = 'rgba(30,47,69,.12)';
   ctx.lineWidth   = 1;
   ctx.beginPath(); ctx.moveTo(0, hdrY + hdrH); ctx.lineTo(totalW, hdrY + hdrH); ctx.stroke();
 
@@ -1094,11 +1094,11 @@ const ACOLOR = {
     const y = dataY0 + rowH * ri;
 
     // Fondo alterno
-    ctx.fillStyle = ri % 2 === 0 ? 'rgba(120,82,40,.025)' : 'rgba(0,0,0,.0)';
+    ctx.fillStyle = ri % 2 === 0 ? 'rgba(44,74,110,.025)' : 'rgba(0,0,0,.0)';
     ctx.fillRect(0, y, totalW, rowH);
 
     // Nombre
-    ctx.fillStyle = '#3a2a1a';
+    ctx.fillStyle = '#1e2f45';
     ctx.font = `bold 12px "Segoe UI", system-ui, sans-serif`;
     ctx.fillText(row.nombre, pad + 8, y + rowH * 0.62);
 
@@ -1108,32 +1108,32 @@ const ACOLOR = {
       const isEsp  = txt === 'Flex' || txt === '1h Guard.' || txt === 'Licencia';
       const isDash = txt === '—';
       ctx.fillStyle = isEsp
-        ? (txt === 'Flex' ? '#6f4fb0' : txt === 'Licencia' ? '#2563eb' : '#b9822b')
-        : isDash ? 'rgba(58,42,26,.22)' : '#d26918';
+        ? (txt === 'Flex' ? '#3457a8' : txt === 'Licencia' ? '#2563eb' : '#3f6aa0')
+        : isDash ? 'rgba(30,47,69,.22)' : '#2c6eb4';
       ctx.fillText(txt, pad + colN + colD * di + 8, y + rowH * 0.62);
     });
 
     // Hs/sem
-    ctx.fillStyle = '#d26918';
+    ctx.fillStyle = '#2c6eb4';
     ctx.font = `bold 12px "Segoe UI", system-ui, sans-serif`;
     ctx.fillText(row.hs, pad + colN + colD*7 + 8, y + rowH * 0.62);
 
     // Obs
     if (row.obs) {
-      ctx.fillStyle = 'rgba(58,42,26,.48)';
+      ctx.fillStyle = 'rgba(30,47,69,.48)';
       ctx.font = `10px "Segoe UI", system-ui, sans-serif`;
       const obsT = row.obs.length > 18 ? row.obs.slice(0,18) + '…' : row.obs;
       ctx.fillText(obsT, pad + colN + colD*7 + colHs + 8, y + rowH * 0.62);
     }
 
     // Línea divisora
-    ctx.strokeStyle = 'rgba(58,42,26,.07)';
+    ctx.strokeStyle = 'rgba(30,47,69,.07)';
     ctx.lineWidth   = 1;
     ctx.beginPath(); ctx.moveTo(pad, y + rowH); ctx.lineTo(totalW - pad, y + rowH); ctx.stroke();
   });
 
   // ── Líneas verticales de columnas ──
-  ctx.strokeStyle = 'rgba(58,42,26,.06)';
+  ctx.strokeStyle = 'rgba(30,47,69,.06)';
   ctx.lineWidth   = 1;
   [pad + colN, ...Array.from({length:7},(_,i)=> pad+colN+colD*(i+1)), pad+colN+colD*7+colHs].forEach(x => {
     ctx.beginPath(); ctx.moveTo(x, titleH); ctx.lineTo(x, dataY0 + rowH * filas.length); ctx.stroke();
@@ -1141,16 +1141,16 @@ const ACOLOR = {
 
   // ── Footer ──
   const fy = dataY0 + rowH * filas.length;
-  ctx.fillStyle = 'rgba(120,82,40,.03)';
+  ctx.fillStyle = 'rgba(44,74,110,.03)';
   ctx.fillRect(0, fy, totalW, footH + pad);
 
-  ctx.fillStyle = 'rgba(58,42,26,.3)';
+  ctx.fillStyle = 'rgba(30,47,69,.3)';
   ctx.font = `10px "Segoe UI", system-ui, sans-serif`;
-  ctx.fillText(`Runas Café · ${new Date().toLocaleDateString('es-AR')}`, pad + 8, fy + footH * 0.65);
+  ctx.fillText(`OSYC · ${new Date().toLocaleDateString('es-AR')}`, pad + 8, fy + footH * 0.65);
 
   // ── Descargar ──
   const a = document.createElement('a');
-  a.download = `Runas_horarios_${areaActual}_${semD}.png`;
+  a.download = `OSYC_horarios_${areaActual}_${semD}.png`;
   a.href = canvas.toDataURL('image/png');
   a.click();
   toast('✓ Imagen descargada');

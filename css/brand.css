@@ -1,27 +1,27 @@
 /* ═══════════════════════════════════════════════
-   BRAND.CSS — RUNAS Café  (tema claro crema + terracota)
+   BRAND.CSS — OSYC  (tema claro blanco + azul institucional)
    Para cambiar colores o logos: editá SOLO este archivo.
-   Paleta: terracota #d26918 · crema #f5e9d0 · blanco · texto espresso
+   Paleta: azul #2c6eb4 · blanco/azul claro #f4f7fb · texto navy #1e2f45
    ═══════════════════════════════════════════════ */
 :root {
   /* — Neutros / base — */
-  --one-black:      #efe2c6;   /* (pista de scrollbar) */
-  --one-ink:        #f5e9d0;   /* fondo página (crema) */
-  --one-ink-light:  #ecdcbd;   /* crema más profundo */
-  --one-white:      #3a2a1a;   /* TEXTO principal (espresso) */
+  --one-black:      #dbe6f2;   /* (pista de scrollbar) */
+  --one-ink:        #f4f7fb;   /* fondo página (blanco azulado) */
+  --one-ink-light:  #e7eef7;   /* fondo un poco más profundo */
+  --one-white:      #1e2f45;   /* TEXTO principal (navy) */
 
-  /* — Acento principal (terracota del logo) — */
-  --one-cyan:       #d26918;   /* acento primario */
-  --one-cyan-light: #e79a52;   /* acento claro */
+  /* — Acento principal (azul del logo) — */
+  --one-cyan:       #2c6eb4;   /* acento primario */
+  --one-cyan-light: #5a97d4;   /* acento claro */
 
   /* — Acentos secundarios (armonizados con la marca) — */
-  --one-pink:       #c0562e;   /* siena */
-  --one-pink-light: #d47a4f;
-  --one-gold:       #b9822b;   /* ámbar legible sobre crema */
-  --one-gold-light: #d9a24a;
-  --one-slate:      #7a6449;   /* texto atenuado */
-  --one-mist:       #5a4632;   /* texto/bordes marrón */
-  --one-purple:     #6f4fb0;
+  --one-pink:       #2c6eb4;   /* siena */
+  --one-pink-light: #4f8fd0;
+  --one-gold:       #3f6aa0;   /* ámbar legible sobre crema */
+  --one-gold-light: #6f93c4;
+  --one-slate:      #5b6b80;   /* texto atenuado */
+  --one-mist:       #33475f;   /* texto/bordes marrón */
+  --one-purple:     #3457a8;
 
   --color-success:      #16a34a;
   --color-success-text: #15803d;
@@ -29,27 +29,27 @@
   --color-danger-text:  #b91c1c;
 
   /* — Colores de área (oscurecidos para legibilidad sobre crema) — */
-  --area-administracion:   #b85e14;
+  --area-administracion:   #1f6f9c;
   --area-comercial:        #a83b7e;
-  --area-rrhh:             #9a7414;
+  --area-rrhh:             #4a6b8a;
   --area-marketing:        #c23d78;
-  --area-academico:        #6f4fb0;
+  --area-academico:        #3457a8;
   --area-innovacion:       #1f8f5f;
-  --area-maestranza:       #c2560f;
+  --area-maestranza:       #1f4e79;
 
   --font-title: "Exo 2", system-ui, sans-serif;
   --font-body:  "Exo 2", system-ui, sans-serif;
 
   /* — Vidrio / superficies — */
   --glass-bg:          rgba(255,255,255,.66);
-  --glass-border:      rgba(120,82,40,.16);
+  --glass-border:      rgba(44,74,110,.16);
   --glass-blur:        14px;
 
   --bg-gradient:
-    radial-gradient(1200px 700px at 70% 25%, rgba(210,105,24,.10), transparent 55%),
-    radial-gradient(900px  600px at 15% 65%, rgba(210,105,24,.06), transparent 55%),
-    radial-gradient(700px  500px at 50% 90%, rgba(228,199,106,.12), transparent 60%),
-    linear-gradient(180deg, #f7ecd4, #f1e2c4);
+    radial-gradient(1200px 700px at 70% 25%, rgba(44,110,180,.10), transparent 55%),
+    radial-gradient(900px  600px at 15% 65%, rgba(44,110,180,.06), transparent 55%),
+    radial-gradient(700px  500px at 50% 90%, rgba(90,151,212,.12), transparent 60%),
+    linear-gradient(180deg, #f8fafc, #eef3f9);
 
   --radius-lg:   16px;
   --radius-md:   12px;
@@ -58,18 +58,18 @@
 }
 
 /* Textos con degradé de marca → todos en terracota */
-.brand-gc { background: linear-gradient(90deg,#d26918,#e79a52); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.brand-gp { background: linear-gradient(90deg,#c2560f,#d47a4f); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.brand-gg { background: linear-gradient(90deg,#b9822b,#d9a24a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.brand-gc { background: linear-gradient(90deg,#2c6eb4,#5a97d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.brand-gp { background: linear-gradient(90deg,#1f4e79,#4f8fd0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.brand-gg { background: linear-gradient(90deg,#3f6aa0,#6f93c4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 
 .brand-mark {
   width:36px; height:36px; border-radius:50%;
   background-image: url('../img/one-iconocolor.png');
   background-size:contain; background-repeat:no-repeat; background-position:center;
-  background-color:rgba(210,105,24,.10);
-  border:1px solid rgba(210,105,24,.30);
-  box-shadow:0 0 20px rgba(210,105,24,.14);
+  background-color:rgba(44,110,180,.10);
+  border:1px solid rgba(44,110,180,.30);
+  box-shadow:0 0 20px rgba(44,110,180,.14);
   flex-shrink:0;
 }
 .brand-name { font-family:var(--font-title); font-weight:800; font-size:16px; letter-spacing:.04em; }
-.brand-sub  { font-size:10px; color:#7a6449; letter-spacing:.04em; display:block; margin-top:1px; }
+.brand-sub  { font-size:10px; color:#5b6b80; letter-spacing:.04em; display:block; margin-top:1px; }

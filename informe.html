@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Runas Café — Informe de Asistencia</title>
+<title>OSYC — Informe de Asistencia</title>
 <link rel="icon" type="image/png" href="img/favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -13,18 +13,18 @@
 /* ══ RESET ══ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --c:#d26918; --p:#c0562e; --g:#b9822b; --pu:#6f4fb0;
+  --c:#2c6eb4; --p:#2c6eb4; --g:#3f6aa0; --pu:#3457a8;
   --gr:#34d399; --re:#ef4444; --or:#fb923c;
   --ink:#241812; --ink2:#2e2016; --ink3:#3a281a;
-  --mi:#d6c8b2; --sl:#8a7052;
+  --mi:#c7d4e3; --sl:#8a7052;
   --serif:'DM Serif Display',Georgia,serif;
   --sans:'Outfit',system-ui,sans-serif;
-  --page-bg:#f5e9d0;
+  --page-bg:#f4f7fb;
   --card-bg:#ffffff;
   --border:#ecdcc4;
-  --text:#3a2a1a;
+  --text:#1e2f45;
   --text2:#8a7052;
-  --text3:#a08a6e;
+  --text3:#6b7f99;
 }
 
 html{scroll-behavior:smooth;}
@@ -32,47 +32,47 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
 
 /* ══ NAV BAR ══ */
 .nav{position:fixed;top:0;left:0;right:0;z-index:200;height:58px;
-  background:rgba(36,24,18,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
-  border-bottom:1px solid rgba(214,200,178,.09);
+  background:rgba(20,30,45,.92);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid rgba(199,212,227,.09);
   display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:12px;}
 .nav-left{display:flex;align-items:center;gap:11px;}
 .nav-logo-img{height:30px;}
 .nav-title{font-size:15px;font-weight:900;color:#fff;letter-spacing:.02em;}
-.nav-title span{background:linear-gradient(90deg,#d26918,#e79a52);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.nav-sub-txt{font-size:10px;color:rgba(214,200,178,.4);margin-top:1px;}
-.nav-sep{width:1px;height:22px;background:rgba(214,200,178,.12);}
+.nav-title span{background:linear-gradient(90deg,#2c6eb4,#5a97d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-sub-txt{font-size:10px;color:rgba(199,212,227,.4);margin-top:1px;}
+.nav-sep{width:1px;height:22px;background:rgba(199,212,227,.12);}
 .nav-back{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:9px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(214,200,178,.18);
-  color:rgba(214,200,178,.8);font-family:var(--sans);font-size:12px;font-weight:700;
+  background:rgba(255,255,255,.07);border:1px solid rgba(199,212,227,.18);
+  color:rgba(199,212,227,.8);font-family:var(--sans);font-size:12px;font-weight:700;
   cursor:pointer;text-decoration:none;transition:all .2s;}
 .nav-back:hover{background:rgba(255,255,255,.13);color:#fff;}
 .nav-back svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5;}
 .nav-badge{padding:3px 10px;border-radius:99px;font-size:11px;font-weight:700;
-  background:rgba(210,105,24,.15);border:1px solid rgba(210,105,24,.3);color:#d26918;}
+  background:rgba(44,110,180,.15);border:1px solid rgba(44,110,180,.3);color:#2c6eb4;}
 .nav-right{display:flex;align-items:center;gap:8px;}
 .btn-print{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:9px;
-  background:linear-gradient(135deg,rgba(210,105,24,.18),rgba(111,79,176,.12));
-  border:1px solid rgba(210,105,24,.38);color:#d26918;
+  background:linear-gradient(135deg,rgba(44,110,180,.18),rgba(111,79,176,.12));
+  border:1px solid rgba(44,110,180,.38);color:#2c6eb4;
   font-family:var(--sans);font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;}
-.btn-print:hover{background:linear-gradient(135deg,rgba(210,105,24,.3),rgba(111,79,176,.22));transform:translateY(-1px);}
+.btn-print:hover{background:linear-gradient(135deg,rgba(44,110,180,.3),rgba(111,79,176,.22));transform:translateY(-1px);}
 .btn-print svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
 
 /* ══ FILTROS ══ */
 .filters-bar{position:sticky;top:58px;z-index:100;
-  background:rgba(36,24,18,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(214,200,178,.08);padding:10px 22px;
+  background:rgba(20,30,45,.85);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(199,212,227,.08);padding:10px 22px;
   display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
 .f-group{display:flex;flex-direction:column;gap:3px;}
-.f-label{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(214,200,178,.38);}
+.f-label{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(199,212,227,.38);}
 .f-sel,.f-inp{height:36px;padding:0 12px;border-radius:9px;font-family:var(--sans);font-size:12px;font-weight:600;
-  background:rgba(255,255,255,.07);border:1px solid rgba(214,200,178,.16);color:#fff;
+  background:rgba(255,255,255,.07);border:1px solid rgba(199,212,227,.16);color:#fff;
   appearance:none;-webkit-appearance:none;cursor:pointer;min-width:150px;}
-.f-sel:focus,.f-inp:focus{outline:none;border-color:rgba(210,105,24,.5);}
+.f-sel:focus,.f-inp:focus{outline:none;border-color:rgba(44,110,180,.5);}
 .f-sel option{background:#241812;color:#fff;}
 .btn-gen{height:36px;padding:0 20px;border-radius:9px;font-family:var(--sans);font-size:12px;font-weight:800;
-  background:rgba(210,105,24,.15);border:1px solid rgba(210,105,24,.38);color:#d26918;
+  background:rgba(44,110,180,.15);border:1px solid rgba(44,110,180,.38);color:#2c6eb4;
   cursor:pointer;transition:all .2s;letter-spacing:.02em;align-self:flex-end;}
-.btn-gen:hover{background:rgba(210,105,24,.28);}
+.btn-gen:hover{background:rgba(44,110,180,.28);}
 
 /* ══ MAIN ══ */
 .main{padding:24px 28px 80px;max-width:1100px;margin:0 auto;}
@@ -87,7 +87,7 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
 /* ══ LOADING ══ */
 .loader{display:flex;flex-direction:column;align-items:center;justify-content:center;
   min-height:55vh;gap:14px;animation:fadeUp .3s ease both;}
-.loader-ring{width:42px;height:42px;border:3px solid rgba(210,105,24,.15);
+.loader-ring{width:42px;height:42px;border:3px solid rgba(44,110,180,.15);
   border-top-color:var(--c);border-radius:50%;animation:spin .8s linear infinite;}
 .loader-steps{display:flex;flex-direction:column;gap:4px;align-items:center;}
 .loader-step{font-size:11px;color:var(--text3);transition:color .3s;}
@@ -106,36 +106,36 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size:200px;}
 .cover-glow-tl{position:absolute;top:-120px;right:-80px;width:440px;height:440px;border-radius:50%;
-  background:radial-gradient(circle,rgba(210,105,24,.1) 0%,transparent 65%);pointer-events:none;}
+  background:radial-gradient(circle,rgba(44,110,180,.1) 0%,transparent 65%);pointer-events:none;}
 .cover-glow-br{position:absolute;bottom:-100px;left:80px;width:360px;height:360px;border-radius:50%;
-  background:radial-gradient(circle,rgba(192,86,46,.09) 0%,transparent 65%);pointer-events:none;}
+  background:radial-gradient(circle,rgba(44,110,180,.09) 0%,transparent 65%);pointer-events:none;}
 .cover-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr auto;gap:0;min-height:340px;}
 .cover-left{padding:44px 52px;display:flex;flex-direction:column;justify-content:space-between;}
 .cover-right{padding:44px 44px 44px 0;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between;}
-.cover-eyebrow{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(210,105,24,.7);margin-bottom:10px;}
+.cover-eyebrow{font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:rgba(44,110,180,.7);margin-bottom:10px;}
 .cover-h1{font-family:var(--serif);font-size:54px;line-height:.98;color:#fff;margin-bottom:4px;font-style:italic;}
 .cover-h1 em{font-style:normal;background:linear-gradient(100deg,var(--c) 0%,var(--p) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.cover-sub{font-size:13px;color:rgba(214,200,178,.45);margin-top:10px;font-weight:400;line-height:1.5;}
+.cover-sub{font-size:13px;color:rgba(199,212,227,.45);margin-top:10px;font-weight:400;line-height:1.5;}
 .cover-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;}
 .cpill{padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid;}
-.cpill-c{background:rgba(210,105,24,.12);border-color:rgba(210,105,24,.3);color:var(--c);}
+.cpill-c{background:rgba(44,110,180,.12);border-color:rgba(44,110,180,.3);color:var(--c);}
 .cpill-p{background:rgba(111,79,176,.12);border-color:rgba(111,79,176,.3);color:var(--pu);}
-.cpill-d{background:rgba(214,200,178,.06);border-color:rgba(214,200,178,.18);color:rgba(214,200,178,.6);}
+.cpill-d{background:rgba(199,212,227,.06);border-color:rgba(199,212,227,.18);color:rgba(199,212,227,.6);}
 .cover-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:230px;}
 .ckpi{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;position:relative;overflow:hidden;}
 .ckpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.ckpi-c::before{background:linear-gradient(90deg,var(--c),#e79a52);}
+.ckpi-c::before{background:linear-gradient(90deg,var(--c),#5a97d4);}
 .ckpi-p::before{background:linear-gradient(90deg,var(--pu),#c4b5fd);}
 .ckpi-g::before{background:linear-gradient(90deg,var(--gr),#86efac);}
 .ckpi-r::before{background:linear-gradient(90deg,var(--re),#fca5a5);}
 .ckpi-go::before{background:linear-gradient(90deg,var(--g),#fde68a);}
 .ckpi-val{font-size:26px;font-weight:900;line-height:1;font-family:var(--sans);}
-.ckpi-lbl{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(214,200,178,.4);margin-top:4px;}
+.ckpi-lbl{font-size:8.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(199,212,227,.4);margin-top:4px;}
 .cover-logos{display:flex;align-items:center;gap:10px;}
 .cover-logo-one{height:32px;}
 .cover-logo-esc{height:20px;filter:brightness(0) invert(1);opacity:.5;}
-.cover-date{font-size:10px;color:rgba(214,200,178,.28);margin-top:8px;text-align:right;}
+.cover-date{font-size:10px;color:rgba(199,212,227,.28);margin-top:8px;text-align:right;}
 
 /* ══ SECCIÓN CARD ══ */
 .section{background:var(--card-bg);border-radius:16px;padding:28px 30px;margin-bottom:16px;
@@ -206,7 +206,7 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;}
 .b-green{background:#dcfce7;color:#15803d;}
 .b-red{background:#fee2e2;color:#dc2626;}
-.b-amber{background:#fef9c3;color:#b45309;}
+.b-amber{background:#fef9c3;color:#1f4e79;}
 .b-blue{background:#dbeafe;color:#1d4ed8;}
 .b-gray{background:#f3f4f6;color:#4b5563;}
 .b-cyan{background:#cffafe;color:#0e7490;}
@@ -238,7 +238,7 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
 .closing-title{font-family:var(--serif);font-size:22px;color:#fff;margin-bottom:6px;}
 .closing-title em{font-style:normal;background:linear-gradient(90deg,var(--c),var(--p));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.closing-sub{font-size:11px;color:rgba(214,200,178,.35);line-height:1.7;}
+.closing-sub{font-size:11px;color:rgba(199,212,227,.35);line-height:1.7;}
 
 /* ══ PRINT ══ */
 @media print{
@@ -270,7 +270,7 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
   <div class="nav-left">
     <img src="img/one-logocolor.png" class="nav-logo-img" onerror="this.style.display='none'"/>
     <div>
-      <div class="nav-title">Runas <span>Café</span></div>
+      <div class="nav-title"><span>OSYC</span></div>
       <div class="nav-sub-txt">Informe de Asistencia</div>
     </div>
     <div class="nav-sep"></div>
@@ -321,7 +321,7 @@ body{font-family:var(--sans);background:var(--page-bg);color:var(--text);min-hei
 <div class="main">
   <!-- Estado inicial -->
   <div class="empty-state" id="stateEmpty">
-    <div class="empty-icon">📊</div>
+    <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
     <div class="empty-title">Informe de Asistencia</div>
     <div class="empty-sub">Seleccioná el período y área deseados, luego presioná "Generar informe".</div>
   </div>
@@ -349,7 +349,7 @@ const SB=supabase.createClient(SUPA_URL,SUPA_KEY);
 
 // Áreas de la empresa (se cargan de configuracion). Vacío si no usa áreas.
 let AREAS=[]; let ACOLOR={}; let USA_AREAS=true;
-const _APAL=['#d26918','#c0562e','#b9822b','#6f4fb0','#1f8f5f','#2563eb','#c23d78','#c2560f','#0e7490','#9a3412'];
+const _APAL=['#2c6eb4','#2c6eb4','#3f6aa0','#3457a8','#1f8f5f','#2563eb','#c23d78','#1f4e79','#0e7490','#9a3412'];
 function _setAreas(arr){ AREAS=Array.isArray(arr)?arr.slice():[]; ACOLOR={}; AREAS.forEach((a,i)=>ACOLOR[a]=_APAL[i%_APAL.length]); }
 const ARROW='\u2192';
 
@@ -467,7 +467,7 @@ function anlz(s,per){
   const{total,personas,puntual,tarde,promTard,promHs,topExtra,topTard,byArea,pct}=s;
   if(!total)return{resumen:'Sin registros.',punt:'',extra:'',areas:'',recs:[]};
 
-  const resumen='Durante '+pl+', el sistema Runas Café registró <strong>'+total+' marcaci'+(total!==1?'ones':'ón')+'</strong> de <strong>'+personas+' colaborador'+(personas!==1?'es':'')+'</strong>. El promedio de jornada fue de <strong>'+fmtHs(promHs)+'</strong> por persona.';
+  const resumen='Durante '+pl+', el sistema OSYC registró <strong>'+total+' marcaci'+(total!==1?'ones':'ón')+'</strong> de <strong>'+personas+' colaborador'+(personas!==1?'es':'')+'</strong>. El promedio de jornada fue de <strong>'+fmtHs(promHs)+'</strong> por persona.';
 
   const punt=pct>=90
     ?'El equipo demostró una puntualidad <strong>sobresaliente del '+pct+'%</strong>, con apenas '+tarde+' registro'+(tarde!==1?'s':'')+' con demora. Este resultado evidencia un alto nivel de compromiso y cultura organizacional consolidada.'
@@ -493,20 +493,20 @@ function anlz(s,per){
   if(pct<85&&topTard.length>0)
     recs.push({t:'Seguimiento de puntualidad',c:'#ef4444',b:topTard.slice(0,3).map(p=>p.nombre).join(', ')+' concentran la mayor acumulación de tardanzas del período. Se recomienda un diálogo individual con cada uno para identificar causas y establecer acuerdos de mejora concretos.'});
   if(topExtra.length>3)
-    recs.push({t:'Gestión de carga laboral',c:'#b9822b',b:topExtra.length+' personas registran horas extra recurrentes. Evaluar si responde a picos de trabajo temporales o a una distribución desbalanceada de tareas. Considerar reconocimiento formal del tiempo aportado.'});
+    recs.push({t:'Gestión de carga laboral',c:'#3f6aa0',b:topExtra.length+' personas registran horas extra recurrentes. Evaluar si responde a picos de trabajo temporales o a una distribución desbalanceada de tareas. Considerar reconocimiento formal del tiempo aportado.'});
   if(byArea.some(a=>a.prom!==null&&a.prom>10))
-    recs.push({t:'Revisión de horarios',c:'#6f4fb0',b:'Las áreas con mayor promedio de tardanza podrían beneficiarse de una revisión de sus horarios de ingreso planificados. En algunos casos, flexibilizar el horario de entrada puede mejorar la puntualidad sin afectar la productividad.'});
+    recs.push({t:'Revisión de horarios',c:'#3457a8',b:'Las áreas con mayor promedio de tardanza podrían beneficiarse de una revisión de sus horarios de ingreso planificados. En algunos casos, flexibilizar el horario de entrada puede mejorar la puntualidad sin afectar la productividad.'});
   if(pct>=90)
     recs.push({t:'Reconocimiento del equipo',c:'#34d399',b:'La excelente puntualidad del período merece ser destacada y comunicada al equipo. El reconocimiento refuerza la cultura organizacional y consolida comportamientos positivos que impactan directamente en la productividad.'});
   if(recs.length===0)
-    recs.push({t:'Continuidad y monitoreo',c:'#d26918',b:'Los indicadores del período son positivos. Mantener las buenas prácticas actuales y continuar el monitoreo semanal para identificar variaciones tempranas y actuar de manera preventiva.'});
+    recs.push({t:'Continuidad y monitoreo',c:'#2c6eb4',b:'Los indicadores del período son positivos. Mantener las buenas prácticas actuales y continuar el monitoreo semanal para identificar variaciones tempranas y actuar de manera preventiva.'});
 
   return{resumen,punt,extra,areas,recs};
 }
 
 /* ══ RENDER HTML ══ */
 function renderReport(rows,s,an,per,area,ds,pl,fr){
-  const pIco=s.pct>=90?'🏆':s.pct>=80?'✅':s.pct>=60?'⚠️':'🚨';
+  const pIco=s.pct>=90?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M6 9a6 6 0 0 0 12 0V4H6z"/><path d="M6 4H4v2a3 3 0 0 0 3 3M18 4h2v2a3 3 0 0 1-3 3"/><line x1="12" y1="15" x2="12" y2="19"/><line x1="8" y1="21" x2="16" y2="21"/></svg>':s.pct>=80?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>':s.pct>=60?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
   const pCls=s.pct>=80?'ins-green':'ins-red';
   const totTardMin=s.topTard.reduce((a,p)=>a+p.totalMin,0);
   const extraImpact=s.tarde>0
@@ -530,11 +530,11 @@ function renderReport(rows,s,an,per,area,ds,pl,fr){
     +'<div class="cover-inner">'
     +'<div class="cover-left">'
     +'<div>'
-    +'<div class="cover-eyebrow">Sistema de Gestión de Asistencia · Runas Café</div>'
+    +'<div class="cover-eyebrow">Sistema de Gestión de Asistencia · OSYC</div>'
     +'<div class="cover-h1">Informe de<br><em>Asistencia</em></div>'
     +'<div class="cover-sub">Puntualidad · Jornadas · Horas extra · Desempeño por área</div>'
     +'<div class="cover-pills">'
-    +'<span class="cpill cpill-c">📅 '+pl+'</span>'
+    +'<span class="cpill cpill-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> '+pl+'</span>'
     +(fr?'<span class="cpill cpill-d">'+fr+'</span>':'')
     +'<span class="cpill cpill-p">'+(area||'Todas las áreas')+'</span>'
     +'</div>'
@@ -589,12 +589,12 @@ function renderReport(rows,s,an,per,area,ds,pl,fr){
     +'<div>'
     +'<div class="sec-num">03 — Compromiso Extra</div>'
     +'<div class="sec-title" style="margin-bottom:14px;"><div class="sec-accent" style="background:var(--g)"></div>Top Horas Extra Post-Salida</div>'
-    +hbarHTML(s.topExtra,p=>'+'+fmtHs(p.totalMin/60),'#b9822b',p=>p.veces+' día'+(p.veces!==1?'s':'')+' · '+esc(p.area.split(' ')[0]))
+    +hbarHTML(s.topExtra,p=>'+'+fmtHs(p.totalMin/60),'#3f6aa0',p=>p.veces+' día'+(p.veces!==1?'s':'')+' · '+esc(p.area.split(' ')[0]))
     +'</div>'
     +'</div>'
     +'<div class="sec-divider"></div>'
-    +'<div class="insight '+(s.tarde>0?'ins-red':'ins-green')+'"><div class="ins-icon">'+(s.tarde>0?'⏰':'✅')+'</div><div><div class="ins-title">Impacto total de tardanzas</div><div class="ins-body">'+extraImpact+'</div></div></div>'
-    +'<div class="insight ins-amber"><div class="ins-icon">⏱️</div><div><div class="ins-title">Horas extra post-salida</div><div class="ins-body">'+an.extra+'</div></div></div>'
+    +'<div class="insight '+(s.tarde>0?'ins-red':'ins-green')+'"><div class="ins-icon">'+(s.tarde>0?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>')+'</div><div><div class="ins-title">Impacto total de tardanzas</div><div class="ins-body">'+extraImpact+'</div></div></div>'
+    +'<div class="insight ins-amber"><div class="ins-icon">⏱</div><div><div class="ins-title">Horas extra post-salida</div><div class="ins-body">'+an.extra+'</div></div></div>'
     +'</div>';
 
   /* Sección 04 — Por área (solo si la empresa usa áreas) */
@@ -604,7 +604,7 @@ function renderReport(rows,s,an,per,area,ds,pl,fr){
     +'<div class="sec-body" style="margin-bottom:16px;">'+an.areas+'</div>'
     +'<div class="tbl-wrap" style="margin-bottom:18px;">'+areaTableHTML(s.byArea)+'</div>'
     +'<div class="chart-card" style="margin-bottom:16px;"><div class="chart-title">Comparativa de puntualidad por área (%)</div><div class="chart-wrap-lg"><canvas id="cPunt2"></canvas></div></div>'
-    +'<div class="insight ins-purple"><div class="ins-icon">📊</div><div><div class="ins-title">Lectura del desempeño sectorial</div><div class="ins-body">'+sectorA+'</div></div></div>'
+    +'<div class="insight ins-purple"><div class="ins-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="ins-title">Lectura del desempeño sectorial</div><div class="ins-body">'+sectorA+'</div></div></div>'
     +'</div>';
 
   /* Sección 05 — Recomendaciones */
@@ -633,8 +633,8 @@ function renderReport(rows,s,an,per,area,ds,pl,fr){
     +'<div class="closing-logos">'
     +'<img src="img/one-logocolor.png" class="closing-logo-one" onerror="this.style.display=\'none\'"/>'
     +'</div>'
-    +'<div class="closing-title">Runas <em>Café</em></div>'
-    +'<div class="closing-sub">Sistema de Gestión de Asistencia · Runas Café<br>Informe generado el '+ds+' · Desarrollado por ONE</div>'
+    +'<div class="closing-title"><em>OSYC</em></div>'
+    +'<div class="closing-sub">Sistema de Gestión de Asistencia · OSYC<br>Informe generado el '+ds+' · Desarrollado por ONE</div>'
     +'</div>';
 
   return html;
@@ -645,7 +645,7 @@ function hbarHTML(list,valFn,color,metaFn){
   if(!list.length)return'<div class="hbar-empty">Sin datos para este período</div>';
   const maxV=list[0].totalMin;
   return'<div class="hbar-list">'+list.map((p,i)=>{
-    const col=ACOLOR[p.area]||'#a08a6e';
+    const col=ACOLOR[p.area]||'#6b7f99';
     const raw=valFn(p);
     const pct=maxV>0?Math.round(p.totalMin/maxV*100):0;
     const fill=i===0?color:color+'bb';
@@ -668,11 +668,11 @@ function areaTableHTML(byArea){
     +'<th>Prom. tard.</th><th>Prom. jornada</th><th style="min-width:130px">Puntualidad</th>'
     +'</tr></thead><tbody>'
     +byArea.map((a,i)=>{
-      const col=ACOLOR[a.area]||'#a08a6e';
+      const col=ACOLOR[a.area]||'#6b7f99';
       const pctA=a.totalDiffs>0?Math.round(a.punt/a.totalDiffs*100):0;
-      const pCol=a.prom===null?'var(--text3)':a.prom>10?'#dc2626':a.prom>0?'#b45309':'#15803d';
+      const pCol=a.prom===null?'var(--text3)':a.prom>10?'#dc2626':a.prom>0?'#1f4e79':'#15803d';
       const pTxt=a.prom===null?'—':(a.prom>0?'+':'')+a.prom+'m';
-      const bCol=pctA>=80?'#34d399':pctA>=60?'#b9822b':'#ef4444';
+      const bCol=pctA>=80?'#34d399':pctA>=60?'#3f6aa0':'#ef4444';
       return'<tr>'
         +'<td><div class="area-chip"><div class="hbar-dot" style="background:'+col+'"></div>'
         +'<span style="color:'+col+';font-weight:700;">'+esc(a.area)+'</span></div></td>'
@@ -697,13 +697,13 @@ function regTableHTML(rows){
     +'<th>Entrada</th><th>Salida</th><th>Horas</th><th>Tardanza</th>'
     +'</tr></thead><tbody>'
     +rows.map(r=>{
-      const col=ACOLOR[r.area]||'#a08a6e';
+      const col=ACOLOR[r.area]||'#6b7f99';
       const hs=calcHs(r.hora_entrada?.slice(0,5),r.hora_salida?.slice(0,5));
       const turno=r.turno||'';
       let tardCell='<span class="badge b-gray">—</span>';
       if(turno==='Flex')      tardCell='<span class="badge b-blue">Flex</span>';
       else if(turno==='Guardia') tardCell='<span class="badge b-amber">Guardia</span>';
-      else if(turno==='Licencia') tardCell='<span class="badge" style="background:rgba(96,165,250,.14);color:#3b82f6;">📋 Licencia</span>';
+      else if(turno==='Licencia') tardCell='<span class="badge" style="background:rgba(96,165,250,.14);color:#3b82f6;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Licencia</span>';
       else if(turno.includes(':')&&r.hora_entrada){
         const pe=turno.split(ARROW)[0].trim();
         if(pe.match(/^\d{2}:\d{2}$/)){
@@ -746,11 +746,11 @@ function buildCharts(s){
   mkChart('cPunt',{type:'bar',data:{
     labels:s.byArea.map(a=>a.area.split(' ')[0]),
     datasets:[{data:s.byArea.map(a=>a.totalDiffs>0?Math.round(a.punt/a.totalDiffs*100):0),
-      backgroundColor:s.byArea.map(a=>(ACOLOR[a.area]||'#a08a6e')+'77'),
-      borderColor:s.byArea.map(a=>ACOLOR[a.area]||'#a08a6e'),
+      backgroundColor:s.byArea.map(a=>(ACOLOR[a.area]||'#6b7f99')+'77'),
+      borderColor:s.byArea.map(a=>ACOLOR[a.area]||'#6b7f99'),
       borderWidth:2,borderRadius:4,borderSkipped:false}]
   },options:{...def,scales:{
-    y:{min:0,max:100,ticks:{color:'#a08a6e',font:{size:9}},grid:{color:'#f0eef8'}},
+    y:{min:0,max:100,ticks:{color:'#6b7f99',font:{size:9}},grid:{color:'#f0eef8'}},
     x:{ticks:{color:'#8a7052',font:{size:8}},grid:{display:false}}}}});
 
   /* Por día line */
@@ -758,22 +758,22 @@ function buildCharts(s){
   mkChart('cDia',{type:'line',data:{
     labels:days.map(d=>fmt(d)),
     datasets:[{data:days.map(d=>s.byDay[d]),
-      borderColor:'#d26918',backgroundColor:'rgba(210,105,24,.1)',
-      fill:true,tension:.4,pointBackgroundColor:'#d26918',
+      borderColor:'#2c6eb4',backgroundColor:'rgba(44,110,180,.1)',
+      fill:true,tension:.4,pointBackgroundColor:'#2c6eb4',
       pointRadius:4,pointHoverRadius:6}]
   },options:{...def,scales:{
-    y:{ticks:{color:'#a08a6e',font:{size:9},stepSize:1},grid:{color:'#f0eef8'}},
+    y:{ticks:{color:'#6b7f99',font:{size:9},stepSize:1},grid:{color:'#f0eef8'}},
     x:{ticks:{color:'#8a7052',font:{size:8},maxTicksLimit:7},grid:{display:false}}}}});
 
   /* Puntualidad área bar tall */
   mkChart('cPunt2',{type:'bar',data:{
     labels:s.byArea.map(a=>a.area.split(' ')[0]),
     datasets:[{data:s.byArea.map(a=>a.totalDiffs>0?Math.round(a.punt/a.totalDiffs*100):0),
-      backgroundColor:s.byArea.map(a=>(ACOLOR[a.area]||'#a08a6e')+'66'),
-      borderColor:s.byArea.map(a=>ACOLOR[a.area]||'#a08a6e'),
+      backgroundColor:s.byArea.map(a=>(ACOLOR[a.area]||'#6b7f99')+'66'),
+      borderColor:s.byArea.map(a=>ACOLOR[a.area]||'#6b7f99'),
       borderWidth:2,borderRadius:6,borderSkipped:false}]
   },options:{...def,plugins:{legend:{display:false}},scales:{
-    y:{min:0,max:100,ticks:{color:'#a08a6e',font:{size:10}},grid:{color:'#f0eef8'}},
+    y:{min:0,max:100,ticks:{color:'#6b7f99',font:{size:10}},grid:{color:'#f0eef8'}},
     x:{ticks:{color:'#374151',font:{size:11,weight:'600',family:'Outfit'}},grid:{display:false}}}}});
 }
 

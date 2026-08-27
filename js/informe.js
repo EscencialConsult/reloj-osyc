@@ -1,13 +1,13 @@
-// js/informe-pdf.js — Runas Café · Informe corporativo v3
+// js/informe-pdf.js — OSYC · Informe corporativo v3
 // Abre una ventana nueva con el informe HTML completo (gráficos, logos, tablas).
 // El usuario usa Ctrl+P → "Guardar como PDF" para exportar.
 
 const InformePDF = (() => {
 
 const ACOLOR = {
-  'ADMINISTRACION':'#6be1e3',
+  'ADMINISTRACION':'#5a97d4',
   'COMERCIAL':'#e17bd7',
-  'RECURSOS HUMANOS':'#e4c76a',
+  'RECURSOS HUMANOS':'#8fb4de',
   'MARKETING':'#f472b6',
   'ACADEMICO / GT':'#a78bfa',
   'INNOVACION Y DESARROLLO':'#34d399',
@@ -141,7 +141,7 @@ const ACOLOR = {
     const pl = PL2[data.per] || 'el período';
     if (!total) return { resumen:'Sin registros.', puntualidad:'', extra:'', areas:'', recs:['Verificar que haya registros cargados.'] };
 
-    const resumen = 'Durante ' + pl + ', el sistema Runas Café registró ' + total + ' marcaci' + (total!==1?'ones':'ón') + ' de ' + personas + ' colaborador' + (personas!==1?'es':'')+'. El promedio de jornada fue de ' + fmtHs(promHs) + ' por persona.';
+    const resumen = 'Durante ' + pl + ', el sistema OSYC registró ' + total + ' marcaci' + (total!==1?'ones':'ón') + ' de ' + personas + ' colaborador' + (personas!==1?'es':'')+'. El promedio de jornada fue de ' + fmtHs(promHs) + ' por persona.';
 
     const puntTxt = pct>=90
       ? 'El equipo demostró una puntualidad sobresaliente del ' + pct + '%, con apenas ' + tarde + ' registro' + (tarde!==1?'s':'') + ' con demora. Este resultado refleja un alto compromiso organizacional.'
@@ -241,7 +241,7 @@ const ACOLOR = {
         const pctA = a.totalDiffs>0 ? Math.round(a.punt/a.totalDiffs*100) : 0;
         const promColor = a.prom===null ? '#999' : a.prom>10 ? '#991b1b' : a.prom>0 ? '#854d0e' : '#166534';
         const promText  = a.prom===null ? '—' : (a.prom>0?'+':'')+a.prom+'m';
-        const barColor  = pctA>=80 ? '#34d399' : pctA>=60 ? '#e4c76a' : '#ef4444';
+        const barColor  = pctA>=80 ? '#34d399' : pctA>=60 ? '#8fb4de' : '#ef4444';
         return '<tr style="background:' + (i%2===0?'#fff':'#fafafa') + ';">'
           + '<td style="padding:9px 10px;">'
           + '<div style="display:flex;align-items:center;gap:7px;">'
@@ -264,7 +264,7 @@ const ACOLOR = {
     }
 
     function recRows() {
-      const colors = ['#6be1e3','#e4c76a','#ef4444','#34d399','#a78bfa'];
+      const colors = ['#5a97d4','#8fb4de','#ef4444','#34d399','#a78bfa'];
       return an.recs.map((r,i) => {
         const parts = r.split(':');
         const title = parts.length>1 ? parts[0] : 'Acción ' + (i+1);
@@ -337,29 +337,29 @@ const ACOLOR = {
       '*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}',
       'body{font-family:"Exo 2",system-ui,sans-serif;background:#fff;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact;}',
       '.cover{min-height:100vh;background:linear-gradient(160deg,#0a0816 0%,#16121f 45%,#0f0c1a 100%);display:flex;flex-direction:column;position:relative;overflow:hidden;page-break-after:always;}',
-      '.cl{position:absolute;top:0;left:0;width:8px;height:100%;background:linear-gradient(180deg,#6be1e3,#e17bd7);}',
-      '.cr{position:absolute;top:0;right:0;width:8px;height:100%;background:linear-gradient(180deg,#e17bd7,#6be1e3);}',
-      '.cd1{position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(107,225,227,.14) 0%,transparent 70%);}',
+      '.cl{position:absolute;top:0;left:0;width:8px;height:100%;background:linear-gradient(180deg,#5a97d4,#e17bd7);}',
+      '.cr{position:absolute;top:0;right:0;width:8px;height:100%;background:linear-gradient(180deg,#e17bd7,#5a97d4);}',
+      '.cd1{position:absolute;top:-80px;right:-80px;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(90,151,212,.14) 0%,transparent 70%);}',
       '.cd2{position:absolute;bottom:-100px;left:-60px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(225,123,215,.1) 0%,transparent 70%);}',
       '.ch{padding:44px 56px 0;display:flex;align-items:center;justify-content:space-between;}',
       '.cb{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 56px;}',
-      '.eyebrow{font-size:11px;font-weight:800;letter-spacing:.2em;color:#6be1e3;text-transform:uppercase;margin-bottom:14px;}',
+      '.eyebrow{font-size:11px;font-weight:800;letter-spacing:.2em;color:#5a97d4;text-transform:uppercase;margin-bottom:14px;}',
       '.ctitle{font-size:50px;font-weight:900;line-height:1.05;color:#fff;margin-bottom:8px;}',
-      '.ctitle span{background:linear-gradient(90deg,#6be1e3,#e17bd7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}',
+      '.ctitle span{background:linear-gradient(90deg,#5a97d4,#e17bd7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}',
       '.csub{font-size:16px;color:rgba(198,201,215,.6);margin-bottom:32px;}',
       '.cpills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px;}',
       '.pill{padding:5px 15px;border-radius:999px;font-size:11px;font-weight:700;}',
-      '.pill-c{background:rgba(107,225,227,.15);border:1px solid rgba(107,225,227,.35);color:#6be1e3;}',
+      '.pill-c{background:rgba(90,151,212,.15);border:1px solid rgba(90,151,212,.35);color:#5a97d4;}',
       '.pill-p{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.35);color:#a78bfa;}',
       '.pill-d{background:rgba(198,201,215,.08);border:1px solid rgba(198,201,215,.2);color:rgba(198,201,215,.7);}',
       '.ckpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}',
       '.ckpi{background:rgba(255,255,255,.05);border:1px solid rgba(198,201,215,.1);border-radius:14px;padding:18px 14px;text-align:center;position:relative;overflow:hidden;}',
       '.ckpi::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;}',
-      '.ck-cy::before{background:linear-gradient(90deg,#6be1e3,#a8f1f1);}',
+      '.ck-cy::before{background:linear-gradient(90deg,#5a97d4,#9cc3e8);}',
       '.ck-pp::before{background:linear-gradient(90deg,#a78bfa,#c4b5fd);}',
       '.ck-gn::before{background:linear-gradient(90deg,#34d399,#86efac);}',
       '.ck-rd::before{background:linear-gradient(90deg,#ef4444,#fca5a5);}',
-      '.ck-go::before{background:linear-gradient(90deg,#e4c76a,#fde68a);}',
+      '.ck-go::before{background:linear-gradient(90deg,#8fb4de,#fde68a);}',
       '.ckv{font-size:34px;font-weight:900;line-height:1;}',
       '.ckl{font-size:8.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(198,201,215,.5);margin-top:5px;}',
       '.cfoot{padding:24px 56px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(198,201,215,.1);}',
@@ -368,7 +368,7 @@ const ACOLOR = {
       '.page:last-child{page-break-after:auto;}',
       '.ph{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:28px;border-bottom:2px solid #f0f0f5;}',
       '.phn{font-size:13px;font-weight:800;color:#111;}',
-      '.phn span{color:#6be1e3;}',
+      '.phn span{color:#5a97d4;}',
       '.phm{font-size:10px;color:#999;text-align:right;}',
       '.pnum{position:absolute;bottom:24px;right:50px;font-size:10px;color:#ccc;}',
       '.sec{margin-bottom:32px;}',
@@ -404,10 +404,10 @@ const ACOLOR = {
       '.dtbl th{padding:7px 9px;text-align:left;font-size:9px;font-weight:800;color:#999;text-transform:uppercase;letter-spacing:.06em;background:#fafafa;border-bottom:2px solid #eee;}',
       '.clos{background:linear-gradient(135deg,#0a0816,#16121f);border-radius:18px;padding:32px 36px;color:#fff;text-align:center;margin-top:28px;}',
       '.clot{font-size:17px;font-weight:900;margin-bottom:5px;}',
-      '.clot span{background:linear-gradient(90deg,#6be1e3,#e17bd7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}',
+      '.clot span{background:linear-gradient(90deg,#5a97d4,#e17bd7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}',
       '.clos2{font-size:10px;color:rgba(198,201,215,.45);}',
-      '.pbtn{position:fixed;top:20px;right:20px;z-index:9999;background:linear-gradient(135deg,#6be1e3,#a78bfa);color:#fff;border:none;padding:12px 22px;border-radius:999px;font-family:"Exo 2",sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(107,225,227,.35);}',
-      '.pbtn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(107,225,227,.45);}',
+      '.pbtn{position:fixed;top:20px;right:20px;z-index:9999;background:linear-gradient(135deg,#5a97d4,#a78bfa);color:#fff;border:none;padding:12px 22px;border-radius:999px;font-family:"Exo 2",sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 20px rgba(90,151,212,.35);}',
+      '.pbtn:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(90,151,212,.45);}',
       '@media print{.pbtn{display:none!important;} *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;} body{margin:0;} .cover{min-height:100vh;} .page{page-break-after:always;} .page:last-child{page-break-after:auto;} @page{margin:0;size:A4;}}',
     ].join('\n');
 
@@ -422,28 +422,28 @@ const ACOLOR = {
       'var cp=document.getElementById("cPunt");',
       'if(cp){new Chart(cp.getContext("2d"),{type:"bar",data:{labels:PL,datasets:[{data:PD,backgroundColor:PC.map(function(c){return c+"66";}),borderColor:PC,borderWidth:2,borderRadius:4}]},options:Object.assign({},def,{scales:{y:{min:0,max:100,ticks:{color:"#aaa",font:{size:9}},grid:{color:"#f0f0f5"}},x:{ticks:{color:"#888",font:{size:8}},grid:{display:false}}}})});}',
       'var cd=document.getElementById("cDia");',
-      'if(cd){new Chart(cd.getContext("2d"),{type:"line",data:{labels:DL,datasets:[{data:DD,borderColor:"#6be1e3",backgroundColor:"rgba(107,225,227,.12)",fill:true,tension:.35,pointBackgroundColor:"#6be1e3",pointRadius:4}]},options:Object.assign({},def,{scales:{y:{ticks:{color:"#aaa",font:{size:9},stepSize:1},grid:{color:"#f0f0f5"}},x:{ticks:{color:"#888",font:{size:8},maxTicksLimit:6},grid:{display:false}}}})});}',
+      'if(cd){new Chart(cd.getContext("2d"),{type:"line",data:{labels:DL,datasets:[{data:DD,borderColor:"#5a97d4",backgroundColor:"rgba(90,151,212,.12)",fill:true,tension:.35,pointBackgroundColor:"#5a97d4",pointRadius:4}]},options:Object.assign({},def,{scales:{y:{ticks:{color:"#aaa",font:{size:9},stepSize:1},grid:{color:"#f0f0f5"}},x:{ticks:{color:"#888",font:{size:8},maxTicksLimit:6},grid:{display:false}}}})});}',
       'var cp2=document.getElementById("cPunt2");',
       'if(cp2){new Chart(cp2.getContext("2d"),{type:"bar",data:{labels:PL,datasets:[{data:PD,backgroundColor:PC.map(function(c){return c+"55";}),borderColor:PC,borderWidth:2,borderRadius:6}]},options:Object.assign({},def,{plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{color:"#aaa",font:{size:10}},grid:{color:"#f0f0f5"}},x:{ticks:{color:"#444",font:{size:11,weight:"bold"}},grid:{display:false}}}})});}',
       '})();',
     ].join('\n');
 
     // ── Assemble pages ──
-    const pIco  = s.pct>=90?'🏆':s.pct>=80?'✅':s.pct>=60?'⚠️':'🚨';
+    const pIco  = s.pct>=90?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M6 9a6 6 0 0 0 12 0V4H6z"/><path d="M6 4H4v2a3 3 0 0 0 3 3M18 4h2v2a3 3 0 0 1-3 3"/><line x1="12" y1="15" x2="12" y2="19"/><line x1="8" y1="21" x2="16" y2="21"/></svg>':s.pct>=80?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>':s.pct>=60?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
     const pCls  = s.pct>=80?'ins-g':'ins-r';
 
     const html = '<!DOCTYPE html>'
       + '<html lang="es"><head>'
       + '<meta charset="UTF-8"/>'
       + '<meta name="viewport" content="width=device-width"/>'
-      + '<title>Runas Café Informe ' + plLow + ' ' + fechaRango + '</title>'
+      + '<title>OSYC Informe ' + plLow + ' ' + fechaRango + '</title>'
       + '<link href="' + fontURL + '" rel="stylesheet">'
       + '<script src="' + chartJS + '"><' + '/script>'
       + '<style>' + css + '</style>'
       + '</head><body>'
 
       // Btn imprimir
-      + '<button class="pbtn" onclick="window.print()">🖨 Guardar como PDF</button>'
+      + '<button class="pbtn" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Guardar como PDF</button>'
 
       // ═══ PORTADA ═══
       + '<div class="cover">'
@@ -452,7 +452,7 @@ const ACOLOR = {
       + '<div class="ch">'
       + '<div style="display:flex;align-items:center;gap:12px;">'
       + '<img src="' + imgBase + 'one-logocolor.png" style="height:42px;" onerror="this.style.display=\'none\'"/>'
-      + '<div style="font-size:22px;font-weight:900;letter-spacing:.04em;color:#fff;">Runas <span style="background:linear-gradient(90deg,#6be1e3,#a8f1f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Café</span></div>'
+      + '<div style="font-size:22px;font-weight:900;letter-spacing:.04em;color:#fff;">OSYC</div>'
       + '</div>'
       + '<img src="' + imgBase + 'escencial-logoblanco.png" style="height:26px;filter:brightness(0) invert(1);opacity:.65;" onerror="this.style.display=\'none\'"/>'
       + '</div>'
@@ -461,18 +461,18 @@ const ACOLOR = {
       + '<div class="ctitle">Informe de<br><span>Asistencia</span></div>'
       + '<div class="csub">Puntualidad · Jornadas · Horas extra · Desempeño por área</div>'
       + '<div class="cpills">'
-      + '<span class="pill pill-c">📅 ' + plLow + '</span>'
+      + '<span class="pill pill-c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ' + plLow + '</span>'
       + (fechaRango ? '<span class="pill pill-d">' + fechaRango + '</span>' : '')
       + '<span class="pill pill-p">' + (data.area||'Todas las áreas') + '</span>'
       + '</div>'
       + '<div class="ckpis">'
-      + '<div class="ckpi ck-cy"><div class="ckv" style="color:#6be1e3;">' + s.total + '</div><div class="ckl">Marcaciones</div></div>'
+      + '<div class="ckpi ck-cy"><div class="ckv" style="color:#5a97d4;">' + s.total + '</div><div class="ckl">Marcaciones</div></div>'
       + '<div class="ckpi ck-pp"><div class="ckv" style="color:#a78bfa;">' + s.personas + '</div><div class="ckl">Personas</div></div>'
       + '<div class="ckpi ' + (s.pct>=80?'ck-gn':'ck-rd') + '"><div class="ckv" style="color:' + (s.pct>=80?'#34d399':'#ef4444') + ';">' + s.pct + '%</div><div class="ckl">Puntualidad</div></div>'
-      + '<div class="ckpi ck-go"><div class="ckv" style="color:#e4c76a;">' + fmtHs(s.promHs) + '</div><div class="ckl">Prom. Jornada</div></div>'
+      + '<div class="ckpi ck-go"><div class="ckv" style="color:#8fb4de;">' + fmtHs(s.promHs) + '</div><div class="ckl">Prom. Jornada</div></div>'
       + '</div>'
       + '</div>'
-      + '<div class="cfoot"><span class="cft">Generado el ' + ds + ' · Runas Café v3</span>'
+      + '<div class="cfoot"><span class="cft">Generado el ' + ds + ' · OSYC v3</span>'
       + '<img src="' + imgBase + 'one-icononegro.png" style="height:22px;opacity:.25;" onerror="this.style.display=\'none\'"/>'
       + '</div>'
       + '</div>'  // /cover
@@ -480,12 +480,12 @@ const ACOLOR = {
       // ═══ PÁG 2: Resumen ejecutivo + gráficos ═══
       + '<div class="page">'
       + '<div class="ph">'
-      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/>Runas <span>Café</span> · Informe de Asistencia</div>'
+      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/><span>OSYC</span> · Informe de Asistencia</div>'
       + '<div class="phm">' + plLow + ' · ' + (fechaRango||ds) + '<br>' + (data.area||'Todas las áreas') + '</div>'
       + '</div>'
       + '<div class="sec">'
       + '<div class="sel">01 — Resumen Ejecutivo</div>'
-      + '<div class="sti"><div class="sta" style="background:#6be1e3;"></div>Panorama General del Período</div>'
+      + '<div class="sti"><div class="sta" style="background:#5a97d4;"></div>Panorama General del Período</div>'
       + '<div class="sdiv"></div>'
       + '<div class="sbody">' + an.resumen + '</div>'
       + '</div>'
@@ -493,7 +493,7 @@ const ACOLOR = {
       + '<div class="kcard"><div class="kv" style="color:#34d399;">' + s.puntual + '</div><div class="kl">Puntuales</div></div>'
       + '<div class="kcard"><div class="kv" style="color:#ef4444;">' + s.tarde + '</div><div class="kl">Con tardanza</div><div class="ks">' + (s.total>0?Math.round(s.tarde/s.total*100):0) + '% del total</div></div>'
       + '<div class="kcard"><div class="kv" style="color:' + (s.promTard>5?'#ef4444':'#34d399') + ';">' + (s.promTard>0?'+':'') + s.promTard + 'm</div><div class="kl">Prom. tardanza</div></div>'
-      + '<div class="kcard"><div class="kv" style="color:#e4c76a;">' + s.topExtra.length + '</div><div class="kl">Con hs extra</div></div>'
+      + '<div class="kcard"><div class="kv" style="color:#8fb4de;">' + s.topExtra.length + '</div><div class="kl">Con hs extra</div></div>'
       + '</div>'
       + '<div class="charts3">'
       + '<div class="cc"><div class="cct">Registros por área</div><div class="cw"><canvas id="cArea"></canvas></div></div>'
@@ -507,7 +507,7 @@ const ACOLOR = {
       // ═══ PÁG 3: Tardanzas y horas extra ═══
       + '<div class="page">'
       + '<div class="ph">'
-      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/>Runas <span>Café</span> · Tardanzas y Horas Extra</div>'
+      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/><span>OSYC</span> · Tardanzas y Horas Extra</div>'
       + '<div class="phm">' + plLow + ' · ' + (fechaRango||ds) + '</div>'
       + '</div>'
       + '<div class="charts2">'
@@ -517,20 +517,20 @@ const ACOLOR = {
       + hbarRows(s.topTard, p=>'+'+p.totalMin+'m', '#ef4444', p=>p.totalMin)
       + '</div>'
       + '<div class="sec"><div class="sel">03 — Compromiso Extra</div>'
-      + '<div class="sti"><div class="sta" style="background:#e4c76a;"></div>Top Horas Extra Post-Salida</div>'
+      + '<div class="sti"><div class="sta" style="background:#8fb4de;"></div>Top Horas Extra Post-Salida</div>'
       + '<div class="sdiv"></div>'
-      + hbarRows(s.topExtra, p=>'+'+fmtHs(p.totalMin/60), '#e4c76a', p=>p.totalMin)
+      + hbarRows(s.topExtra, p=>'+'+fmtHs(p.totalMin/60), '#8fb4de', p=>p.totalMin)
       + '</div>'
       + '</div>'
-      + '<div class="ins ' + (s.tarde>0?'ins-r':'ins-g') + '"><div class="ini">' + (s.tarde>0?'⏰':'✅') + '</div><div><div class="int">Impacto Total de Tardanzas</div><div class="inb">' + extraImpact + '</div></div></div>'
-      + '<div class="ins ins-y"><div class="ini">⏱️</div><div><div class="int">Horas Extra Post-Salida</div><div class="inb">' + an.extra + '</div></div></div>'
+      + '<div class="ins ' + (s.tarde>0?'ins-r':'ins-g') + '"><div class="ini">' + (s.tarde>0?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>') + '</div><div><div class="int">Impacto Total de Tardanzas</div><div class="inb">' + extraImpact + '</div></div></div>'
+      + '<div class="ins ins-y"><div class="ini">⏱</div><div><div class="int">Horas Extra Post-Salida</div><div class="inb">' + an.extra + '</div></div></div>'
       + '<div class="pnum">3</div>'
       + '</div>'  // /page3
 
       // ═══ PÁG 4: Desempeño por área ═══
       + '<div class="page">'
       + '<div class="ph">'
-      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/>Runas <span>Café</span> · Desempeño por Área</div>'
+      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/><span>OSYC</span> · Desempeño por Área</div>'
       + '<div class="phm">' + plLow + ' · ' + (fechaRango||ds) + '</div>'
       + '</div>'
       + '<div class="sec"><div class="sel">04 — Análisis Sectorial</div>'
@@ -544,14 +544,14 @@ const ACOLOR = {
       + '</tr></thead><tbody>' + areaTableRows() + '</tbody></table>'
       + '</div>'
       + '<div class="cc" style="margin-bottom:18px;"><div class="cct">Comparativa de puntualidad por área (%)</div><div class="cwt"><canvas id="cPunt2"></canvas></div></div>'
-      + '<div class="ins ins-p"><div class="ini">📊</div><div><div class="int">Lectura del Desempeño Sectorial</div><div class="inb">' + sectorAnalysis + '</div></div></div>'
+      + '<div class="ins ins-p"><div class="ini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div><div class="int">Lectura del Desempeño Sectorial</div><div class="inb">' + sectorAnalysis + '</div></div></div>'
       + '<div class="pnum">4</div>'
       + '</div>'  // /page4
 
       // ═══ PÁG 5: Recomendaciones + tabla ═══
       + '<div class="page">'
       + '<div class="ph">'
-      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/>Runas <span>Café</span> · Recomendaciones y Registros</div>'
+      + '<div class="phn"><img src="' + imgBase + 'one-logocolor.png" style="height:22px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'"/><span>OSYC</span> · Recomendaciones y Registros</div>'
       + '<div class="phm">' + plLow + ' · ' + (fechaRango||ds) + '</div>'
       + '</div>'
       + '<div class="sec"><div class="sel">05 — Plan de Acción</div>'
@@ -568,8 +568,8 @@ const ACOLOR = {
       + '</div>'
       + '<div class="clos">'
       + '<img src="' + imgBase + 'escencial-logoblanco.png" style="height:28px;filter:brightness(0) invert(1);opacity:.7;margin:0 auto 10px;display:block;" onerror="this.style.display=\'none\'"/>'
-      + '<div class="clot">Runas <span>Café</span></div>'
-      + '<div class="clos2">Sistema de Gestión de Asistencia y Horarios · Runas Café<br>Informe generado automáticamente el ' + ds + '</div>'
+      + '<div class="clot"><span>OSYC</span></div>'
+      + '<div class="clos2">Sistema de Gestión de Asistencia y Horarios · OSYC<br>Informe generado automáticamente el ' + ds + '</div>'
       + '</div>'
       + '<div class="pnum">5</div>'
       + '</div>'  // /page5

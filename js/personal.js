@@ -1,4 +1,4 @@
-// js/personal.js — RUNAS (áreas opcionales; el puesto va en "Rol")
+// js/personal.js — OSYC (áreas opcionales; el puesto va en "Rol")
 const Personal = (() => {
   let all = [];
 
@@ -15,7 +15,7 @@ const Personal = (() => {
   function render() {
     const rows = all;
     const tb = document.getElementById('tbP');
-    if (!rows.length) { tb.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:rgba(58,42,26,.3);">Sin personal</td></tr>`; return; }
+    if (!rows.length) { tb.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:rgba(30,47,69,.3);">Sin personal</td></tr>`; return; }
     tb.innerHTML = rows.map((p, i) => {
       const areaBadge = (p.area && p.area !== 'GENERAL')
         ? ` <span style="font-size:10px;font-weight:800;color:${areaColor(p.area)};background:${areaColor(p.area)}1a;border:1px solid ${areaColor(p.area)}33;padding:1px 7px;border-radius:999px;margin-left:6px;white-space:nowrap;">${p.area}</span>`
@@ -23,10 +23,10 @@ const Personal = (() => {
       return `<tr>
       <td><span class="num-badge">${i + 1}</span></td>
       <td style="font-weight:700;">${p.nombre}${areaBadge}</td>
-      <td style="color:rgba(58,42,26,.58);font-size:13px;">${p.rol || '—'}</td>
+      <td style="color:rgba(30,47,69,.58);font-size:13px;">${p.rol || '—'}</td>
       <td><span class="badge ${p.activo ? 'badge-green' : 'badge-red'}">${p.activo ? 'Activo' : 'Inactivo'}</span></td>
       <td class="no-print"><div style="display:flex;gap:4px;">
-        <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="Personal.openEdit('${p.id}')">✏</button>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="Personal.openEdit('${p.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
         <button class="btn btn-danger" onclick="Personal.del('${p.id}')">✕</button>
       </div></td>
     </tr>`;

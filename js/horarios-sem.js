@@ -36,7 +36,7 @@ const HorariosSem = (() => {
       const el = document.getElementById(id); if (el) el.textContent = '…';
     });
     const grid = document.getElementById('hsemAreaGrid');
-    if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(58,42,26,.3);"><span class="sp"></span></div>';
+    if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(30,47,69,.3);"><span class="sp"></span></div>';
 
     const [{ data: hsData }, { data: rdData }] = await Promise.all([
       SB.from('horarios_semanales').select('*').eq('semana_desde', desde).order('area'),
@@ -99,15 +99,15 @@ const HorariosSem = (() => {
 
     nav.innerHTML = `
       <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
-        <button class="tab-btn ${esActual?'active':''}" onclick="HorariosSem.irSemana(0)" style="font-size:12px;padding:6px 14px;">📅 Esta semana</button>
+        <button class="tab-btn ${esActual?'active':''}" onclick="HorariosSem.irSemana(0)" style="font-size:12px;padding:6px 14px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Esta semana</button>
         <button class="tab-btn ${esAnt?'active':''}"    onclick="HorariosSem.irSemana(-1)" style="font-size:12px;padding:6px 14px;">← Semana ant.</button>
         <button class="wnav-sm ${puedeAnt?'':'op30'}" onclick="HorariosSem.movSem(-1)" ${puedeAnt?'':'disabled'}>‹</button>
-        <span class="week-pill">📅 ${label}</span>
+        <span class="week-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${label}</span>
         <button class="wnav-sm ${puedeSig?'':'op30'}" onclick="HorariosSem.movSem(1)" ${puedeSig?'':'disabled'}>›</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:6px;">
-          <span style="font-size:11px;color:rgba(58,42,26,.4);">Ir a fecha:</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.4);">Ir a fecha:</span>
           <input class="inp" type="date" style="padding:5px 10px;font-size:12px;max-width:150px;"
             onchange="HorariosSem.irFecha(this.value)"/>
         </div>
@@ -186,7 +186,7 @@ function _hsPersona(p) {
 
     grid.innerHTML = _grupos().map(area => {
       const row      = byArea[area];
-      const col      = area==='GENERAL' ? (_usaAreas() ? '#7a6449' : '#d26918') : areaColor(area);
+      const col      = area==='GENERAL' ? (_usaAreas() ? '#5b6b80' : '#2c6eb4') : areaColor(area);
       const personas = row ? _flatPersonas([row]) : [];
       const totalHs  = personas.reduce((a,p) => a+_hsPersona(p), 0);
       const cargado  = !!row;
@@ -202,11 +202,11 @@ const vacCount      = personas.filter(p => p.vacaciones).length;  // ← agregar
         const refE = DIAS.map(d=>p[d+'_e']).find(x=>x) || '';
         const refS = DIAS.map(d=>p[d+'_s']).find(x=>x) || '';
         let horStr;
-        if (refTipo==='flex')          horStr = `<span style="font-size:10px;color:var(--one-purple);">🔄 Flex</span>`;
-        else if (refTipo==='guardia')  horStr = `<span style="font-size:10px;color:var(--one-gold);">🛡 Guardia</span>`;
-        else if (refTipo==='licencia') horStr = `<span style="font-size:10px;color:#2563eb;">📋 Licencia</span>`;
-        else horStr = refE ? `<span style="font-size:10px;color:rgba(58,42,26,.4);">${refE}${refS?' → '+refS:''}</span>` : '';
-        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(58,42,26,.05);">
+        if (refTipo==='flex')          horStr = `<span style="font-size:10px;color:var(--one-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</span>`;
+        else if (refTipo==='guardia')  horStr = `<span style="font-size:10px;color:var(--one-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia</span>`;
+        else if (refTipo==='licencia') horStr = `<span style="font-size:10px;color:#2563eb;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Licencia</span>`;
+        else horStr = refE ? `<span style="font-size:10px;color:rgba(30,47,69,.4);">${refE}${refS?' → '+refS:''}</span>` : '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(30,47,69,.05);">
           <div>
             <span style="font-size:12px;font-weight:700;">${p.nombre}</span>
             <span style="margin-left:6px;">${horStr}</span>
@@ -216,35 +216,35 @@ const vacCount      = personas.filter(p => p.vacaciones).length;  // ← agregar
       }).join('');
 
       const masHtml = personas.length > 5
-        ? `<div style="font-size:11px;color:rgba(58,42,26,.35);padding-top:4px;">+${personas.length-5} más...</div>` : '';
+        ? `<div style="font-size:11px;color:rgba(30,47,69,.35);padding-top:4px;">+${personas.length-5} más...</div>` : '';
 
       const badge = cargado
         ? `<span style="background:rgba(22,163,74,.14);border:1px solid rgba(22,163,74,.3);color:var(--color-success-text);padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">✓ ${personas.length} personas</span>`
         : `<span style="background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.22);color:var(--color-danger-text);padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;">Sin cargar</span>`;
 
 const extraBadges = [
-  flexCount    ? `<span style="background:rgba(111,79,176,.14);border:1px solid rgba(111,79,176,.24);color:var(--one-purple);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;">🔄 ${flexCount} Flex</span>` : '',
-  guardiaCount  ? `<span style="background:rgba(185,130,43,.14);border:1px solid rgba(185,130,43,.24);color:var(--one-gold);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;">🛡 ${guardiaCount} Guardia</span>` : '',
-  licenciaCount ? `<span style="background:rgba(37,99,235,.14);border:1px solid rgba(37,99,235,.24);color:#2563eb;padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;">📋 ${licenciaCount} Lic.</span>` : '',
-  vacCount      ? `<span style="background:rgba(22,163,74,.14);border:1px solid rgba(22,163,74,.24);color:var(--color-success-text);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;">🏖 ${vacCount} Vac.</span>` : '',
+  flexCount    ? `<span style="background:rgba(111,79,176,.14);border:1px solid rgba(111,79,176,.24);color:var(--one-purple);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> ${flexCount} Flex</span>` : '',
+  guardiaCount  ? `<span style="background:rgba(63,106,160,.14);border:1px solid rgba(63,106,160,.24);color:var(--one-gold);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ${guardiaCount} Guardia</span>` : '',
+  licenciaCount ? `<span style="background:rgba(37,99,235,.14);border:1px solid rgba(37,99,235,.24);color:#2563eb;padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> ${licenciaCount} Lic.</span>` : '',
+  vacCount      ? `<span style="background:rgba(22,163,74,.14);border:1px solid rgba(22,163,74,.24);color:var(--color-success-text);padding:2px 8px;border-radius:999px;font-size:9px;font-weight:800;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg> ${vacCount} Vac.</span>` : '',
 ].filter(Boolean).join(' ');
 
       return `<div class="area-card" onclick="HorariosSem.openAreaModal('${area}')">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px;">
           <div>
             <div style="font-size:13px;font-weight:800;color:${col};">${area==='GENERAL'?(_usaAreas()?'<svg class="tab-ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Sin área asignada':'<svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Todos los empleados'):area}</div>
-            ${cargado?`<div style="font-size:11px;color:rgba(58,42,26,.4);margin-top:1px;">Total: <strong style="color:var(--one-cyan);">${fmtHs(totalHs)}</strong></div>`:''}
+            ${cargado?`<div style="font-size:11px;color:rgba(30,47,69,.4);margin-top:1px;">Total: <strong style="color:var(--one-cyan);">${fmtHs(totalHs)}</strong></div>`:''}
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
             ${badge}
             ${extraBadges ? `<div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;margin-top:3px;">${extraBadges}</div>` : ''}
-            <span style="font-size:9px;color:rgba(58,42,26,.28);">${cargado?'Click para editar →':'Click para cargar →'}</span>
+            <span style="font-size:9px;color:rgba(30,47,69,.28);">${cargado?'Click para editar →':'Click para cargar →'}</span>
           </div>
         </div>
-        <div style="border-top:1px solid rgba(58,42,26,.07);padding-top:8px;min-height:52px;">
-          ${cargado ? (persHtml+masHtml) : '<div style="font-size:12px;color:rgba(58,42,26,.25);padding:4px 0;">No hay horarios para esta semana</div>'}
+        <div style="border-top:1px solid rgba(30,47,69,.07);padding-top:8px;min-height:52px;">
+          ${cargado ? (persHtml+masHtml) : '<div style="font-size:12px;color:rgba(30,47,69,.25);padding:4px 0;">No hay horarios para esta semana</div>'}
         </div>
-        ${row?.observaciones?`<div style="margin-top:6px;font-size:11px;color:rgba(58,42,26,.38);padding-top:6px;border-top:1px solid rgba(58,42,26,.06);">📝 ${row.observaciones}</div>`:''}
+        ${row?.observaciones?`<div style="margin-top:6px;font-size:11px;color:rgba(30,47,69,.38);padding-top:6px;border-top:1px solid rgba(30,47,69,.06);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg> ${row.observaciones}</div>`:''}
       </div>`;
     }).join('');
 
@@ -299,7 +299,7 @@ const extraBadges = [
     const hasta = getSabado(desde);
 
     document.getElementById('mhAreaTitle').innerHTML =
-      `<span style="color:${area === 'GENERAL' ? '#d26918' : areaColor(area)};">${area === 'GENERAL' ? (_usaAreas() ? '<svg class="tab-ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Sin área asignada' : '<svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Todos los empleados') : area}</span>`;
+      `<span style="color:${area === 'GENERAL' ? '#2c6eb4' : areaColor(area)};">${area === 'GENERAL' ? (_usaAreas() ? '<svg class="tab-ic" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Sin área asignada' : '<svg class="tab-ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Todos los empleados') : area}</span>`;
     document.getElementById('mhSemLabel').textContent = `${_dd(desde)} al ${_dd(hasta)}`;
     document.getElementById('mhAreaObs').value = existing?.observaciones || '';
 
@@ -324,7 +324,7 @@ const extraBadges = [
     editRowId = existing?.id || null;
     const { data: personal } = await SB.from('personal').select('nombre,rol').eq('activo', true).order('nombre');
     if (!personal?.length) {
-      grid.innerHTML = '<div class="glass" style="padding:20px;text-align:center;color:rgba(58,42,26,.45);">No hay empleados activos. Cargá personal en la pestaña <strong>Personal</strong>.</div>';
+      grid.innerHTML = '<div class="glass" style="padding:20px;text-align:center;color:rgba(30,47,69,.45);">No hay empleados activos. Cargá personal en la pestaña <strong>Personal</strong>.</div>';
       return;
     }
     const savedMap = {}; (existing?.horarios || []).forEach(h => savedMap[h.nombre] = h);
@@ -383,7 +383,7 @@ const extraBadges = [
     const fArr = _diasArr(semViendo);
     const DCORTO = { lunes:'LUN', martes:'MAR', miercoles:'MIÉ', jueves:'JUE', viernes:'VIE', sabado:'SÁB', domingo:'DOM' };
 
-    if (!editRows.length) { cont.innerHTML = '<div style="padding:30px;text-align:center;color:rgba(58,42,26,.35);">No hay empleados en este grupo.</div>'; return; }
+    if (!editRows.length) { cont.innerHTML = '<div style="padding:30px;text-align:center;color:rgba(30,47,69,.35);">No hay empleados en este grupo.</div>'; return; }
 
     const cards = editRows.map((r, i) => {
       const vac = !!r.vacaciones;
@@ -391,9 +391,9 @@ const extraBadges = [
         const tipo  = r[d+'_tipo'] || 'normal';
         const spDia = !!(r[d+'_split'] || r[d+'_e2'] || r[d+'_s2']);
         let cell;
-        if (tipo === 'flex')          cell = `<div class="hc-badge" style="color:var(--one-purple);background:rgba(111,79,176,.1);">🔄 Flex</div>`;
-        else if (tipo === 'guardia')  cell = `<div class="hc-badge" style="color:var(--one-gold);background:rgba(185,130,43,.1);">🛡 1h</div>`;
-        else if (tipo === 'licencia') cell = `<div class="hc-badge" style="color:#2563eb;background:rgba(37,99,235,.1);">📋 Lic</div>`;
+        if (tipo === 'flex')          cell = `<div class="hc-badge" style="color:var(--one-purple);background:rgba(111,79,176,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</div>`;
+        else if (tipo === 'guardia')  cell = `<div class="hc-badge" style="color:var(--one-gold);background:rgba(63,106,160,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 1h</div>`;
+        else if (tipo === 'licencia') cell = `<div class="hc-badge" style="color:#2563eb;background:rgba(37,99,235,.1);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Lic</div>`;
         else cell = `
           <input class="ht-edit ${r[d+'_e']?'v':''}" type="text" maxlength="5" placeholder="—" value="${r[d+'_e']}"
             oninput="HorariosSem._uf(${i},'${d}_e',this)" onblur="HorariosSem._ff(${i},'${d}_e',this)"/>
@@ -414,7 +414,7 @@ const extraBadges = [
             <option value="licencia"${tipo==='licencia'?' selected':''}>Licencia</option>
           </select>
           ${cell}
-          ${tipo==='normal' ? `<button class="hc-split ${spDia?'on':''}" onclick="HorariosSem._tsDia(${i},'${d}')" title="2° turno">✂ 2° turno</button>` : ''}
+          ${tipo==='normal' ? `<button class="hc-split ${spDia?'on':''}" onclick="HorariosSem._tsDia(${i},'${d}')" title="2° turno"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg> 2° turno</button>` : ''}
         </div>`;
       }).join('');
 
@@ -422,7 +422,7 @@ const extraBadges = [
         <div class="hc-head">
           <div style="min-width:0;">
             <span style="font-size:14px;font-weight:800;">${r.nombre}</span>
-            <span style="font-size:11px;color:rgba(58,42,26,.4);margin-left:6px;">${r.rol||''}</span>
+            <span style="font-size:11px;color:rgba(30,47,69,.4);margin-left:6px;">${r.rol||''}</span>
           </div>
           <div class="hc-tools">
             <button class="hc-vac ${vac?'on':''}" onclick="HorariosSem._toggleVac(${i})"><svg class="tab-ic" viewBox="0 0 24 24"><path d="M23 12a11.05 11.05 0 0 0-22 0zm-5 7a3 3 0 0 1-6 0v-7"/></svg>Vac.</button>
@@ -431,17 +431,17 @@ const extraBadges = [
         </div>
         ${!vac ? `
         <div class="hc-tpl">
-          <span style="font-size:11px;color:rgba(58,42,26,.6);font-weight:800;">Días:</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.6);font-weight:800;">Días:</span>
           <span class="hc-days">${DIAS.map((d, di) => `<button type="button" class="hc-daychip${di < 5 ? ' on' : ''}" id="tplD${i}_${di}" onclick="this.classList.toggle('on')">${DCORTO[d]}</button>`).join('')}</span>
           <span class="hc-vsep"></span>
-          <span style="font-size:11px;color:rgba(58,42,26,.5);font-weight:700;">Horario:</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.5);font-weight:700;">Horario:</span>
           <input class="ht-edit" id="qfE${i}" type="text" maxlength="5" placeholder="09:00" style="width:52px;"/>
-          <span style="color:rgba(58,42,26,.3);">→</span>
+          <span style="color:rgba(30,47,69,.3);">→</span>
           <input class="ht-edit" id="qfS${i}" type="text" maxlength="5" placeholder="17:00" style="width:52px;"/>
           <button class="hc-apply" onclick="HorariosSem._fillWeek(${i})">Aplicar</button>
           ${PLANTILLAS.length ? `
           <span class="hc-vsep"></span>
-          <span style="font-size:11px;color:rgba(58,42,26,.5);font-weight:700;">o Plantilla:</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.5);font-weight:700;">o Plantilla:</span>
           <select id="tplSel${i}" class="hc-tplsel">
             <option value="">Elegir…</option>
             ${PLANTILLAS.map((t, ti) => `<option value="${ti}">${t.nombre}${t.e ? ` (${t.e}${t.s ? '→' + t.s : ''}${t.e2 ? ' | ' + t.e2 + (t.s2 ? '→' + t.s2 : '') : ''})` : ''}</option>`).join('')}
@@ -449,7 +449,7 @@ const extraBadges = [
           <button class="hc-apply" onclick="HorariosSem._applyTemplate(${i})">Aplicar plantilla</button>` : ''}
         </div>` : ''}
         ${vac
-          ? `<div style="padding:16px;text-align:center;color:var(--color-success-text);font-weight:800;font-size:13px;background:rgba(22,163,74,.06);border-radius:10px;">🏖 Semana de vacaciones</div>`
+          ? `<div style="padding:16px;text-align:center;color:var(--color-success-text);font-weight:800;font-size:13px;background:rgba(22,163,74,.06);border-radius:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="5" y1="5" x2="6.5" y2="6.5"/><line x1="17.5" y1="17.5" x2="19" y2="19"/><line x1="5" y1="19" x2="6.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="19" y2="5"/></svg> Semana de vacaciones</div>`
           : `<div class="hc-grid">${cols}</div>`}
         <input type="text" placeholder="Observación de ${r.nombre} (opcional)..." value="${(r.obs||'').replace(/"/g,'&quot;')}"
           oninput="HorariosSem._uo(${i}, this.value)" class="hc-obs"/>
@@ -458,35 +458,35 @@ const extraBadges = [
 
     cont.innerHTML = `
       <style>
-        .ht-edit{width:100%;text-align:center;padding:5px 3px;border:1px solid rgba(58,42,26,.18);border-radius:7px;background:#fffdf8;color:#3a2a1a;font-family:var(--font-body);font-size:13px;font-weight:700;}
-        .ht-edit:focus{outline:none;border-color:rgba(210,105,24,.55);}
-        .ht-edit.v{border-color:rgba(210,105,24,.4);color:#d26918;}
+        .ht-edit{width:100%;text-align:center;padding:5px 3px;border:1px solid rgba(30,47,69,.18);border-radius:7px;background:#fffdf8;color:#1e2f45;font-family:var(--font-body);font-size:13px;font-weight:700;}
+        .ht-edit:focus{outline:none;border-color:rgba(44,110,180,.55);}
+        .ht-edit.v{border-color:rgba(44,110,180,.4);color:#2c6eb4;}
         .ht-edit.err{border-color:#dc2626;}
-        .ht-gold.v{border-color:rgba(185,130,43,.5);color:#b9822b;}
-        .hc-card{border:1px solid rgba(58,42,26,.1);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.55);}
+        .ht-gold.v{border-color:rgba(63,106,160,.5);color:#3f6aa0;}
+        .hc-card{border:1px solid rgba(30,47,69,.1);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.55);}
         .hc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
         .hc-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-        .hc-quick{display:inline-flex;align-items:center;gap:5px;background:rgba(210,105,24,.06);border:1px solid rgba(210,105,24,.16);border-radius:999px;padding:4px 10px;}
-        .hc-apply{background:#d26918;color:#fff;border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-title);font-size:11px;font-weight:800;cursor:pointer;}
-        .hc-apply:hover{background:#b9560f;}
-        .hc-vac{background:rgba(120,82,40,.06);border:1px solid rgba(58,42,26,.16);color:rgba(58,42,26,.6);border-radius:999px;padding:4px 11px;font-family:var(--font-title);font-size:11px;font-weight:800;cursor:pointer;}
+        .hc-quick{display:inline-flex;align-items:center;gap:5px;background:rgba(44,110,180,.06);border:1px solid rgba(44,110,180,.16);border-radius:999px;padding:4px 10px;}
+        .hc-apply{background:#2c6eb4;color:#fff;border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-title);font-size:11px;font-weight:800;cursor:pointer;}
+        .hc-apply:hover{background:#1f4e79;}
+        .hc-vac{background:rgba(44,74,110,.06);border:1px solid rgba(30,47,69,.16);color:rgba(30,47,69,.6);border-radius:999px;padding:4px 11px;font-family:var(--font-title);font-size:11px;font-weight:800;cursor:pointer;}
         .hc-vac.on{background:rgba(22,163,74,.14);border-color:rgba(22,163,74,.4);color:var(--color-success-text);}
-        .hc-tot{font-size:13px;font-weight:800;color:#d26918;min-width:34px;text-align:right;}
+        .hc-tot{font-size:13px;font-weight:800;color:#2c6eb4;min-width:34px;text-align:right;}
         .hc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
-        .hc-col{background:rgba(120,82,40,.03);border:1px solid rgba(58,42,26,.08);border-radius:9px;padding:6px 5px;display:flex;flex-direction:column;gap:3px;}
-        .hc-day{font-size:10px;font-weight:800;color:rgba(58,42,26,.65);text-align:center;}
-        .hc-date{font-weight:600;color:rgba(58,42,26,.35);}
-        .hc-tipo{width:100%;font-size:10px;padding:2px 3px;border:1px solid rgba(58,42,26,.14);border-radius:6px;background:#fffdf8;color:rgba(58,42,26,.7);cursor:pointer;margin-bottom:1px;}
+        .hc-col{background:rgba(44,74,110,.03);border:1px solid rgba(30,47,69,.08);border-radius:9px;padding:6px 5px;display:flex;flex-direction:column;gap:3px;}
+        .hc-day{font-size:10px;font-weight:800;color:rgba(30,47,69,.65);text-align:center;}
+        .hc-date{font-weight:600;color:rgba(30,47,69,.35);}
+        .hc-tipo{width:100%;font-size:10px;padding:2px 3px;border:1px solid rgba(30,47,69,.14);border-radius:6px;background:#fffdf8;color:rgba(30,47,69,.7);cursor:pointer;margin-bottom:1px;}
         .hc-badge{text-align:center;font-size:11px;font-weight:800;padding:8px 2px;border-radius:7px;}
-        .hc-split{background:none;border:1px dashed rgba(185,130,43,.3);color:rgba(185,130,43,.7);border-radius:6px;font-size:9px;font-weight:700;padding:2px;cursor:pointer;}
-        .hc-split.on{background:rgba(185,130,43,.12);border-style:solid;}
-        .hc-obs{margin-top:8px;width:100%;background:rgba(120,82,40,.04);border:1px solid rgba(58,42,26,.1);border-radius:8px;padding:6px 10px;font-family:var(--font-body);font-size:12px;color:rgba(58,42,26,.7);}
-        .hc-tpl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(210,105,24,.05);border:1px solid rgba(210,105,24,.14);border-radius:10px;padding:7px 10px;margin-bottom:10px;}
-        .hc-tplsel{font-size:12px;padding:5px 8px;border:1px solid rgba(58,42,26,.16);border-radius:8px;background:#fffdf8;color:#3a2a1a;font-weight:700;cursor:pointer;max-width:230px;}
+        .hc-split{background:none;border:1px dashed rgba(63,106,160,.3);color:rgba(63,106,160,.7);border-radius:6px;font-size:9px;font-weight:700;padding:2px;cursor:pointer;}
+        .hc-split.on{background:rgba(63,106,160,.12);border-style:solid;}
+        .hc-obs{margin-top:8px;width:100%;background:rgba(44,74,110,.04);border:1px solid rgba(30,47,69,.1);border-radius:8px;padding:6px 10px;font-family:var(--font-body);font-size:12px;color:rgba(30,47,69,.7);}
+        .hc-tpl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:rgba(44,110,180,.05);border:1px solid rgba(44,110,180,.14);border-radius:10px;padding:7px 10px;margin-bottom:10px;}
+        .hc-tplsel{font-size:12px;padding:5px 8px;border:1px solid rgba(30,47,69,.16);border-radius:8px;background:#fffdf8;color:#1e2f45;font-weight:700;cursor:pointer;max-width:230px;}
         .hc-days{display:inline-flex;gap:3px;flex-wrap:wrap;}
-        .hc-daychip{background:rgba(120,82,40,.06);border:1px solid rgba(58,42,26,.16);color:rgba(58,42,26,.5);border-radius:7px;font-size:10px;font-weight:800;padding:4px 7px;cursor:pointer;}
-        .hc-daychip.on{background:rgba(210,105,24,.16);border-color:rgba(210,105,24,.45);color:#d26918;}
-        .hc-vsep{width:1px;height:20px;background:rgba(58,42,26,.14);display:inline-block;}
+        .hc-daychip{background:rgba(44,74,110,.06);border:1px solid rgba(30,47,69,.16);color:rgba(30,47,69,.5);border-radius:7px;font-size:10px;font-weight:800;padding:4px 7px;cursor:pointer;}
+        .hc-daychip.on{background:rgba(44,110,180,.16);border-color:rgba(44,110,180,.45);color:#2c6eb4;}
+        .hc-vsep{width:1px;height:20px;background:rgba(30,47,69,.14);display:inline-block;}
         @media(max-width:720px){ .hc-grid{grid-template-columns:repeat(4,1fr);} }
       </style>` + cards;
   }
@@ -551,39 +551,39 @@ const extraBadges = [
 
       let resumen;
       if (conH.length === 0) {
-        resumen = `<span style="font-size:12px;color:rgba(58,42,26,.28);">Sin horario</span>`;
+        resumen = `<span style="font-size:12px;color:rgba(30,47,69,.28);">Sin horario</span>`;
       } else {
         const tipo0 = primerH[d+'_tipo'] || 'normal';
         let horStr;
-        if (tipo0==='flex')          horStr = `<span style="color:var(--one-purple);font-weight:800;font-size:13px;">🔄 Flex</span>`;
-        else if (tipo0==='guardia')  horStr = `<span style="color:var(--one-gold);font-weight:800;font-size:13px;">🛡 Guardia 1h</span>`;
-        else if (tipo0==='licencia') horStr = `<span style="color:#2563eb;font-weight:800;font-size:13px;">📋 Licencia</span>`;
+        if (tipo0==='flex')          horStr = `<span style="color:var(--one-purple);font-weight:800;font-size:13px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</span>`;
+        else if (tipo0==='guardia')  horStr = `<span style="color:var(--one-gold);font-weight:800;font-size:13px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia 1h</span>`;
+        else if (tipo0==='licencia') horStr = `<span style="color:#2563eb;font-weight:800;font-size:13px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Licencia</span>`;
         else horStr = `<span style="font-size:13px;font-weight:800;color:var(--one-cyan);">${primerH[d+'_e']}${primerH[d+'_s']?' → '+primerH[d+'_s']:''}</span>`;
         resumen = `${horStr}
           ${todosIgual
-            ? `<span style="font-size:11px;color:rgba(58,42,26,.4);margin-left:8px;">todos igual</span>`
-            : `<span style="font-size:11px;color:rgba(58,42,26,.4);margin-left:6px;">${conH.length}/${editRows.length} cargados</span>`}`;
+            ? `<span style="font-size:11px;color:rgba(30,47,69,.4);margin-left:8px;">todos igual</span>`
+            : `<span style="font-size:11px;color:rgba(30,47,69,.4);margin-left:6px;">${conH.length}/${editRows.length} cargados</span>`}`;
       }
 
       const statusDot = conH.length === 0
         ? `<span style="width:8px;height:8px;border-radius:50%;background:rgba(220,38,38,.4);display:inline-block;flex-shrink:0;"></span>`
         : conH.length === editRows.length
           ? `<span style="width:8px;height:8px;border-radius:50%;background:rgba(22,163,74,.55);display:inline-block;flex-shrink:0;"></span>`
-          : `<span style="width:8px;height:8px;border-radius:50%;background:rgba(185,130,43,.55);display:inline-block;flex-shrink:0;"></span>`;
+          : `<span style="width:8px;height:8px;border-radius:50%;background:rgba(63,106,160,.55);display:inline-block;flex-shrink:0;"></span>`;
 
       return `<div onclick="HorariosSem._goDia(${di})"
-        style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border:1px solid rgba(58,42,26,.09);border-radius:10px;cursor:pointer;background:rgba(120,82,40,.03);transition:all .15s;margin-bottom:7px;"
-        onmouseover="this.style.borderColor='rgba(210,105,24,.3)';this.style.background='rgba(210,105,24,.04)'"
-        onmouseout="this.style.borderColor='rgba(58,42,26,.09)';this.style.background='rgba(120,82,40,.03)'">
+        style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border:1px solid rgba(30,47,69,.09);border-radius:10px;cursor:pointer;background:rgba(44,74,110,.03);transition:all .15s;margin-bottom:7px;"
+        onmouseover="this.style.borderColor='rgba(44,110,180,.3)';this.style.background='rgba(44,110,180,.04)'"
+        onmouseout="this.style.borderColor='rgba(30,47,69,.09)';this.style.background='rgba(44,74,110,.03)'">
         <div style="display:flex;align-items:center;gap:14px;">
           ${statusDot}
           <div>
             <span style="font-size:15px;font-weight:800;">${DIA_LBL[d]}</span>
-            <span style="font-size:11px;color:rgba(58,42,26,.4);margin-left:8px;">${_ddShort(fArr[di])}</span>
+            <span style="font-size:11px;color:rgba(30,47,69,.4);margin-left:8px;">${_ddShort(fArr[di])}</span>
           </div>
           <div>${resumen}</div>
         </div>
-        <span style="font-size:16px;color:rgba(58,42,26,.35);">›</span>
+        <span style="font-size:16px;color:rgba(30,47,69,.35);">›</span>
       </div>`;
     }).join('');
 
@@ -602,41 +602,41 @@ const extraBadges = [
 
       const tipoSelector = `
         <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">
-          <button class="tipo-btn ${tipo==='normal'?'tipo-active-cyan':''}" onclick="HorariosSem._setTipo(${i},'${d}','normal')">🕐 Fijo</button>
-          <button class="tipo-btn ${tipo==='flex'?'tipo-active-purple':''}" onclick="HorariosSem._setTipo(${i},'${d}','flex')">🔄 Flex</button>
-          <button class="tipo-btn ${tipo==='guardia'?'tipo-active-gold':''}" onclick="HorariosSem._setTipo(${i},'${d}','guardia')">🛡 Guardia</button>
-          <button class="tipo-btn ${tipo==='licencia'?'tipo-active-blue':''}" onclick="HorariosSem._setTipo(${i},'${d}','licencia')">📋 Licencia</button>
+          <button class="tipo-btn ${tipo==='normal'?'tipo-active-cyan':''}" onclick="HorariosSem._setTipo(${i},'${d}','normal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg> Fijo</button>
+          <button class="tipo-btn ${tipo==='flex'?'tipo-active-purple':''}" onclick="HorariosSem._setTipo(${i},'${d}','flex')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</button>
+          <button class="tipo-btn ${tipo==='guardia'?'tipo-active-gold':''}" onclick="HorariosSem._setTipo(${i},'${d}','guardia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Guardia</button>
+          <button class="tipo-btn ${tipo==='licencia'?'tipo-active-blue':''}" onclick="HorariosSem._setTipo(${i},'${d}','licencia')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Licencia</button>
         </div>`;
 
       let contenido;
       if (tipo === 'flex') {
-        contenido = `<div style="padding:10px 14px;background:rgba(111,79,176,.07);border:1px solid rgba(111,79,176,.2);border-radius:8px;font-size:12px;color:var(--one-purple);">🔄 <strong>Horario Flex</strong> — Sin horario fijo.</div>`;
+        contenido = `<div style="padding:10px 14px;background:rgba(111,79,176,.07);border:1px solid rgba(111,79,176,.2);border-radius:8px;font-size:12px;color:var(--one-purple);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> <strong>Horario Flex</strong> — Sin horario fijo.</div>`;
       } else if (tipo === 'guardia') {
-        contenido = `<div style="padding:10px 14px;background:rgba(185,130,43,.07);border:1px solid rgba(185,130,43,.2);border-radius:8px;font-size:12px;color:var(--one-gold);">🛡 <strong>Guardia</strong> — 1 hora computable.</div>`;
+        contenido = `<div style="padding:10px 14px;background:rgba(63,106,160,.07);border:1px solid rgba(63,106,160,.2);border-radius:8px;font-size:12px;color:var(--one-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <strong>Guardia</strong> — 1 hora computable.</div>`;
       } else if (tipo === 'licencia') {
-        contenido = `<div style="padding:10px 14px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-radius:8px;font-size:12px;color:#2563eb;">📋 <strong>Licencia</strong> — Ausencia avisada, 0 horas. No se registra ni computa.</div>`;
+        contenido = `<div style="padding:10px 14px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.2);border-radius:8px;font-size:12px;color:#2563eb;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> <strong>Licencia</strong> — Ausencia avisada, 0 horas. No se registra ni computa.</div>`;
       } else {
         contenido = `
           <div style="display:grid;grid-template-columns:1fr 18px 1fr;align-items:center;gap:6px;">
             <input class="ht-edit ${r[d+'_e']?'v':''}" type="text" maxlength="5" placeholder="09:00" value="${r[d+'_e']}"
               oninput="HorariosSem._uf(${i},'${d}_e',this)" onblur="HorariosSem._ff(${i},'${d}_e',this)"/>
-            <span style="font-size:13px;color:rgba(58,42,26,.3);text-align:center;">→</span>
+            <span style="font-size:13px;color:rgba(30,47,69,.3);text-align:center;">→</span>
             <input class="ht-edit ${r[d+'_s']?'v':''}" type="text" maxlength="5" placeholder="17:00" value="${r[d+'_s']}"
               oninput="HorariosSem._uf(${i},'${d}_s',this)" onblur="HorariosSem._ff(${i},'${d}_s',this)"/>
           </div>
           ${spDia ? `
-          <div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(185,130,43,.25);">
-            <div style="font-size:9px;color:rgba(185,130,43,.6);font-weight:800;margin-bottom:4px;">✂ 2° TURNO</div>
+          <div style="margin-top:6px;padding-top:6px;border-top:1px dashed rgba(63,106,160,.25);">
+            <div style="font-size:9px;color:rgba(63,106,160,.6);font-weight:800;margin-bottom:4px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg> 2° TURNO</div>
             <div style="display:grid;grid-template-columns:1fr 18px 1fr;align-items:center;gap:6px;">
               <input class="ht-edit ht-gold ${r[d+'_e2']?'v':''}" type="text" maxlength="5" placeholder="—" value="${r[d+'_e2']}"
                 oninput="HorariosSem._uf(${i},'${d}_e2',this)" onblur="HorariosSem._ff(${i},'${d}_e2',this)"/>
-              <span style="font-size:13px;color:rgba(185,130,43,.28);text-align:center;">→</span>
+              <span style="font-size:13px;color:rgba(63,106,160,.28);text-align:center;">→</span>
               <input class="ht-edit ht-gold ${r[d+'_s2']?'v':''}" type="text" maxlength="5" placeholder="—" value="${r[d+'_s2']}"
                 oninput="HorariosSem._uf(${i},'${d}_s2',this)" onblur="HorariosSem._ff(${i},'${d}_s2',this)"/>
             </div>
           </div>` : ''}
           <button class="btn-split-sm ${spDia?'on':''}" onclick="HorariosSem._tsDia(${i},'${d}')" style="font-size:11px;margin-top:4px;">
-            ${spDia?'✂ Quitar 2° turno':'✂ Agregar 2° turno'}
+            ${spDia?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg> Quitar 2° turno':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg> Agregar 2° turno'}
           </button>`;
       }
 
@@ -649,11 +649,11 @@ const extraBadges = [
         hsDay = tot > 0 ? fmtHs(tot) : '—';
       }
 
-return `<div id="mh-member-${i}" style="padding:12px 16px;border-bottom:1px solid rgba(58,42,26,.06);">
+return `<div id="mh-member-${i}" style="padding:12px 16px;border-bottom:1px solid rgba(30,47,69,.06);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
     <div>
       <span style="font-size:13px;font-weight:800;">${r.nombre}</span>
-      <span style="font-size:11px;color:rgba(58,42,26,.4);margin-left:6px;">${r.rol||''}</span>
+      <span style="font-size:11px;color:rgba(30,47,69,.4);margin-left:6px;">${r.rol||''}</span>
     </div>
     <span style="font-size:12px;font-weight:800;color:var(--one-cyan);">${hsDay}</span>
   </div>
@@ -662,8 +662,8 @@ return `<div id="mh-member-${i}" style="padding:12px 16px;border-bottom:1px soli
   <input type="text" placeholder="Observación de ${r.nombre} (opcional)..."
     value="${(r.obs||'').replace(/"/g,'&quot;')}"
     oninput="HorariosSem._uo(${i}, this.value)"
-    style="margin-top:8px;background:rgba(120,82,40,.05);border:1px solid rgba(58,42,26,.12);
-      color:rgba(58,42,26,.7);padding:6px 10px;border-radius:8px;
+    style="margin-top:8px;background:rgba(44,74,110,.05);border:1px solid rgba(30,47,69,.12);
+      color:rgba(30,47,69,.7);padding:6px 10px;border-radius:8px;
       font-family:var(--font-body);font-size:12px;width:100%;"/>
 </div>`;
     }).join('');
@@ -672,44 +672,44 @@ return `<div id="mh-member-${i}" style="padding:12px 16px;border-bottom:1px soli
       const isActive = ddi === di;
       const conH = editRows.filter(r => r[dd+'_e'] || r[dd+'_tipo']==='flex' || r[dd+'_tipo']==='guardia' || r[dd+'_tipo']==='licencia');
       const dot = conH.length === 0 ? 'rgba(220,38,38,.4)'
-        : conH.length === editRows.length ? 'rgba(22,163,74,.55)' : 'rgba(185,130,43,.55)';
+        : conH.length === editRows.length ? 'rgba(22,163,74,.55)' : 'rgba(63,106,160,.55)';
       return `<button onclick="HorariosSem._goDia(${ddi})"
         style="width:100%;padding:8px 6px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;text-align:center;
           background:${isActive?'rgba(111,79,176,.18)':'transparent'};
           border:1px solid ${isActive?'rgba(111,79,176,.45)':'transparent'};">
         <div style="width:6px;height:6px;border-radius:50%;background:${dot};margin:0 auto 4px;"></div>
-        <div style="font-size:9px;font-weight:800;letter-spacing:.05em;color:${isActive?'#6f4fb0':'rgba(58,42,26,.45)'};text-transform:uppercase;">${DIA_CORTO[dd]}</div>
-        <div style="font-size:8px;color:${isActive?'rgba(111,79,176,.7)':'rgba(58,42,26,.25)'};">${_ddShort(fArr[ddi])}</div>
+        <div style="font-size:9px;font-weight:800;letter-spacing:.05em;color:${isActive?'#3457a8':'rgba(30,47,69,.45)'};text-transform:uppercase;">${DIA_CORTO[dd]}</div>
+        <div style="font-size:8px;color:${isActive?'rgba(111,79,176,.7)':'rgba(30,47,69,.25)'};">${_ddShort(fArr[ddi])}</div>
       </button>`;
     }).join('');
 
     const memberBar = editRows.map((r, i) => {
       const tipo = r[d+'_tipo'] || 'normal';
-      const tCol = tipo==='flex' ? '#6f4fb0' : tipo==='guardia' ? '#b9822b' : tipo==='licencia' ? '#2563eb' : (r[d+'_e'] ? '#d26918' : 'rgba(58,42,26,.28)');
+      const tCol = tipo==='flex' ? '#3457a8' : tipo==='guardia' ? '#3f6aa0' : tipo==='licencia' ? '#2563eb' : (r[d+'_e'] ? '#2c6eb4' : 'rgba(30,47,69,.28)');
       const initials = r.nombre.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
       const firstName = r.nombre.split(' ')[0];
       return `<button onclick="document.getElementById('mh-member-${i}').scrollIntoView({behavior:'smooth',block:'nearest'})"
         style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;cursor:pointer;padding:0;transition:transform .15s;"
         onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
         <div style="width:40px;height:40px;border-radius:50%;border:2px solid ${tCol};background:${tCol}18;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:${tCol};">${initials}</div>
-        <span style="font-size:9px;color:rgba(58,42,26,.5);white-space:nowrap;max-width:44px;overflow:hidden;text-overflow:ellipsis;">${firstName}</span>
+        <span style="font-size:9px;color:rgba(30,47,69,.5);white-space:nowrap;max-width:44px;overflow:hidden;text-overflow:ellipsis;">${firstName}</span>
       </button>`;
     }).join('');
 
     cont.innerHTML = `
       <style>
-        .tipo-btn{background:rgba(120,82,40,.06);border:1px solid rgba(58,42,26,.18);color:rgba(58,42,26,.6);padding:4px 10px;border-radius:999px;font-family:var(--font-title);font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;}
-        .tipo-btn:hover{background:rgba(120,82,40,.11);}
-        .tipo-active-cyan{background:rgba(210,105,24,.15)!important;border-color:rgba(210,105,24,.45)!important;color:var(--one-cyan)!important;}
+        .tipo-btn{background:rgba(44,74,110,.06);border:1px solid rgba(30,47,69,.18);color:rgba(30,47,69,.6);padding:4px 10px;border-radius:999px;font-family:var(--font-title);font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;}
+        .tipo-btn:hover{background:rgba(44,74,110,.11);}
+        .tipo-active-cyan{background:rgba(44,110,180,.15)!important;border-color:rgba(44,110,180,.45)!important;color:var(--one-cyan)!important;}
         .tipo-active-purple{background:rgba(111,79,176,.15)!important;border-color:rgba(111,79,176,.45)!important;color:var(--one-purple)!important;}
-        .tipo-active-gold{background:rgba(185,130,43,.15)!important;border-color:rgba(185,130,43,.45)!important;color:var(--one-gold)!important;}
+        .tipo-active-gold{background:rgba(63,106,160,.15)!important;border-color:rgba(63,106,160,.45)!important;color:var(--one-gold)!important;}
         .tipo-active-blue{background:rgba(37,99,235,.15)!important;border-color:rgba(37,99,235,.45)!important;color:#2563eb!important;}
       </style>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <button onclick="HorariosSem._backDias()" style="background:rgba(120,82,40,.07);border:1px solid rgba(58,42,26,.18);color:rgba(58,42,26,.8);padding:6px 14px;border-radius:999px;font-family:var(--font-title);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">‹ Volver</button>
+        <button onclick="HorariosSem._backDias()" style="background:rgba(44,74,110,.07);border:1px solid rgba(30,47,69,.18);color:rgba(30,47,69,.8);padding:6px 14px;border-radius:999px;font-family:var(--font-title);font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;">‹ Volver</button>
         <div>
           <span style="font-size:16px;font-weight:800;">${DIA_LBL[d]}</span>
-          <span style="font-size:13px;color:rgba(58,42,26,.45);margin-left:8px;">${_ddShort(fArr[di])}</span>
+          <span style="font-size:13px;color:rgba(30,47,69,.45);margin-left:8px;">${_ddShort(fArr[di])}</span>
         </div>
       </div>
       <div style="margin-bottom:12px;padding:8px 12px;background:rgba(111,79,176,.06);border:1px solid rgba(111,79,176,.18);border-radius:10px;">
@@ -718,7 +718,7 @@ return `<div id="mh-member-${i}" style="padding:12px 16px;border-bottom:1px soli
       </div>
       <div style="display:flex;gap:8px;">
         <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;width:48px;padding:8px 4px;background:rgba(111,79,176,.05);border:1px solid rgba(111,79,176,.18);border-radius:10px;">${daySidebar}</div>
-        <div style="flex:1;background:rgba(120,82,40,.03);border:1px solid rgba(58,42,26,.09);border-radius:10px;overflow:hidden;min-width:0;">${personaRows}</div>
+        <div style="flex:1;background:rgba(44,74,110,.03);border:1px solid rgba(30,47,69,.09);border-radius:10px;overflow:hidden;min-width:0;">${personaRows}</div>
       </div>`;
   }
 
@@ -936,7 +936,7 @@ regs.forEach(reg => {
     if(!tbody) return;
     const personas=_flatPersonas(allData);
     if(!personas.length){
-      tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;padding:30px;color:rgba(58,42,26,.3);">No hay horarios para esta semana</td></tr>`;
+      tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;padding:30px;color:rgba(30,47,69,.3);">No hay horarios para esta semana</td></tr>`;
       return;
     }
     tbody.innerHTML=personas.map(p=>{
@@ -947,11 +947,11 @@ regs.forEach(reg => {
       const extra=re>tp&&tp>0?re-tp:0;
       const eb=extra>0?`<span class="badge badge-gold" style="font-size:10px;margin-left:4px;">+${fmtHs(extra)}</span>`:'';
       const fd=(e,s,tipo)=>{
-        if(tipo==='flex')     return `<span style="color:var(--one-purple);font-size:11px;font-weight:700;">🔄 Flex</span>`;
-        if(tipo==='guardia')  return `<span style="color:var(--one-gold);font-size:11px;font-weight:700;">🛡 1h</span>`;
-        if(tipo==='licencia') return `<span style="color:#2563eb;font-size:11px;font-weight:700;">📋 Lic.</span>`;
-        if(!e) return '<span style="color:rgba(58,42,26,.2);font-size:11px;">—</span>';
-        return s?`<b style="font-size:12px;">${e}</b><span style="color:rgba(58,42,26,.35);font-size:10px;"> → ${s}</span>`
+        if(tipo==='flex')     return `<span style="color:var(--one-purple);font-size:11px;font-weight:700;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.5 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.65 4.36A9 9 0 0 0 20.5 15"/></svg> Flex</span>`;
+        if(tipo==='guardia')  return `<span style="color:var(--one-gold);font-size:11px;font-weight:700;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 1h</span>`;
+        if(tipo==='licencia') return `<span style="color:#2563eb;font-size:11px;font-weight:700;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Lic.</span>`;
+        if(!e) return '<span style="color:rgba(30,47,69,.2);font-size:11px;">—</span>';
+        return s?`<b style="font-size:12px;">${e}</b><span style="color:rgba(30,47,69,.35);font-size:10px;"> → ${s}</span>`
                 :`<b style="font-size:12px;">${e}</b>`;
       };
 
@@ -960,12 +960,12 @@ regs.forEach(reg => {
         const preview = p.obs.length > 18 ? p.obs.slice(0,18)+'…' : p.obs;
         const safe    = p.obs.replace(/\\/g,'\\\\').replace(/`/g,'\\`');
         obsCell = `<div style="display:flex;align-items:center;gap:5px;">
-          <span style="font-size:11px;color:rgba(58,42,26,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;">${preview}</span>
+          <span style="font-size:11px;color:rgba(30,47,69,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;">${preview}</span>
           <button onclick="HorariosSem._showObs(\`${safe}\`)" title="Ver completo"
-            style="flex-shrink:0;background:rgba(210,105,24,.12);border:1px solid rgba(210,105,24,.25);color:#d26918;border-radius:6px;padding:2px 7px;font-size:10px;cursor:pointer;font-weight:700;line-height:1.5;">👁</button>
+            style="flex-shrink:0;background:rgba(44,110,180,.12);border:1px solid rgba(44,110,180,.25);color:#2c6eb4;border-radius:6px;padding:2px 7px;font-size:10px;cursor:pointer;font-weight:700;line-height:1.5;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>`;
       } else {
-        obsCell = `<span style="color:rgba(58,42,26,.2);font-size:11px;">—</span>`;
+        obsCell = `<span style="color:rgba(30,47,69,.2);font-size:11px;">—</span>`;
       }
 
       return`<tr>
@@ -974,7 +974,7 @@ regs.forEach(reg => {
         ${DIAS.map(d=>`<td style="font-size:12px;line-height:1.6;">${fd(p[d+'_e'],p[d+'_s'],p[d+'_tipo'])}${p[d+'_e2']?'<br/>'+fd(p[d+'_e2'],p[d+'_s2'],'normal'):''}</td>`).join('')}
         <td><span class="badge badge-cyan" style="font-size:10px;">${tp>0?fmtHs(tp):'—'}</span></td>
         <td>${obsCell}</td>
-        <td class="no-print"><button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="HorariosSem.openAreaModal('${p.area}')">✏</button></td>
+        <td class="no-print"><button class="btn btn-ghost" style="padding:4px 8px;font-size:11px;" onclick="HorariosSem.openAreaModal('${p.area}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button></td>
       </tr>`;
     }).join('');
   }
@@ -986,13 +986,13 @@ regs.forEach(reg => {
     overlay.id = 'hsemObsPopup';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
     overlay.innerHTML = `
-      <div style="background:#fffdf8;border:1px solid rgba(210,105,24,.22);border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="background:#fffdf8;border:1px solid rgba(44,110,180,.22);border-radius:16px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.6);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-          <div style="font-size:12px;font-weight:700;color:rgba(210,105,24,.7);text-transform:uppercase;letter-spacing:.07em;">💬 Observación</div>
-          <button onclick="document.getElementById('hsemObsPopup').remove()" style="background:none;border:none;color:rgba(58,42,26,.5);font-size:20px;cursor:pointer;">✕</button>
+          <div style="font-size:12px;font-weight:700;color:rgba(44,110,180,.7);text-transform:uppercase;letter-spacing:.07em;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Observación</div>
+          <button onclick="document.getElementById('hsemObsPopup').remove()" style="background:none;border:none;color:rgba(30,47,69,.5);font-size:20px;cursor:pointer;">✕</button>
         </div>
-        <div style="background:rgba(120,82,40,.05);border:1px solid rgba(58,42,26,.1);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.7;color:rgba(58,42,26,.88);word-break:break-word;">${text}</div>
-        <button onclick="document.getElementById('hsemObsPopup').remove()" style="margin-top:14px;width:100%;padding:10px;border-radius:10px;background:rgba(210,105,24,.12);border:1px solid rgba(210,105,24,.28);color:#d26918;font-weight:700;font-size:13px;cursor:pointer;">Cerrar</button>
+        <div style="background:rgba(44,74,110,.05);border:1px solid rgba(30,47,69,.1);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.7;color:rgba(30,47,69,.88);word-break:break-word;">${text}</div>
+        <button onclick="document.getElementById('hsemObsPopup').remove()" style="margin-top:14px;width:100%;padding:10px;border-radius:10px;background:rgba(44,110,180,.12);border:1px solid rgba(44,110,180,.28);color:#2c6eb4;font-weight:700;font-size:13px;cursor:pointer;">Cerrar</button>
       </div>`;
     overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
     document.body.appendChild(overlay);
@@ -1036,17 +1036,17 @@ regs.forEach(reg => {
     ctx.scale(scale, scale);
 
     const ACOLORS = {
-    'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-    'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-    'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+    'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+    'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+    'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
   };
 
-    ctx.fillStyle='#f5e9d0'; ctx.fillRect(0,0,totalW,totalH);
+    ctx.fillStyle='#f4f7fb'; ctx.fillRect(0,0,totalW,totalH);
 
-    ctx.fillStyle='#3a2a1a'; ctx.font=`bold 14px "Segoe UI",sans-serif`;
-    ctx.fillText(`Runas Café · Semana ${_dd(desde)} al ${_dd(getSabado(desde))}`, pad, pad+14);
-    ctx.fillStyle='rgba(58,42,26,.4)'; ctx.font=`11px "Segoe UI",sans-serif`;
-    ctx.fillText('Runas Café', pad, pad+30);
+    ctx.fillStyle='#1e2f45'; ctx.font=`bold 14px "Segoe UI",sans-serif`;
+    ctx.fillText(`OSYC · Semana ${_dd(desde)} al ${_dd(getSabado(desde))}`, pad, pad+14);
+    ctx.fillStyle='rgba(30,47,69,.4)'; ctx.font=`11px "Segoe UI",sans-serif`;
+    ctx.fillText('OSYC', pad, pad+30);
 
     const hY = pad+headH;
     const cols = [
@@ -1057,50 +1057,50 @@ regs.forEach(reg => {
       {lbl:'OBS',    x:pad+col0+col1+colW*7+colHs},
     ];
 
-    ctx.fillStyle='rgba(120,82,40,.06)';
+    ctx.fillStyle='rgba(44,74,110,.06)';
     ctx.fillRect(pad, hY-rowH+6, totalW-pad*2, rowH);
-    ctx.fillStyle='rgba(58,42,26,.45)'; ctx.font=`bold 10px "Segoe UI",sans-serif`;
+    ctx.fillStyle='rgba(30,47,69,.45)'; ctx.font=`bold 10px "Segoe UI",sans-serif`;
     cols.forEach(c => ctx.fillText(c.lbl, c.x+7, hY-8));
 
-    ctx.strokeStyle='rgba(58,42,26,.12)'; ctx.lineWidth=1;
+    ctx.strokeStyle='rgba(30,47,69,.12)'; ctx.lineWidth=1;
     ctx.beginPath(); ctx.moveTo(pad,hY+3); ctx.lineTo(totalW-pad,hY+3); ctx.stroke();
 
     filas.forEach((row,ri) => {
       const y = hY+3+rowH*ri;
-      if (ri%2===0) { ctx.fillStyle='rgba(120,82,40,.02)'; ctx.fillRect(pad,y,totalW-pad*2,rowH); }
+      if (ri%2===0) { ctx.fillStyle='rgba(44,74,110,.02)'; ctx.fillRect(pad,y,totalW-pad*2,rowH); }
 
-      const ac = ACOLORS[row.area]||'#7a6449';
+      const ac = ACOLORS[row.area]||'#5b6b80';
       ctx.fillStyle=ac; ctx.font=`bold 10px "Segoe UI",sans-serif`;
       ctx.fillText(row.area.split(' ')[0], pad+7, y+rowH*.62);
 
-      ctx.fillStyle='#3a2a1a'; ctx.font=`bold 12px "Segoe UI",sans-serif`;
+      ctx.fillStyle='#1e2f45'; ctx.font=`bold 12px "Segoe UI",sans-serif`;
       ctx.fillText(row.nombre, pad+col0+7, y+rowH*.62);
 
       ctx.font=`11px "Segoe UI",sans-serif`;
       row.dias.forEach((txt,di) => {
         const isEsp = txt==='Flex'||txt==='1h';
-        ctx.fillStyle = isEsp ? (txt==='Flex'?'#6f4fb0':'#b9822b') : (txt==='—'?'rgba(58,42,26,.25)':'#d26918');
+        ctx.fillStyle = isEsp ? (txt==='Flex'?'#3457a8':'#3f6aa0') : (txt==='—'?'rgba(30,47,69,.25)':'#2c6eb4');
         ctx.fillText(txt, pad+col0+col1+colW*di+7, y+rowH*.62);
       });
 
-      ctx.fillStyle='#d26918'; ctx.font=`bold 11px "Segoe UI",sans-serif`;
+      ctx.fillStyle='#2c6eb4'; ctx.font=`bold 11px "Segoe UI",sans-serif`;
       ctx.fillText(row.hs, pad+col0+col1+colW*7+7, y+rowH*.62);
 
       if (row.obs) {
-        ctx.fillStyle='rgba(58,42,26,.5)'; ctx.font=`10px "Segoe UI",sans-serif`;
+        ctx.fillStyle='rgba(30,47,69,.5)'; ctx.font=`10px "Segoe UI",sans-serif`;
         ctx.fillText(row.obs.length>18?row.obs.slice(0,18)+'…':row.obs, pad+col0+col1+colW*7+colHs+7, y+rowH*.62);
       }
 
-      ctx.strokeStyle='rgba(58,42,26,.06)'; ctx.lineWidth=1;
+      ctx.strokeStyle='rgba(30,47,69,.06)'; ctx.lineWidth=1;
       ctx.beginPath(); ctx.moveTo(pad,y+rowH); ctx.lineTo(totalW-pad,y+rowH); ctx.stroke();
     });
 
     const fy = hY+3+rowH*filas.length+16;
-    ctx.fillStyle='rgba(58,42,26,.28)'; ctx.font=`10px "Segoe UI",sans-serif`;
-    ctx.fillText(`Runas Café · ${new Date().toLocaleDateString('es-AR')}`, pad, fy);
+    ctx.fillStyle='rgba(30,47,69,.28)'; ctx.font=`10px "Segoe UI",sans-serif`;
+    ctx.fillText(`OSYC · ${new Date().toLocaleDateString('es-AR')}`, pad, fy);
 
     const a = document.createElement('a');
-    a.download = `Runas_horarios_${semViendo}.png`;
+    a.download = `OSYC_horarios_${semViendo}.png`;
     a.href = canvas.toDataURL('image/png');
     a.click();
     showToast('✓ Imagen descargada');
@@ -1126,7 +1126,7 @@ regs.forEach(reg => {
     });
     const a=document.createElement('a');
     a.href=URL.createObjectURL(new Blob(['\uFEFF'+lines.join('\n')],{type:'text/csv;charset=utf-8;'}));
-    a.download=`Runas_horarios_${semViendo}.csv`;
+    a.download=`OSYC_horarios_${semViendo}.csv`;
     a.click(); showToast('CSV descargado ✓');
   }
 
@@ -1173,19 +1173,19 @@ function _render() {
           return `<button onclick="CfgVentana._toggle('${d.key}', ${!activo})"
             style="padding:10px 4px;border-radius:12px;font-family:var(--font-title);
               font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;
-              border:2px solid ${activo?'rgba(210,105,24,.6)':'rgba(58,42,26,.14)'};
-              background:${activo?'rgba(210,105,24,.15)':'rgba(120,82,40,.03)'};
-              color:${activo?'var(--one-cyan)':'rgba(58,42,26,.28)'};
+              border:2px solid ${activo?'rgba(44,110,180,.6)':'rgba(30,47,69,.14)'};
+              background:${activo?'rgba(44,110,180,.15)':'rgba(44,74,110,.03)'};
+              color:${activo?'var(--one-cyan)':'rgba(30,47,69,.28)'};
               text-align:center;">
             ${d.label.slice(0,3)}
-            <div style="font-size:8px;margin-top:3px;color:${activo?'rgba(210,105,24,.6)':'rgba(58,42,26,.2)'};">
+            <div style="font-size:8px;margin-top:3px;color:${activo?'rgba(44,110,180,.6)':'rgba(30,47,69,.2)'};">
               ${activo?'✓ ON':'OFF'}
             </div>
           </button>`;
         }).join('')}
       </div>
       ${DIAS_CFG.some(d => (_cfg[d.key]||{}).activo) ? `
-        <div style="font-size:10px;font-weight:700;color:rgba(58,42,26,.35);
+        <div style="font-size:10px;font-weight:700;color:rgba(30,47,69,.35);
           text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">
           Hora límite por día (vacío = todo el día)
         </div>
@@ -1193,23 +1193,23 @@ function _render() {
           ${DIAS_CFG.filter(d => (_cfg[d.key]||{}).activo).map(d => {
             const hasta = _cfg[d.key]?.hasta ?? '';
             return `<div style="display:flex;align-items:center;gap:10px;
-              background:rgba(210,105,24,.05);border:1px solid rgba(210,105,24,.12);
+              background:rgba(44,110,180,.05);border:1px solid rgba(44,110,180,.12);
               border-radius:9px;padding:7px 14px;">
               <span style="font-size:12px;font-weight:800;color:var(--one-cyan);
                 min-width:28px;">${d.label.slice(0,3)}</span>
-              <div style="flex:1;height:1px;background:rgba(58,42,26,.07);"></div>
+              <div style="flex:1;height:1px;background:rgba(30,47,69,.07);"></div>
               <input type="number" min="0" max="23" placeholder="Sin límite"
                 value="${hasta}"
                 onchange="CfgVentana._setHasta('${d.key}', this.value)"
-                style="background:rgba(120,82,40,.07);border:1px solid rgba(210,105,24,.25);
+                style="background:rgba(44,74,110,.07);border:1px solid rgba(44,110,180,.25);
                   color:var(--one-cyan);padding:4px 8px;border-radius:7px;
                   font-family:var(--font-title);font-size:13px;font-weight:800;
                   width:80px;text-align:center;"/>
-              <span style="font-size:11px;color:rgba(58,42,26,.3);">hs</span>
+              <span style="font-size:11px;color:rgba(30,47,69,.3);">hs</span>
             </div>`;
           }).join('')}
         </div>` :
-        `<div style="font-size:12px;color:rgba(58,42,26,.25);text-align:center;padding:8px 0;">
+        `<div style="font-size:12px;color:rgba(30,47,69,.25);text-align:center;padding:8px 0;">
           Activá al menos un día para configurar la hora límite
         </div>`
       }`;
@@ -1230,11 +1230,11 @@ function _render() {
   async function guardar() {
     const st = document.getElementById('cfgStatus');
     st.textContent = '⏳ Guardando...';
-    st.style.color = 'rgba(58,42,26,.5)';
+    st.style.color = 'rgba(30,47,69,.5)';
     const { error } = await SB.from('configuracion')
       .upsert({ id: 'ventana_carga', valor: _cfg });
     if (error) {
-      st.textContent = '⚠ Error: ' + error.message;
+      st.textContent = 'Error: ' + error.message;
       st.style.color = 'var(--color-danger-text)';
     } else {
       st.textContent = '✓ Guardado';

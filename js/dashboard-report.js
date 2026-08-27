@@ -1,4 +1,4 @@
-// js/dashboard-report-pro.js  ·  Runas Café — Informe PDF v5 FINAL
+// js/dashboard-report-pro.js  ·  OSYC — Informe PDF v5 FINAL
 // A4 portrait = 794px @ 96dpi. Con scale:2 html2canvas captura a 1588px → jsPDF escala a 210mm.
 // El ancho del documento HTML debe ser exactamente 794px.
 const DashboardReportPro = (() => {
@@ -13,9 +13,9 @@ const DashboardReportPro = (() => {
 
   // ── COLORES DE ÁREA ──────────────────────────────────────────────
   const AREA_COLORS = {
-    'ADMINISTRACION':         '#6be1e3',
+    'ADMINISTRACION':         '#5a97d4',
     'COMERCIAL':              '#e17bd7',
-    'RECURSOS HUMANOS':       '#e4c76a',
+    'RECURSOS HUMANOS':       '#8fb4de',
     'MARKETING':              '#f472b6',
     'ACADEMICO / GT':         '#a78bfa',
     'INNOVACION Y DESARROLLO':'#34d399',
@@ -116,7 +116,7 @@ const DashboardReportPro = (() => {
       showToast('Error: ' + e.message, 'err');
     } finally {
       document.querySelectorAll('iframe[style*="opacity: 0.01"]').forEach(f => f.remove());
-      if (btn) { btn.disabled = false; btn.innerHTML = prev || '🖨 Informe'; }
+      if (btn) { btn.disabled = false; btn.innerHTML = prev || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Informe'; }
     }
   }
 
@@ -304,17 +304,17 @@ body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111827;width:
 /* COVER */
 .cover{width:${W}px;min-height:1122px;background:#0d1426;color:#fff;display:flex;flex-direction:column;justify-content:space-between;padding:44px 48px;}
 .cover-logo{display:flex;align-items:center;gap:13px;}
-.cover-icon{width:50px;height:50px;border-radius:50%;background:rgba(107,225,227,.15);border:2px solid rgba(107,225,227,.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.cover-brand{font-size:13px;font-weight:800;color:#6be1e3;letter-spacing:.12em;text-transform:uppercase;}
+.cover-icon{width:50px;height:50px;border-radius:50%;background:rgba(90,151,212,.15);border:2px solid rgba(90,151,212,.4);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.cover-brand{font-size:13px;font-weight:800;color:#5a97d4;letter-spacing:.12em;text-transform:uppercase;}
 .cover-sub{font-size:10px;color:rgba(198,201,215,.5);margin-top:2px;letter-spacing:.08em;}
 .cover-date{text-align:right;}
 .cover-date-lbl{font-size:10px;color:rgba(198,201,215,.4);text-transform:uppercase;letter-spacing:.1em;}
 .cover-date-val{font-size:14px;font-weight:800;color:rgba(255,255,255,.9);margin-top:3px;}
 .cover-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:56px 0 36px;}
-.cover-pill{display:inline-block;background:rgba(107,225,227,.08);border:1px solid rgba(107,225,227,.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;}
-.cover-pill span{font-size:11px;font-weight:800;color:#6be1e3;letter-spacing:.14em;text-transform:uppercase;}
+.cover-pill{display:inline-block;background:rgba(90,151,212,.08);border:1px solid rgba(90,151,212,.22);border-radius:999px;padding:8px 18px;margin-bottom:28px;}
+.cover-pill span{font-size:11px;font-weight:800;color:#5a97d4;letter-spacing:.14em;text-transform:uppercase;}
 .cover-title{font-size:76px;font-weight:900;line-height:.88;letter-spacing:-.04em;color:#fff;margin-bottom:16px;}
-.cover-title-grad{background:linear-gradient(90deg,#6be1e3,#e17bd7,#e4c76a);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.cover-title-grad{background:linear-gradient(90deg,#5a97d4,#e17bd7,#8fb4de);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .cover-desc{font-size:15px;line-height:1.7;color:rgba(255,255,255,.55);max-width:520px;margin-bottom:36px;}
 .cover-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
 .cover-meta-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px 15px;}
@@ -330,12 +330,12 @@ body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111827;width:
 /* INDEX PAGE */
 .index-page{width:${W}px;min-height:1122px;background:#fff;padding:52px 56px;}
 .index-header{display:flex;align-items:center;gap:14px;margin-bottom:44px;}
-.index-bar{width:5px;height:50px;border-radius:3px;background:linear-gradient(180deg,#6be1e3,#e17bd7);flex-shrink:0;}
+.index-bar{width:5px;height:50px;border-radius:3px;background:linear-gradient(180deg,#5a97d4,#e17bd7);flex-shrink:0;}
 .index-supra{font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;}
 .index-title{font-size:38px;font-weight:900;color:#0f172a;letter-spacing:-.03em;}
 .index-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid #f1f5f9;}
 .index-num{width:44px;height:44px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.index-num.hl{background:linear-gradient(135deg,rgba(107,225,227,.18),rgba(225,123,215,.12));border-color:rgba(107,225,227,.28);}
+.index-num.hl{background:linear-gradient(135deg,rgba(90,151,212,.18),rgba(225,123,215,.12));border-color:rgba(90,151,212,.28);}
 .index-num span{font-size:13px;font-weight:900;color:#64748b;}
 .index-num.hl span{color:#0d1426;}
 .index-text{flex:1;margin:0 18px;font-size:14px;font-weight:700;color:#1e293b;}
@@ -368,7 +368,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111827;width:
 .val-sm{font-size:20px;font-weight:900;line-height:1;}
 .val-lg{font-size:13px;font-weight:900;line-height:1.2;}
 .foot{font-size:8px;color:#94a3b8;margin-top:3px;}
-.kpi-top::before{content:"";display:block;height:3px;background:linear-gradient(90deg,#6be1e3,#e17bd7,#e4c76a);border-radius:2px 2px 0 0;margin:-11px -12px 10px;}
+.kpi-top::before{content:"";display:block;height:3px;background:linear-gradient(90deg,#5a97d4,#e17bd7,#8fb4de);border-radius:2px 2px 0 0;margin:-11px -12px 10px;}
 
 /* NARRATIVE */
 .narr p{font-size:10.5px;line-height:1.65;color:#374151;margin-bottom:6px;}
@@ -418,7 +418,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111827;width:
 .ins-ul li{margin-bottom:5px;font-size:10px;color:#1f2937;line-height:1.5;}
 
 /* CONCLUSION */
-.conc{border-radius:16px;padding:16px 20px;background:linear-gradient(135deg,rgba(107,225,227,.07),rgba(225,123,215,.05),rgba(228,199,106,.05));border:1px solid #e2e8f0;}
+.conc{border-radius:16px;padding:16px 20px;background:linear-gradient(135deg,rgba(90,151,212,.07),rgba(225,123,215,.05),rgba(90,151,212,.05));border:1px solid #e2e8f0;}
 .conc-ttl{font-size:14px;font-weight:800;color:#0f172a;margin-bottom:9px;}
 .conc-ul{padding-left:16px;}
 .conc-ul li{font-size:10.5px;line-height:1.6;color:#1f2937;margin-bottom:5px;}
@@ -448,9 +448,9 @@ ${_annexPages(r)}
 <div class="cover">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;">
     <div class="cover-logo">
-      <div class="cover-icon">🕐</div>
+      <div class="cover-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg></div>
       <div>
-        <div class="cover-brand">Runas Café · Sistema de Horarios</div>
+        <div class="cover-brand">OSYC · Sistema de Horarios</div>
         <div class="cover-sub">ESCENCIAL CONSULTORA</div>
       </div>
     </div>
@@ -463,7 +463,7 @@ ${_annexPages(r)}
   <div class="cover-body">
     <div class="cover-pill"><span>Informe ejecutivo · Dashboard operativo</span></div>
     <div class="cover-title">
-      Runas<br><span class="cover-title-grad">Café</span>
+      <span class="cover-title-grad">OSYC</span>
     </div>
     <div class="cover-desc">Informe integral con lectura cuantitativa y cualitativa del período. Integra puntualidad, planificación vs ejecución, consistencia de registros y focos por área.</div>
     <div class="cover-meta">
@@ -479,12 +479,12 @@ ${_annexPages(r)}
     <div class="cover-kpis-ttl">Indicadores clave del período</div>
     <div class="cover-kpis-grid">
       ${[
-        ['Puntualidad', k.punt+'%',  k.punt>=85?'#34d399':k.punt>=70?'#e4c76a':'#ef4444'],
-        ['Personas',    String(k.personas), '#6be1e3'],
-        ['Hs planif.',  fmtHs(k.hsPlan),   '#e4c76a'],
-        ['Hs reales',   fmtHs(k.hsReales), '#6be1e3'],
-        ['Prom tarda.', k.promT+'m',        k.promT<=3?'#34d399':k.promT<=10?'#e4c76a':'#ef4444'],
-        ['Incompletos', String(r.inc.length),r.inc.length?'#e4c76a':'#34d399'],
+        ['Puntualidad', k.punt+'%',  k.punt>=85?'#34d399':k.punt>=70?'#8fb4de':'#ef4444'],
+        ['Personas',    String(k.personas), '#5a97d4'],
+        ['Hs planif.',  fmtHs(k.hsPlan),   '#8fb4de'],
+        ['Hs reales',   fmtHs(k.hsReales), '#5a97d4'],
+        ['Prom tarda.', k.promT+'m',        k.promT<=3?'#34d399':k.promT<=10?'#8fb4de':'#ef4444'],
+        ['Incompletos', String(r.inc.length),r.inc.length?'#8fb4de':'#34d399'],
       ].map(([l,v,col])=>`
         <div class="cover-kpi">
           <div class="cover-kpi-lbl">${l}</div>
@@ -519,7 +519,7 @@ ${_annexPages(r)}
   <div class="index-header">
     <div class="index-bar"></div>
     <div>
-      <div class="index-supra">Runas Café</div>
+      <div class="index-supra">OSYC</div>
       <div class="index-title">Contenido del informe</div>
     </div>
   </div>
@@ -531,7 +531,7 @@ ${_annexPages(r)}
       <div class="index-pg">p.${p}</div>
     </div>`).join('')}
   <div class="index-note">
-    Informe generado automáticamente por <strong>Runas Café</strong>.
+    Informe generado automáticamente por <strong>OSYC</strong>.
     Período: <strong>${_e(_pl(f.per))}</strong> ·
     Área: <strong>${_e(f.area||'Todas las áreas')}</strong> ·
     Rango: <strong>${_e(rng)}</strong> ·
@@ -565,13 +565,13 @@ ${_annexPages(r)}
 
   <div class="pg-header nb">
     <div class="pg-header-left">
-      <div class="pg-bar" style="background:linear-gradient(180deg,#6be1e3,#e17bd7)"></div>
+      <div class="pg-bar" style="background:linear-gradient(180deg,#5a97d4,#e17bd7)"></div>
       <div>
         <div class="pg-title">Indicadores del período</div>
         <div class="pg-sub">Métricas consolidadas · ${_e(_pl(f.per))}</div>
       </div>
     </div>
-    <div class="pg-right">Runas Café · ${_e(rng)}</div>
+    <div class="pg-right">OSYC · ${_e(rng)}</div>
   </div>
 
   <div class="g4">
@@ -613,7 +613,7 @@ ${_annexPages(r)}
       </div>
       <div class="notes">
         ${c.fort.map(t=>`<div class="note nb"><div class="dot" style="background:#34d399"></div><div class="note-txt">${_e(t)}</div></div>`).join('')}
-        ${(c.aler.length?c.aler:['Sin alertas críticas.']).map(t=>`<div class="note nb"><div class="dot" style="background:${c.aler.length?'#e4c76a':'#34d399'}"></div><div class="note-txt">${_e(t)}</div></div>`).join('')}
+        ${(c.aler.length?c.aler:['Sin alertas críticas.']).map(t=>`<div class="note nb"><div class="dot" style="background:${c.aler.length?'#8fb4de':'#34d399'}"></div><div class="note-txt">${_e(t)}</div></div>`).join('')}
       </div>
     </div></div>
   </div>
@@ -665,13 +665,13 @@ ${_annexPages(r)}
 
   <div class="pg-header nb">
     <div class="pg-header-left">
-      <div class="pg-bar" style="background:linear-gradient(180deg,#e17bd7,#e4c76a)"></div>
+      <div class="pg-bar" style="background:linear-gradient(180deg,#e17bd7,#8fb4de)"></div>
       <div>
         <div class="pg-title">Análisis detallado</div>
         <div class="pg-sub">Tardanzas · Insights · Desvíos · Conclusión</div>
       </div>
     </div>
-    <div class="pg-right">Runas Café · ${_e(_pl(f.per))}</div>
+    <div class="pg-right">OSYC · ${_e(_pl(f.per))}</div>
   </div>
 
   <div class="sec">Tardanzas más relevantes</div>
@@ -697,15 +697,15 @@ ${_annexPages(r)}
 
   <div class="g3">
     <div class="ins-panel nb">
-      <div class="ins-ttl">✅ Fortalezas</div>
+      <div class="ins-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Fortalezas</div>
       <ul class="ins-ul">${c.fort.map(x=>`<li>${_e(x)}</li>`).join('')}</ul>
     </div>
     <div class="ins-panel nb">
-      <div class="ins-ttl">⚠️ Alertas</div>
+      <div class="ins-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Alertas</div>
       <ul class="ins-ul">${(c.aler.length?c.aler:['Sin alertas críticas.']).map(x=>`<li>${_e(x)}</li>`).join('')}</ul>
     </div>
     <div class="ins-panel nb">
-      <div class="ins-ttl">🎯 Focos</div>
+      <div class="ins-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg> Focos</div>
       <ul class="ins-ul">
         <li>${_e(r.meta.mejorA?`Mejor: ${r.meta.mejorA.area} (${r.meta.mejorA.punt}%).`:'Sin mejor área.')}</li>
         <li>${_e(r.meta.peorA?`Sensible: ${r.meta.peorA.area} (${r.meta.peorA.punt}%).`:'Sin área crítica.')}</li>
@@ -738,7 +738,7 @@ ${_annexPages(r)}
   </div>
 
   <div class="conc nb">
-    <div class="conc-ttl">📋 Conclusión y acciones sugeridas</div>
+    <div class="conc-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg> Conclusión y acciones sugeridas</div>
     <ul class="conc-ul">${c.acc.map(x=>`<li>${_e(x)}</li>`).join('')}</ul>
   </div>
 
@@ -755,13 +755,13 @@ ${_annexPages(r)}
 
   <div class="pg-header nb">
     <div class="pg-header-left">
-      <div class="pg-bar" style="background:linear-gradient(180deg,#6be1e3,#34d399)"></div>
+      <div class="pg-bar" style="background:linear-gradient(180deg,#5a97d4,#34d399)"></div>
       <div>
         <div class="pg-title">Anexo de personas · ${idx+1} / ${r.tabChunks.length}</div>
         <div class="pg-sub">Detalle de planificación y ejecución por persona.</div>
       </div>
     </div>
-    <div class="pg-right">Runas Café</div>
+    <div class="pg-right">OSYC</div>
   </div>
 
   <div class="tbl-wrap nb" style="margin-bottom:${idx===r.tabChunks.length-1?'10px':'0'};">
@@ -851,8 +851,8 @@ ${_annexPages(r)}
 
     mk('rptC1',{type:'doughnut',data:{labels,datasets:[{data:r.aStats.map(a=>a.registros),backgroundColor:colors.map(c=>`${c}CC`),borderColor:colors,borderWidth:2,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'56%',plugins:{tooltip:{...tip},legend:{position:'bottom',labels:{color:ax,font:{family:font,size:8,weight:'700'},boxWidth:9,padding:7}}}}});
     mk('rptC2',{type:'bar',data:{labels,datasets:[{label:'% puntualidad',data:r.aStats.map(a=>a.punt),backgroundColor:colors.map(c=>`${c}55`),borderColor:colors,borderWidth:2,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{...tip},legend:{display:false}},scales:{x:{ticks:tick,grid:nog},y:{ticks:tick,grid:{color:gr},min:0,max:100}}}});
-    mk('rptC3',{type:'bar',data:{labels,datasets:[{label:'Hs planif.',data:r.aStats.map(a=>+a.hp.toFixed(2)),backgroundColor:'#e4c76a55',borderColor:'#e4c76a',borderWidth:2,borderRadius:6,borderSkipped:false},{label:'Hs reales',data:r.aStats.map(a=>+a.hr.toFixed(2)),backgroundColor:'#6be1e355',borderColor:'#6be1e3',borderWidth:2,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{...tip},legend:{labels:{color:ax,font:{family:font,size:9,weight:'700'},boxWidth:10,padding:8}}},scales:{x:{ticks:tick,grid:nog},y:{ticks:tick,grid:{color:gr}}}}});
-    mk('rptC4',{type:'polarArea',data:{labels:['Incompletos','Sin plan','Sin regs','Top tardanzas'],datasets:[{data:[r.inc.length,r.sinP.length,r.sinR.length,r.topT.length],backgroundColor:['#e4c76a66','#e17bd766','#a78bfa66','#6be1e366'],borderColor:['#e4c76a','#e17bd7','#a78bfa','#6be1e3'],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{...tip},legend:{position:'bottom',labels:{color:ax,font:{family:font,size:8,weight:'700'},boxWidth:9,padding:7}}},scales:{r:{grid:{color:gr},angleLines:{color:gr},pointLabels:{color:ax,font:{family:font,size:8,weight:'700'}},ticks:{color:ax,backdropColor:'#fff',font:{family:font,size:7,weight:'700'}}}}}});
+    mk('rptC3',{type:'bar',data:{labels,datasets:[{label:'Hs planif.',data:r.aStats.map(a=>+a.hp.toFixed(2)),backgroundColor:'#8fb4de55',borderColor:'#8fb4de',borderWidth:2,borderRadius:6,borderSkipped:false},{label:'Hs reales',data:r.aStats.map(a=>+a.hr.toFixed(2)),backgroundColor:'#5a97d455',borderColor:'#5a97d4',borderWidth:2,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{...tip},legend:{labels:{color:ax,font:{family:font,size:9,weight:'700'},boxWidth:10,padding:8}}},scales:{x:{ticks:tick,grid:nog},y:{ticks:tick,grid:{color:gr}}}}});
+    mk('rptC4',{type:'polarArea',data:{labels:['Incompletos','Sin plan','Sin regs','Top tardanzas'],datasets:[{data:[r.inc.length,r.sinP.length,r.sinR.length,r.topT.length],backgroundColor:['#8fb4de66','#e17bd766','#a78bfa66','#5a97d466'],borderColor:['#8fb4de','#e17bd7','#a78bfa','#5a97d4'],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{tooltip:{...tip},legend:{position:'bottom',labels:{color:ax,font:{family:font,size:8,weight:'700'},boxWidth:9,padding:7}}},scales:{r:{grid:{color:gr},angleLines:{color:gr},pointLabels:{color:ax,font:{family:font,size:8,weight:'700'}},ticks:{color:ax,backdropColor:'#fff',font:{family:font,size:7,weight:'700'}}}}}});
 
     await _wait(400);
   }

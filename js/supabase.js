@@ -1,6 +1,6 @@
-// js/supabase.js — cliente Supabase centralizado (RUNAS Café)
-const SUPA_URL = 'https://nntmkwrqjbzhonvqvxhb.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5udG1rd3JxamJ6aG9udnF2eGhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczMTgyODksImV4cCI6MjEwMjg5NDI4OX0.ueKP0cm5861H4Ryb6jsRbWcWgcc397GfMkiWX0FaTJc';
+// js/supabase.js — cliente Supabase centralizado (OSYC)
+const SUPA_URL = 'https://zbaqcbadqefaggpbylfn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiYXFjYmFkcWVmYWdncGJ5bGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MzcxOTAsImV4cCI6MjEwMzQxMzE5MH0.oW92ZOpWcPAeK037DUS5BMFhh0c0XLSCTbVN7Fa108M';
 const SB = supabase.createClient(SUPA_URL, SUPA_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });

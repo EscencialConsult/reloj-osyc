@@ -5,7 +5,7 @@ const Dashboard = (() => {
 
 let _lastRows = [], _lastPer = 'semana';
 
-  // ✅ Formateador de fecha YYYY-MM-DD → DD/MM/YYYY
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Formateador de fecha YYYY-MM-DD → DD/MM/YYYY
   function _fmtFechaCompleta(fecha) {
     if (!fecha) return '';
     const parts = fecha.split('-');
@@ -24,7 +24,7 @@ let _lastRows = [], _lastPer = 'semana';
   async function load(){
     const per     = document.getElementById('dPer').value;
     const area    = document.getElementById('dArea').value;
-    const persona = document.getElementById('dPersona')?.value?.toLowerCase() || '';  // ✅ NUEVO
+    const persona = document.getElementById('dPersona')?.value?.toLowerCase() || '';  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVO
     _lastPer      = per;
 
     let desde, hasta;
@@ -45,7 +45,7 @@ let _lastRows = [], _lastPer = 'semana';
     if(error){showToast('Error dashboard','err');return;}
     let rows=data||[];
     
-    // ✅ NUEVO - Filtro por persona
+    // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVO - Filtro por persona
     if(persona){
       rows = rows.filter(r => r.nombre.toLowerCase().includes(persona));
     }
@@ -67,7 +67,7 @@ let _lastRows = [], _lastPer = 'semana';
     _topTard(rows, per);
     _topExtra(rows, per);
     _areaTable(rows);
-    _personasTable(rows);  // ✅ NUEVO - Mostrar tabla de personas
+    _personasTable(rows);  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVO - Mostrar tabla de personas
   }
 
   function _kpis(rows,hs){
@@ -137,7 +137,7 @@ let _lastRows = [], _lastPer = 'semana';
     const counts=AREAS.map(a=>rows.filter(r=>r.area===a).length);
     const ctx=document.getElementById('chartArea')?.getContext('2d');
     if(!ctx) return;
-    _cA=new Chart(ctx,{type:'doughnut',data:{labels:AREAS.map(a=>a.split(' ')[0]),datasets:[{data:counts,backgroundColor:AREAS.map(a=>areaColorHex(a)+'55'),borderColor:AREAS.map(a=>areaColorHex(a)),borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'rgba(58,42,26,.75)',font:{size:11},boxWidth:12}}}}});
+    _cA=new Chart(ctx,{type:'doughnut',data:{labels:AREAS.map(a=>a.split(' ')[0]),datasets:[{data:counts,backgroundColor:AREAS.map(a=>areaColorHex(a)+'55'),borderColor:AREAS.map(a=>areaColorHex(a)),borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'rgba(30,47,69,.75)',font:{size:11},boxWidth:12}}}}});
   }
 
   function _chartPunt(rows){
@@ -151,7 +151,7 @@ let _lastRows = [], _lastPer = 'semana';
     });
     const ctx=document.getElementById('chartPunt')?.getContext('2d');
     if(!ctx) return;
-    _cP=new Chart(ctx,{type:'bar',data:{labels:areas.map(a=>a.split(' ')[0]),datasets:[{label:'% puntualidad',data:punt,backgroundColor:areas.map(a=>areaColorHex(a)+'55'),borderColor:areas.map(a=>areaColorHex(a)),borderWidth:2,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{color:'rgba(58,42,26,.6)',font:{size:10}},grid:{color:'rgba(58,42,26,.07)'}},x:{ticks:{color:'rgba(58,42,26,.6)',font:{size:10}},grid:{display:false}}},plugins:{legend:{display:false}}}});
+    _cP=new Chart(ctx,{type:'bar',data:{labels:areas.map(a=>a.split(' ')[0]),datasets:[{label:'% puntualidad',data:punt,backgroundColor:areas.map(a=>areaColorHex(a)+'55'),borderColor:areas.map(a=>areaColorHex(a)),borderWidth:2,borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:0,max:100,ticks:{color:'rgba(30,47,69,.6)',font:{size:10}},grid:{color:'rgba(30,47,69,.07)'}},x:{ticks:{color:'rgba(30,47,69,.6)',font:{size:10}},grid:{display:false}}},plugins:{legend:{display:false}}}});
   }
 
   function _chartDia(rows){
@@ -160,7 +160,7 @@ let _lastRows = [], _lastPer = 'semana';
     const dates=Object.keys(by).sort();
     const ctx=document.getElementById('chartDia')?.getContext('2d');
     if(!ctx) return;
-    _cD=new Chart(ctx,{type:'line',data:{labels:dates.map(d=>fmtDate(d)),datasets:[{label:'Registros',data:dates.map(d=>by[d]),borderColor:'#d26918',backgroundColor:'rgba(210,105,24,.10)',fill:true,tension:.35,pointBackgroundColor:'#d26918',pointRadius:4,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{ticks:{color:'rgba(58,42,26,.6)',font:{size:10},stepSize:1},grid:{color:'rgba(58,42,26,.07)'}},x:{ticks:{color:'rgba(58,42,26,.6)',font:{size:10},maxTicksLimit:8},grid:{display:false}}},plugins:{legend:{display:false}}}});
+    _cD=new Chart(ctx,{type:'line',data:{labels:dates.map(d=>fmtDate(d)),datasets:[{label:'Registros',data:dates.map(d=>by[d]),borderColor:'#2c6eb4',backgroundColor:'rgba(44,110,180,.10)',fill:true,tension:.35,pointBackgroundColor:'#2c6eb4',pointRadius:4,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{ticks:{color:'rgba(30,47,69,.6)',font:{size:10},stepSize:1},grid:{color:'rgba(30,47,69,.07)'}},x:{ticks:{color:'rgba(30,47,69,.6)',font:{size:10},maxTicksLimit:8},grid:{display:false}}},plugins:{legend:{display:false}}}});
   }
 
 // ── TOP TARDANZAS CON MINIFILTRO ──
@@ -206,7 +206,7 @@ let _lastRows = [], _lastPer = 'semana';
         byPers[k].veces++;
         if(diff > byPers[k].maxMin) {
           byPers[k].maxMin = diff;
-          byPers[k].maxFecha = r.fecha; // ✅ guardar fecha del máximo
+          byPers[k].maxFecha = r.fecha; // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> guardar fecha del máximo
         }
       });
       allData = Object.values(byPers).sort((a,b)=>b.maxMin-a.maxMin);
@@ -214,38 +214,38 @@ let _lastRows = [], _lastPer = 'semana';
     }
 
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
-    if(!sorted.length){el.innerHTML='<div style="font-size:12px;color:rgba(58,42,26,.3);">—</div>';return;}
+    if(!sorted.length){el.innerHTML='<div style="font-size:12px;color:rgba(30,47,69,.3);">—</div>';return;}
     
     // Header con minifiltro
     const header = `
       <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
         <button class="tab-btn ${modo==='total'?'active':''}" style="padding:6px 12px;font-size:11px;" 
-          onclick="document.getElementById('topTardMode').value='total'; Dashboard.load()">📊 Total (suma)</button>
+          onclick="document.getElementById('topTardMode').value='total'; Dashboard.load()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Total (suma)</button>
         <button class="tab-btn ${modo==='individual'?'active':''}" style="padding:6px 12px;font-size:11px;" 
-          onclick="document.getElementById('topTardMode').value='individual'; Dashboard.load()">👤 Individual (máx)</button>
+          onclick="document.getElementById('topTardMode').value='individual'; Dashboard.load()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Individual (máx)</button>
       </div>
     `;
 
 const listHtml = sorted.map((p,i)=>{
       const label = modo === 'total' ? `+${p.totalMin}m` : `+${p.maxMin}m`;
       const subtitle = modo === 'total' ? `${p.veces} registros` : (p.maxFecha ? _fmtFechaCompleta(p.maxFecha) : 'máximo 1 día');;
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(58,42,26,.06);">
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(30,47,69,.06);">
         <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
           <span style="color:${ACOLOR[p.area]||'#8a7052'};font-weight:800;flex-shrink:0;">${i+1}</span>
           <div style="min-width:0;flex:1;">
             <div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.nombre}</div>
-            <div style="font-size:10px;color:rgba(58,42,26,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.area}</div>
+            <div style="font-size:10px;color:rgba(30,47,69,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.area}</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
           <div style="text-align:right;">
             <div style="font-size:13px;font-weight:800;color:#dc2626;">${label}</div>
-            <div style="font-size:10px;color:rgba(58,42,26,.4);">${subtitle}</div>
+            <div style="font-size:10px;color:rgba(30,47,69,.4);">${subtitle}</div>
           </div>
         </div>
       </div>`;
@@ -253,8 +253,8 @@ const listHtml = sorted.map((p,i)=>{
 
     // Botón "Ver más" si hay más de 5 personas
     const verMasBtn = allData.length > 5 ? `
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(58,42,26,.06);">
-        <button onclick="Dashboard._showAllTardanzas('${modo}')" style="width:100%;padding:8px;background:rgba(210,105,24,.1);border:1px solid rgba(210,105,24,.25);color:#d26918;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(30,47,69,.06);">
+        <button onclick="Dashboard._showAllTardanzas('${modo}')" style="width:100%;padding:8px;background:rgba(44,110,180,.1);border:1px solid rgba(44,110,180,.25);color:#2c6eb4;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">
           Ver más (${allData.length} total)
         </button>
       </div>
@@ -304,9 +304,9 @@ const listHtml = sorted.map((p,i)=>{
 
 
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
     document.getElementById('tardanzasModalContent')?.remove();
@@ -314,28 +314,28 @@ const listHtml = sorted.map((p,i)=>{
     overlay.id='tardanzasModalContent';
     overlay.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
     overlay.innerHTML=`
-      <div style="background:#fffdf8;border:1px solid rgba(210,105,24,.22);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="background:#fffdf8;border:1px solid rgba(44,110,180,.22);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <div style="font-size:14px;font-weight:700;color:#d26918;">📊 Todas las tardanzas (${modo==='total'?'suma':'máximo'})</div>
-          <button onclick="document.getElementById('tardanzasModalContent').remove()" style="background:none;border:none;color:rgba(58,42,26,.5);font-size:20px;cursor:pointer;">✕</button>
+          <div style="font-size:14px;font-weight:700;color:#2c6eb4;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Todas las tardanzas (${modo==='total'?'suma':'máximo'})</div>
+          <button onclick="document.getElementById('tardanzasModalContent').remove()" style="background:none;border:none;color:rgba(30,47,69,.5);font-size:20px;cursor:pointer;">✕</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
 ${allData.map((p,i)=>{
             const label = modo === 'total' ? `+${p.totalMin}m` : `+${p.maxMin}m`;
             const subtitle = modo === 'total' ? `${p.veces} registros` : (p.maxFecha ? _fmtFechaCompleta(p.maxFecha) : 'máximo 1 día');
-            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(58,42,26,.05);border:1px solid rgba(58,42,26,.08);border-radius:8px;">
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(30,47,69,.05);border:1px solid rgba(30,47,69,.08);border-radius:8px;">
               <div>
-                <div style="font-weight:700;color:#3a2a1a;">${i+1}. ${p.nombre}</div>
+                <div style="font-weight:700;color:#1e2f45;">${i+1}. ${p.nombre}</div>
                 <div style="font-size:11px;color:${ACOLOR[p.area]||'#8a7052'};margin-top:2px;">${p.area}</div>
               </div>
               <div style="text-align:right;">
                 <div style="font-size:14px;font-weight:800;color:#dc2626;">${label}</div>
-                <div style="font-size:10px;color:rgba(58,42,26,.4);">${subtitle}</div>
+                <div style="font-size:10px;color:rgba(30,47,69,.4);">${subtitle}</div>
               </div>
             </div>`;
           }).join('')}
         </div>
-        <button onclick="document.getElementById('tardanzasModalContent').remove()" style="margin-top:20px;width:100%;padding:10px;background:rgba(210,105,24,.12);border:1px solid rgba(210,105,24,.28);color:#d26918;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;">Cerrar</button>
+        <button onclick="document.getElementById('tardanzasModalContent').remove()" style="margin-top:20px;width:100%;padding:10px;background:rgba(44,110,180,.12);border:1px solid rgba(44,110,180,.28);color:#2c6eb4;border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;">Cerrar</button>
       </div>`;
     overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
     document.body.appendChild(overlay);
@@ -370,20 +370,20 @@ ${allData.map((p,i)=>{
     }
 
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
-    if(!sorted.length){el.innerHTML='<div style="font-size:12px;color:rgba(58,42,26,.3);">—</div>';return;}
+    if(!sorted.length){el.innerHTML='<div style="font-size:12px;color:rgba(30,47,69,.3);">—</div>';return;}
     
     // Header con minifiltro
     const header = `
       <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
         <button class="tab-btn ${modo==='total'?'active':''}" style="padding:6px 12px;font-size:11px;" 
-          onclick="document.getElementById('topExtraMode').value='total'; Dashboard.load()">📊 Total (suma)</button>
+          onclick="document.getElementById('topExtraMode').value='total'; Dashboard.load()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Total (suma)</button>
         <button class="tab-btn ${modo==='individual'?'active':''}" style="padding:6px 12px;font-size:11px;" 
-          onclick="document.getElementById('topExtraMode').value='individual'; Dashboard.load()">👤 Individual (máx)</button>
+          onclick="document.getElementById('topExtraMode').value='individual'; Dashboard.load()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> Individual (máx)</button>
       </div>
     `;
 
@@ -391,18 +391,18 @@ ${allData.map((p,i)=>{
       const extraVal = modo === 'total' ? p.totalExtra : (p.maxExtra || 0);
       const hs=fmtHs(extraVal/60);
       const subtitle = modo === 'total' ? `${p.veces} días` : (p.maxFecha ? _fmtFechaCompleta(p.maxFecha) : 'máximo 1 día');
-      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(58,42,26,.06);">
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(30,47,69,.06);">
         <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0;">
           <span style="color:${ACOLOR[p.area]||'#8a7052'};font-weight:800;flex-shrink:0;">${i+1}</span>
           <div style="min-width:0;flex:1;">
             <div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.nombre}</div>
-            <div style="font-size:10px;color:rgba(58,42,26,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.area}</div>
+            <div style="font-size:10px;color:rgba(30,47,69,.4);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.area}</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:8px;">
           <div style="text-align:right;">
             <div style="font-size:13px;font-weight:800;color:var(--one-gold);">+${hs}</div>
-            <div style="font-size:10px;color:rgba(58,42,26,.4);">${subtitle}</div>
+            <div style="font-size:10px;color:rgba(30,47,69,.4);">${subtitle}</div>
           </div>
         </div>
       </div>`;
@@ -410,8 +410,8 @@ ${allData.map((p,i)=>{
 
     // Botón "Ver más" si hay más de 5 personas
     const verMasBtn = allData.length > 5 ? `
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(58,42,26,.06);">
-        <button onclick="Dashboard._showAllExtra('${modo}')" style="width:100%;padding:8px;background:rgba(185,130,43,.1);border:1px solid rgba(185,130,43,.25);color:var(--one-gold);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(30,47,69,.06);">
+        <button onclick="Dashboard._showAllExtra('${modo}')" style="width:100%;padding:8px;background:rgba(63,106,160,.1);border:1px solid rgba(63,106,160,.25);color:var(--one-gold);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;">
           Ver más (${allData.length} total)
         </button>
       </div>
@@ -440,9 +440,9 @@ function _showAllExtra(modo) {
     }
 
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
     document.getElementById('extraModalContent')?.remove();
@@ -450,29 +450,29 @@ function _showAllExtra(modo) {
     overlay.id='extraModalContent';
     overlay.style.cssText='position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.8);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;';
     overlay.innerHTML=`
-      <div style="background:#fffdf8;border:1px solid rgba(185,130,43,.22);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
+      <div style="background:#fffdf8;border:1px solid rgba(63,106,160,.22);border-radius:16px;padding:24px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.6);">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-          <div style="font-size:14px;font-weight:700;color:var(--one-gold);">⏰ Horas extra (${modo==='total'?'suma':'máximo'})</div>
-          <button onclick="document.getElementById('extraModalContent').remove()" style="background:none;border:none;color:rgba(58,42,26,.5);font-size:20px;cursor:pointer;">✕</button>
+          <div style="font-size:14px;font-weight:700;color:var(--one-gold);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg> Horas extra (${modo==='total'?'suma':'máximo'})</div>
+          <button onclick="document.getElementById('extraModalContent').remove()" style="background:none;border:none;color:rgba(30,47,69,.5);font-size:20px;cursor:pointer;">✕</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           ${allData.map((p,i)=>{
             const extraVal = modo === 'total' ? p.totalExtra : (p.maxExtra || 0);
             const hs=fmtHs(extraVal/60);
             const subtitle = modo === 'total' ? `${p.veces} días` : (p.maxFecha ? _fmtFechaCompleta(p.maxFecha) : 'máximo 1 día');
-            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(58,42,26,.05);border:1px solid rgba(58,42,26,.08);border-radius:8px;">
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(30,47,69,.05);border:1px solid rgba(30,47,69,.08);border-radius:8px;">
               <div>
-                <div style="font-weight:700;color:#3a2a1a;">${i+1}. ${p.nombre}</div>
+                <div style="font-weight:700;color:#1e2f45;">${i+1}. ${p.nombre}</div>
                 <div style="font-size:11px;color:${ACOLOR[p.area]||'#8a7052'};margin-top:2px;">${p.area}</div>
               </div>
               <div style="text-align:right;">
                 <div style="font-size:14px;font-weight:800;color:var(--one-gold);">+${hs}</div>
-                <div style="font-size:10px;color:rgba(58,42,26,.4);">${subtitle}</div>
+                <div style="font-size:10px;color:rgba(30,47,69,.4);">${subtitle}</div>
               </div>
             </div>`;
           }).join('')}
         </div>
-        <button onclick="document.getElementById('extraModalContent').remove()" style="margin-top:20px;width:100%;padding:10px;background:rgba(185,130,43,.12);border:1px solid rgba(185,130,43,.28);color:var(--one-gold);border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;">Cerrar</button>
+        <button onclick="document.getElementById('extraModalContent').remove()" style="margin-top:20px;width:100%;padding:10px;background:rgba(63,106,160,.12);border:1px solid rgba(63,106,160,.28);color:var(--one-gold);border-radius:10px;font-weight:700;font-size:12px;cursor:pointer;">Cerrar</button>
       </div>`;
     overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
     document.body.appendChild(overlay);
@@ -501,9 +501,9 @@ function _showAllExtra(modo) {
     });
 
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
     el.innerHTML=Object.entries(byArea).map(([area,d])=>{
@@ -512,7 +512,7 @@ function _showAllExtra(modo) {
     }).join('');
   }
 
-  // ✅ NUEVO - Tabla detallada por persona
+  // <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> NUEVO - Tabla detallada por persona
   function _personasTable(rows){
     const el=document.getElementById('tbPersonas');
     if(!el)return;
@@ -558,13 +558,13 @@ function _showAllExtra(modo) {
 
     const sorted = Object.values(byPers).sort((a, b) => a.nombre.localeCompare(b.nombre));
     const ACOLOR={
-      'ADMINISTRACION':'#d26918','COMERCIAL':'#c0562e','RECURSOS HUMANOS':'#b9822b',
-      'MARKETING':'#c23d78','ACADEMICO / GT':'#6f4fb0',
-      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#c2560f','PASANTIAS':'#2563eb',
+      'ADMINISTRACION':'#2c6eb4','COMERCIAL':'#2c6eb4','RECURSOS HUMANOS':'#3f6aa0',
+      'MARKETING':'#c23d78','ACADEMICO / GT':'#3457a8',
+      'INNOVACION Y DESARROLLO':'#1f8f5f','MAESTRANZA':'#1f4e79','PASANTIAS':'#2563eb',
     };
 
     if(!sorted.length){
-      el.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:rgba(58,42,26,.28);">Sin datos</td></tr>';
+      el.innerHTML='<tr><td colspan="7" style="text-align:center;padding:30px;color:rgba(30,47,69,.28);">Sin datos</td></tr>';
       return;
     }
 
@@ -575,12 +575,12 @@ function _showAllExtra(modo) {
       const hsFormatted = p.horasTotal > 0 ? fmtHs(p.horasTotal) : '—';
 
       return `<tr>
-        <td style="color:rgba(58,42,26,.3);font-size:11px;">${i+1}</td>
+        <td style="color:rgba(30,47,69,.3);font-size:11px;">${i+1}</td>
         <td style="font-weight:700;">${p.nombre}</td>
         <td><span style="color:${col};font-weight:800;font-size:11px;">${p.area.split(' / ')[0]}</span></td>
-        <td style="text-align:center;color:rgba(58,42,26,.6);">${p.registros}</td>
+        <td style="text-align:center;color:rgba(30,47,69,.6);">${p.registros}</td>
         <td style="text-align:center;"><span class="badge badge-cyan">${hsFormatted}</span></td>
-        <td style="text-align:center;color:rgba(58,42,26,.6);">${puntualidad === '—' ? '—' : puntualidad + '%'}</td>
+        <td style="text-align:center;color:rgba(30,47,69,.6);">${puntualidad === '—' ? '—' : puntualidad + '%'}</td>
         <td style="text-align:center;${p.tardanzas.length > 0 ? 'color:#dc2626;' : 'color:var(--color-success-text);'}font-weight:700;">${p.tardanzas.length > 0 ? '+' + promTard + 'm' : '✓'}</td>
       </tr>`;
     }).join('');

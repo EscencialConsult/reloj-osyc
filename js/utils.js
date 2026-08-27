@@ -132,10 +132,10 @@ const calcHsExtra = (planSalStr, salRealStr) => {
 };
 
 // ── ÁREAS (las define la empresa desde Configuración; vacío = no usa áreas) ──
-const AREA_PALETTE = ['#d26918','#c0562e','#b9822b','#6f4fb0','#1f8f5f','#2563eb','#c23d78','#c2560f','#0e7490','#9a3412'];
+const AREA_PALETTE = ['#2c6eb4','#2c6eb4','#3f6aa0','#3457a8','#1f8f5f','#2563eb','#c23d78','#1f4e79','#0e7490','#9a3412'];
 let AREAS = [];                                   // nombres de áreas de la empresa
 const setAreas = (arr) => { AREAS = Array.isArray(arr) ? arr.slice() : []; };
-const areaColor = a => { const i = AREAS.indexOf(a); return i >= 0 ? AREA_PALETTE[i % AREA_PALETTE.length] : '#7a6449'; };
+const areaColor = a => { const i = AREAS.indexOf(a); return i >= 0 ? AREA_PALETTE[i % AREA_PALETTE.length] : '#5b6b80'; };
 const areaColorHex = areaColor;
 
 // ── PLANTILLAS DE HORARIO (las define la empresa; {nombre,e,s,e2,s2}) ──
@@ -187,7 +187,7 @@ const tardInfoText = diff => {
   if (diff===null) return { text:'', color:'' };
   if (diff<0)  return { text:`✓ ${Math.abs(diff)} min antes del horario`, color:'var(--color-success-text)' };
   if (diff===0) return { text:'✓ Llegó en horario exacto',               color:'var(--color-success-text)' };
-  return           { text:`⚠ ${diff} min tarde`,                         color:'var(--color-danger-text)' };
+  return           { text:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> ${diff} min tarde`,                         color:'var(--color-danger-text)' };
 };
 
 // ── BUSCAR HORARIO PLANIFICADO DE UNA PERSONA PARA UNA FECHA ──
