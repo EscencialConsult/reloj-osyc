@@ -42,6 +42,26 @@
     .link-btn { background: none; border: none; color: #8a7052; font-size: 13px; text-decoration: underline; cursor: pointer; }
     .spin { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, .4); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Notificación de resultado del fichaje (pantalla completa) ── */
+    .notif-ov { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 22px; background: rgba(30, 47, 69, .5); backdrop-filter: blur(5px); animation: notifFade .2s ease both; }
+    .notif-card { background: #fff; border-radius: 26px; max-width: 380px; width: 100%; overflow: hidden; text-align: center; padding: 0 26px 26px; box-shadow: 0 26px 64px rgba(30, 47, 69, .3); animation: notifPop .32s cubic-bezier(.2, .8, .3, 1.25) both; }
+    .notif-band { height: 9px; margin: 0 -26px 22px; }
+    .notif-card.ok .notif-band { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .notif-card.err .notif-band { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .notif-ic { width: 82px; height: 82px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 6px auto 16px; }
+    .notif-card.ok .notif-ic { background: rgba(22, 163, 74, .12); color: #15803d; }
+    .notif-card.err .notif-ic { background: rgba(220, 38, 38, .1); color: #b91c1c; }
+    .notif-ic svg { width: 46px; height: 46px; }
+    .notif-title { font-family: var(--font-title); font-size: 24px; font-weight: 800; color: #1e2f45; line-height: 1.14; }
+    .notif-msg { font-size: 15px; color: #5b6b80; margin-top: 9px; line-height: 1.45; }
+    .notif-det { margin-top: 16px; padding-top: 15px; border-top: 1px dashed rgba(30, 47, 69, .15); font-size: 16px; color: #1e2f45; font-weight: 800; }
+    .notif-det .sub { font-size: 14px; color: #5b6b80; font-weight: 600; margin-top: 3px; }
+    .notif-btn { margin-top: 22px; width: 100%; min-height: 52px; border: none; border-radius: 15px; font-size: 16px; font-weight: 800; color: #fff; cursor: pointer; font-family: var(--font-title); }
+    .notif-card.ok .notif-btn { background: linear-gradient(135deg, #16a34a, #22c55e); }
+    .notif-card.err .notif-btn { background: linear-gradient(135deg, #2c6eb4, #5a97d4); }
+    @keyframes notifFade { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes notifPop { from { opacity: 0; transform: scale(.9) translateY(12px) } to { opacity: 1; transform: none } }
   </style>
 </head>
 
@@ -92,6 +112,18 @@
 
     <div id="vLoading" style="text-align:center;padding:40px;color:#8a7052;">Cargando…</div>
 
+  </div>
+
+  <!-- ══ NOTIFICACIÓN DE RESULTADO ══ -->
+  <div id="notif" class="notif-ov" style="display:none;" onclick="if(event.target===this)closeNotif()">
+    <div class="notif-card" id="notifCard">
+      <div class="notif-band"></div>
+      <div class="notif-ic" id="notifIc"></div>
+      <div class="notif-title" id="notifTitle"></div>
+      <div class="notif-msg" id="notifMsg"></div>
+      <div class="notif-det" id="notifDet" style="display:none;"></div>
+      <button class="notif-btn" id="notifBtn" onclick="closeNotif()">Listo</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -157,11 +189,39 @@
       r.style.display = '';
     }
 
+    // Notificación grande de resultado (éxito / error) con vibración
+    let _notifTimer = null;
+    const _NOTIF_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    const _NOTIF_ALERT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+    function closeNotif() {
+      document.getElementById('notif').style.display = 'none';
+      if (_notifTimer) { clearTimeout(_notifTimer); _notifTimer = null; }
+    }
+    function _notify(ok, o) {
+      o = o || {};
+      const card = document.getElementById('notifCard');
+      card.className = 'notif-card ' + (ok ? 'ok' : 'err');
+      document.getElementById('notifIc').innerHTML = ok ? _NOTIF_CHECK : _NOTIF_ALERT;
+      document.getElementById('notifTitle').textContent = o.title || (ok ? 'Listo' : 'No se pudo fichar');
+      const msgEl = document.getElementById('notifMsg');
+      msgEl.textContent = o.msg || '';
+      msgEl.style.display = o.msg ? '' : 'none';
+      const det = document.getElementById('notifDet');
+      if (o.det) { det.innerHTML = o.det; det.style.display = ''; } else { det.style.display = 'none'; }
+      document.getElementById('notifBtn').textContent = ok ? 'Listo' : 'Entendido';
+      document.getElementById('notif').style.display = '';
+      try { if (navigator.vibrate) navigator.vibrate(ok ? 90 : [70, 60, 70]); } catch (_) {}
+      if (_notifTimer) clearTimeout(_notifTimer);
+      if (ok) _notifTimer = setTimeout(closeNotif, 5000);   // el éxito se cierra solo
+    }
+    // texto seguro dentro de HTML (para nombre/sede que vienen de la base)
+    function _esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
     function doFichar() {
       const btn = document.getElementById('btnFichar');
       const r = document.getElementById('fResult');
       r.style.display = 'none';
-      if (!navigator.geolocation) { _result(false, 'Tu teléfono no permite ubicación.'); return; }
+      if (!navigator.geolocation) { _notify(false, { title: 'No se pudo fichar', msg: 'Tu teléfono no permite acceder a la ubicación. Activá el GPS y probá de nuevo.' }); return; }
       btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Ubicando…';
 
       navigator.geolocation.getCurrentPosition(async pos => {
@@ -173,27 +233,45 @@
         btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Fichar';
         if (error) {
           console.error('fichar RPC error:', error);
-          _result(false, 'Error: ' + (error.message || 'desconocido') + (error.hint ? ' — ' + error.hint : ''));
+          _notify(false, { title: 'No se pudo fichar', msg: 'Hubo un problema de conexión. Esperá unos segundos y probá otra vez.' });
           return;
         }
         if (data?.ok) {
-          const icon = data.tipo === 'entrada' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
-          _result(true, `${icon} <div style="font-size:18px;margin-top:4px;">${data.tipo === 'entrada' ? 'Ingreso' : 'Salida'} registrada</div>`
-            + `<div style="font-size:14px;font-weight:600;margin-top:6px;">${data.sede || ''} · ${data.hora || ''}</div>`);
+          const esEnt = data.tipo === 'entrada';
+          _notify(true, {
+            title: esEnt ? '¡Ingreso registrado!' : '¡Salida registrada!',
+            msg: esEnt ? 'Tu ingreso quedó fichado correctamente.' : 'Tu salida quedó fichada correctamente.',
+            det: (data.nombre ? _esc(data.nombre) : '')
+              + '<div class="sub">' + _esc(data.sede || '') + (data.hora ? ' · ' + _esc(data.hora) : '') + '</div>'
+          });
         } else {
-          _result(false, data?.msg || 'No se pudo fichar.');
+          _notify(false, { title: 'No se pudo fichar', msg: data?.msg || 'No se pudo registrar el fichaje. Probá de nuevo.' });
         }
       }, err => {
         btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Fichar';
         const msg = err.code === 1
           ? 'Necesitás permitir la ubicación para fichar. Activala y probá de nuevo.'
           : 'No pudimos obtener tu ubicación. Salí a un lugar más abierto y reintentá.';
-        _result(false, msg);
+        _notify(false, { title: 'No se pudo fichar', msg: msg });
       }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        // Busca si hay una versión nueva publicada
+        reg.update();
+        setInterval(() => reg.update(), 60 * 60 * 1000);   // y revisa cada 1 h si la app queda abierta
+        reg.addEventListener('updatefound', () => {
+          const nuevo = reg.installing;
+          if (!nuevo) return;
+          nuevo.addEventListener('statechange', () => {
+            // Nueva versión lista Y ya había una controlando la página → recargar
+            if (nuevo.state === 'installed' && navigator.serviceWorker.controller) {
+              window.location.reload();
+            }
+          });
+        });
+      }).catch(() => {});
     }
     init();
   </script>
