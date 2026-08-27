@@ -169,6 +169,11 @@ end $$;
 -- desde el navegador. La única vía de escritura es la función fichar().
 -- Las demás tablas quedan sin RLS (el panel admin las maneja con su sesión).
 
+-- Permisos de tablas/secuencias para los roles públicos (evita errores 403)
+grant usage on schema public to anon, authenticated;
+grant all on all tables    in schema public to anon, authenticated;
+grant all on all sequences in schema public to anon, authenticated;
+
 alter table public.fichajes enable row level security;
 
 drop policy if exists fichajes_select_own on public.fichajes;

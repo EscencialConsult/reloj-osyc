@@ -10,7 +10,7 @@
 //     la versión nueva automáticamente. Es lo único que hay que tocar acá.
 // ============================================================================
 
-const CACHE_VERSION = 1;                       // ⬅️ subí este número en cada publicación
+const CACHE_VERSION = 2;                       // ⬅️ subí este número en cada publicación
 const CACHE_NAME = 'osyc-cache-v' + CACHE_VERSION;
 
 // 1) Instalar la versión nueva de inmediato (no espera a cerrar pestañas)

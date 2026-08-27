@@ -93,6 +93,7 @@ const Registros = (() => {
       const _hs1 = calcHs(r.hora_entrada?.slice(0, 5), r.hora_salida?.slice(0, 5));
       const _hs2 = calcHs(r.hora_entrada2?.slice(0, 5), r.hora_salida2?.slice(0, 5));
       const hs = (_hs1 !== null || _hs2 !== null) ? (_hs1 || 0) + (_hs2 || 0) : null;
+      const hay2 = !!(r.hora_entrada2 || r.hora_salida2);   // ¿tiene 2° turno (horario cortado)?
 
       const turno = r.turno || '';
       const col = areaColor(r.area);
@@ -140,8 +141,8 @@ const Registros = (() => {
         <td class="hide-mobile" style="color:rgba(30,47,69,.58);font-size:12px;">${r.rol || '—'}</td>
         <td style="white-space:nowrap;">${fmtDate(r.fecha)}</td>
         <td class="hide-mobile" style="font-size:12px;color:rgba(30,47,69,.6);">${turno || '—'}</td>
-        <td style="font-weight:700;">${r.hora_entrada?.slice(0, 5) || '—'}</td>
-        <td style="color:rgba(30,47,69,.62);">${r.hora_salida?.slice(0, 5) || '—'}</td>
+        <td style="font-weight:700;">${r.hora_entrada?.slice(0, 5) || '—'}${hay2 ? `<div style="font-size:11px;font-weight:600;color:rgba(30,47,69,.5);margin-top:2px;"><span style="font-size:9px;opacity:.7;">2º </span>${r.hora_entrada2?.slice(0, 5) || '—'}</div>` : ''}</td>
+        <td style="color:rgba(30,47,69,.62);">${r.hora_salida?.slice(0, 5) || '—'}${hay2 ? `<div style="font-size:11px;font-weight:600;color:rgba(30,47,69,.5);margin-top:2px;"><span style="font-size:9px;opacity:.7;">2º </span>${r.hora_salida2?.slice(0, 5) || '—'}</div>` : ''}</td>
         <td><span class="badge badge-cyan">${hs !== null ? fmtHs(hs) : '—'}</span></td>
         <td>${tardCell}</td>
         <td class="hide-mobile">${obsCell}</td>

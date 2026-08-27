@@ -217,7 +217,7 @@
         <div style="display:flex;align-items:center;gap:7px;">
           <span class="badge badge-pink"><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;vertical-align:-2px;margin-right:3px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin</span>
           <a href="index.html" class="btn btn-ghost" style="font-size:12px;padding:6px 12px;">← Inicio</a>
-          <button class="btn btn-ghost" onclick="Auth.logout();window.location.href='index.html';"
+          <button class="btn btn-ghost" onclick="Auth.logout();"
             style="font-size:12px;padding:6px 12px;">Salir</button>
         </div>
       </div>
@@ -779,13 +779,13 @@
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
                 <div style="flex:1;min-width:130px;">
                   <label class="lbl">Radio de la zona (m)</label>
-                  <input class="inp" type="number" id="sedeRadio" value="40" min="10" />
-                  <div style="font-size:10px;color:rgba(30,47,69,.4);margin-top:3px;">Cuántos metros alrededor del punto cuentan como "dentro del local".</div>
+                  <input class="inp" type="number" id="sedeRadio" value="100" min="10" />
+                  <div style="font-size:10px;color:rgba(30,47,69,.4);margin-top:3px;">Metros alrededor del punto que cuentan como "dentro del local". El GPS del celular varía: 80–150 m es lo recomendado para que los empleados ficha sin problemas.</div>
                 </div>
                 <div style="flex:1;min-width:130px;">
                   <label class="lbl">Precisión GPS máx. (m)</label>
-                  <input class="inp" type="number" id="sedePrecision" value="50" min="10" />
-                  <div style="font-size:10px;color:rgba(30,47,69,.4);margin-top:3px;">Si el GPS es más impreciso que esto, se rechaza el fichaje.</div>
+                  <input class="inp" type="number" id="sedePrecision" value="100" min="10" />
+                  <div style="font-size:10px;color:rgba(30,47,69,.4);margin-top:3px;">Si el GPS es más impreciso que esto, se rechaza el fichaje. 80–120 m es un buen valor.</div>
                 </div>
               </div>
               <label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;cursor:pointer;">
@@ -1340,8 +1340,8 @@
         document.getElementById('sedeDireccion').value  = s ? (s.direccion || '') : '';
         document.getElementById('sedeLat').value        = s ? s.lat : '';
         document.getElementById('sedeLng').value        = s ? s.lng : '';
-        document.getElementById('sedeRadio').value      = s ? s.radio_m : 40;
-        document.getElementById('sedePrecision').value  = s ? s.precision_max : 50;
+        document.getElementById('sedeRadio').value      = s ? s.radio_m : 100;
+        document.getElementById('sedePrecision').value  = s ? s.precision_max : 100;
         document.getElementById('sedeActivo').checked   = s ? !!s.activo : true;
         document.getElementById('sedeGpsHint').textContent =
           'Tocá "Usar mi ubicación actual" estando parado dentro del local, o pegá las coordenadas del pin de Google Maps.';
@@ -1354,22 +1354,36 @@
         const btn = document.getElementById('sedeGpsBtn');
         const hint = document.getElementById('sedeGpsHint');
         if (!navigator.geolocation) { showToast('Este dispositivo no tiene GPS disponible', 'err'); return; }
-        btn.disabled = true; const prev = btn.textContent; btn.textContent = 'Obteniendo ubicación…';
-        navigator.geolocation.getCurrentPosition(
+        const prev = btn.textContent;
+        btn.disabled = true; btn.textContent = 'Afinando GPS…'; hint.style.color = '';
+        let best = null, watchId = null, done = false;
+        const apply = () => {
+          if (done) return; done = true;
+          if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (_) {} }
+          clearTimeout(timer);
+          btn.disabled = false; btn.textContent = prev;
+          if (!best) { showToast('No se pudo obtener la ubicación. Probá en un lugar abierto.', 'err'); return; }
+          const { latitude, longitude, accuracy } = best.coords;
+          document.getElementById('sedeLat').value = latitude.toFixed(6);
+          document.getElementById('sedeLng').value = longitude.toFixed(6);
+          hint.textContent = 'Ubicación tomada con una precisión de ±' + Math.round(accuracy) + ' m. '
+            + (accuracy > 30 ? 'Es algo imprecisa: probá a cielo abierto, o poné un radio de sede más amplio.' : 'Buena precisión ✓');
+          hint.style.color = accuracy > 30 ? 'var(--color-danger-text)' : 'var(--color-success-text, #2e7d32)';
+        };
+        const timer = setTimeout(apply, 9000);   // corta a los 9 s con la mejor lectura que haya
+        watchId = navigator.geolocation.watchPosition(
           pos => {
-            const { latitude, longitude, accuracy } = pos.coords;
-            document.getElementById('sedeLat').value = latitude.toFixed(6);
-            document.getElementById('sedeLng').value = longitude.toFixed(6);
-            hint.textContent = 'Ubicación tomada con una precisión de ±' + Math.round(accuracy) + ' m. Ideal medir parado en la puerta o el centro del local.';
-            hint.style.color = 'var(--color-success-text, #2e7d32)';
-            btn.disabled = false; btn.textContent = prev;
+            if (!best || pos.coords.accuracy < best.coords.accuracy) best = pos;
+            btn.textContent = 'Afinando GPS… ±' + Math.round(best.coords.accuracy) + ' m';
+            if (best.coords.accuracy <= 15) apply();           // ya es bien preciso, cortamos
           },
           err => {
-            const msg = err.code === 1 ? 'Permiso de ubicación denegado. Activalo para usar esta opción.' : 'No se pudo obtener la ubicación. Probá de nuevo en un lugar abierto.';
-            showToast(msg, 'err');
-            btn.disabled = false; btn.textContent = prev;
+            if (best) return;                                  // ya tenemos alguna lectura: la usará el timer
+            done = true; if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (_) {} }
+            clearTimeout(timer); btn.disabled = false; btn.textContent = prev;
+            showToast(err.code === 1 ? 'Permiso de ubicación denegado. Activalo para usar esta opción.' : 'No se pudo obtener la ubicación. Probá de nuevo en un lugar abierto.', 'err');
           },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+          { enableHighAccuracy: true, timeout: 9000, maximumAge: 0 }
         );
       }
       async function save() {

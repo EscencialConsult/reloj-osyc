@@ -217,43 +217,73 @@
     // texto seguro dentro de HTML (para nombre/sede que vienen de la base)
     function _esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
-    function doFichar() {
-      const btn = document.getElementById('btnFichar');
-      const r = document.getElementById('fResult');
-      r.style.display = 'none';
-      if (!navigator.geolocation) { _notify(false, { title: 'No se pudo fichar', msg: 'Tu teléfono no permite acceder a la ubicación. Activá el GPS y probá de nuevo.' }); return; }
-      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Ubicando…';
+    // Ícono del botón Fichar (pin)
+    const _PIN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
 
-      navigator.geolocation.getCurrentPosition(async pos => {
-        const { latitude, longitude, accuracy } = pos.coords;
-        btn.innerHTML = '<span class="spin"></span> Registrando…';
-        const { data, error } = await SB.rpc('fichar', {
-          p_sede_id: _sedeParam, p_lat: latitude, p_lng: longitude, p_accuracy: accuracy, p_tipo: null
-        });
-        btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Fichar';
-        if (error) {
-          console.error('fichar RPC error:', error);
-          _notify(false, { title: 'No se pudo fichar', msg: 'Hubo un problema de conexión. Esperá unos segundos y probá otra vez.' });
-          return;
-        }
-        if (data?.ok) {
-          const esEnt = data.tipo === 'entrada';
-          _notify(true, {
-            title: esEnt ? '¡Ingreso registrado!' : '¡Salida registrada!',
-            msg: esEnt ? 'Tu ingreso quedó fichado correctamente.' : 'Tu salida quedó fichada correctamente.',
-            det: (data.nombre ? _esc(data.nombre) : '')
-              + '<div class="sub">' + _esc(data.sede || '') + (data.hora ? ' · ' + _esc(data.hora) : '') + '</div>'
-          });
-        } else {
-          _notify(false, { title: 'No se pudo fichar', msg: data?.msg || 'No se pudo registrar el fichaje. Probá de nuevo.' });
-        }
-      }, err => {
-        btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1em;height:1em;vertical-align:-.15em;display:inline-block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Fichar';
-        const msg = err.code === 1
+    // Toma la MEJOR lectura de GPS: observa unos segundos y se queda con la de
+    // menor error (accuracy). Corta antes si logra una lectura bien precisa.
+    // Esto reduce mucho la variación del GPS entre lecturas.
+    function _bestPosition({ timeout = 9000, desired = 18 } = {}) {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) { reject({ code: 2 }); return; }
+        let best = null, watchId = null, done = false;
+        const stop = () => {
+          if (watchId != null) { try { navigator.geolocation.clearWatch(watchId); } catch (_) {} }
+          clearTimeout(timer);
+        };
+        const finish = () => { if (done) return; done = true; stop(); best ? resolve(best) : reject({ code: 3 }); };
+        const timer = setTimeout(finish, timeout);
+        watchId = navigator.geolocation.watchPosition(
+          pos => {
+            if (!best || pos.coords.accuracy < best.coords.accuracy) best = pos;
+            if (best.coords.accuracy <= desired) finish();     // ya es suficientemente preciso
+          },
+          err => { if (!best) { done = true; stop(); reject(err); } },   // error y todavía sin ninguna lectura
+          { enableHighAccuracy: true, timeout, maximumAge: 0 }
+        );
+      });
+    }
+
+    async function doFichar() {
+      const btn = document.getElementById('btnFichar');
+      if (!navigator.geolocation) { _notify(false, { title: 'No se pudo fichar', msg: 'Tu teléfono no permite acceder a la ubicación. Activá el GPS y probá de nuevo.' }); return; }
+      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Afinando GPS…';
+
+      let pos;
+      try {
+        pos = await _bestPosition({ timeout: 9000, desired: 18 });
+      } catch (err) {
+        btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+        const msg = (err && err.code === 1)
           ? 'Necesitás permitir la ubicación para fichar. Activala y probá de nuevo.'
-          : 'No pudimos obtener tu ubicación. Salí a un lugar más abierto y reintentá.';
+          : 'No pudimos obtener tu ubicación. Salí a un lugar más abierto (a cielo abierto anda mejor) y reintentá.';
         _notify(false, { title: 'No se pudo fichar', msg: msg });
-      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+        return;
+      }
+
+      const { latitude, longitude, accuracy } = pos.coords;
+      btn.innerHTML = '<span class="spin"></span> Registrando…';
+      const { data, error } = await SB.rpc('fichar', {
+        p_sede_id: _sedeParam, p_lat: latitude, p_lng: longitude, p_accuracy: accuracy, p_tipo: null
+      });
+      btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+
+      if (error) {
+        console.error('fichar RPC error:', error);
+        _notify(false, { title: 'No se pudo fichar', msg: 'Hubo un problema de conexión. Esperá unos segundos y probá otra vez.' });
+        return;
+      }
+      if (data?.ok) {
+        const esEnt = data.tipo === 'entrada';
+        _notify(true, {
+          title: esEnt ? '¡Ingreso registrado!' : '¡Salida registrada!',
+          msg: esEnt ? 'Tu ingreso quedó fichado correctamente.' : 'Tu salida quedó fichada correctamente.',
+          det: (data.nombre ? _esc(data.nombre) : '')
+            + '<div class="sub">' + _esc(data.sede || '') + (data.hora ? ' · ' + _esc(data.hora) : '') + '</div>'
+        });
+      } else {
+        _notify(false, { title: 'No se pudo fichar', msg: data?.msg || 'No se pudo registrar el fichaje. Probá de nuevo.' });
+      }
     }
 
     if ('serviceWorker' in navigator) {
