@@ -62,6 +62,22 @@
     .notif-card.err .notif-btn { background: linear-gradient(135deg, #2c6eb4, #5a97d4); }
     @keyframes notifFade { from { opacity: 0 } to { opacity: 1 } }
     @keyframes notifPop { from { opacity: 0; transform: scale(.9) translateY(12px) } to { opacity: 1; transform: none } }
+
+    /* ── Consentimiento biométrico ── */
+    .consent-ov { position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(30, 47, 69, .55); backdrop-filter: blur(5px); animation: notifFade .2s ease both; overflow-y: auto; }
+    .consent-card { background: #fff; border-radius: 24px; max-width: 400px; width: 100%; overflow: hidden; text-align: center; padding: 0 24px 24px; box-shadow: 0 26px 64px rgba(30, 47, 69, .3); animation: notifPop .32s cubic-bezier(.2, .8, .3, 1.25) both; }
+    .consent-band { height: 9px; margin: 0 -24px 20px; background: linear-gradient(90deg, #2c6eb4, #5a97d4); }
+    .consent-ic { width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 4px auto 14px; background: rgba(44, 110, 180, .12); color: #2c6eb4; }
+    .consent-ic svg { width: 38px; height: 38px; }
+    .consent-title { font-family: var(--font-title); font-size: 21px; font-weight: 800; color: #1e2f45; }
+    .consent-body { text-align: left; font-size: 14px; color: #4a5a6e; line-height: 1.5; margin-top: 12px; }
+    .consent-body p { margin: 0 0 10px; }
+    .consent-body ul { margin: 0 0 10px; padding-left: 18px; }
+    .consent-body li { margin-bottom: 6px; }
+    .consent-legal { font-size: 12.5px; color: #7a8a9e; background: rgba(44, 110, 180, .06); border-radius: 12px; padding: 10px 12px; }
+    .consent-btn { width: 100%; min-height: 52px; border: none; border-radius: 15px; font-size: 16px; font-weight: 800; cursor: pointer; font-family: var(--font-title); }
+    .consent-btn.ok { margin-top: 16px; background: linear-gradient(135deg, #2c6eb4, #5a97d4); color: #fff; }
+    .consent-btn.no { margin-top: 10px; background: none; color: #8a7052; text-decoration: underline; min-height: 40px; font-weight: 700; font-size: 14px; }
   </style>
 </head>
 
@@ -114,6 +130,28 @@
 
   </div>
 
+  <!-- ══ CONSENTIMIENTO BIOMÉTRICO (1ª vez) ══ -->
+  <div id="consent" class="consent-ov" style="display:none;">
+    <div class="consent-card">
+      <div class="consent-band"></div>
+      <div class="consent-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div class="consent-title">Registro facial para fichar</div>
+      <div class="consent-body">
+        <p>Para fichar con reconocimiento facial, <b>OSYC</b> necesita registrar y usar un <b>dato biométrico</b>: un código matemático de tu rostro.</p>
+        <ul>
+          <li><b>No se guardan fotos</b>, solo un vector de números del que <b>no se puede reconstruir</b> tu cara.</li>
+          <li>Se usa <b>únicamente</b> para verificar tu identidad al fichar entrada/salida.</li>
+          <li>Podés pedir que se <b>borre</b> cuando dejes de trabajar o si revocás el consentimiento.</li>
+        </ul>
+        <p class="consent-legal">Al tocar <b>Acepto</b>, autorizás este uso conforme a la Ley 25.326 de Protección de los Datos Personales. Queda registrada la fecha y hora de tu aceptación.</p>
+      </div>
+      <button class="consent-btn ok" id="consentOk">Acepto</button>
+      <button class="consent-btn no" id="consentNo">Ahora no</button>
+    </div>
+  </div>
+
   <!-- ══ NOTIFICACIÓN DE RESULTADO ══ -->
   <div id="notif" class="notif-ov" style="display:none;" onclick="if(event.target===this)closeNotif()">
     <div class="notif-card" id="notifCard">
@@ -128,6 +166,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js?v=8"></script>
+  <script src="js/facial.js?v=1"></script>
   <script>
     // Si el QR de la sucursal trae ?sede=<id>, se ficha contra esa sede; si no, se autodetecta por GPS.
     const _sedeParam = new URLSearchParams(location.search).get('sede') || null;
@@ -154,11 +193,22 @@
       else _show('vLogin');
     }
 
+    // Estado de la biometría facial del empleado logueado
+    let _faceState = null;   // { enrolado:bool, descriptor:[128] | null }
+
     function enterFichaje(session) {
       const nombre = session.user?.user_metadata?.nombre || session.user?.email || 'Empleado';
       document.getElementById('empNombre').textContent = 'Hola, ' + nombre + ' ';
       _tickClock();
       _show('vFichar');
+      // Precargar modelos de reconocimiento facial (así el primer fichaje no espera)
+      try { Facial.ready().catch(() => {}); } catch (_) {}
+      // Traer si ya tiene la cara registrada (para saber si toca enrolar o verificar)
+      SB.rpc('mi_biometria').then(({ data }) => {
+        _faceState = data && data.enrolado
+          ? { enrolado: true, descriptor: data.descriptor }
+          : { enrolado: false, descriptor: null };
+      }).catch(() => { _faceState = { enrolado: false, descriptor: null }; });
     }
 
     async function doLogin() {
@@ -177,6 +227,7 @@
 
     async function doLogout() {
       try { await SB.auth.signOut(); } catch (_) {}
+      _faceState = null;
       document.getElementById('fEmail').value = '';
       document.getElementById('fPass').value = '';
       _show('vLogin');
@@ -244,9 +295,105 @@
       });
     }
 
+    // ── CONSENTIMIENTO BIOMÉTRICO (1ª vez) ─────────────────────────────────
+    // Versión del texto de consentimiento. Si cambia el texto, subir la versión
+    // (ej. 'v2') para poder distinguir qué aceptó cada empleado.
+    const _CONSENT_VER = 'v1';
+    function _pedirConsentimiento() {
+      return new Promise(resolve => {
+        const ov = document.getElementById('consent');
+        const ok = document.getElementById('consentOk');
+        const no = document.getElementById('consentNo');
+        const cerrar = (val) => { ov.style.display = 'none'; ok.onclick = null; no.onclick = null; resolve(val); };
+        ok.onclick = () => cerrar(true);
+        no.onclick = () => cerrar(false);
+        ov.style.display = '';
+      });
+    }
+
+    // ── PUERTA FACIAL ──────────────────────────────────────────────────────
+    // La 1ª vez REGISTRA la cara del empleado; después de eso, la VERIFICA.
+    // Devuelve true si se puede continuar con el fichaje; false si no (ya avisó).
+    async function _puertaFacial(btn) {
+      // 1) Asegurar que la librería + modelos estén cargados
+      btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Preparando cámara…';
+      try {
+        await Facial.ready();
+      } catch (_) {
+        btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+        _notify(false, { title: 'No se pudo fichar', msg: 'No pudimos cargar el reconocimiento facial. Revisá tu conexión y probá de nuevo.' });
+        return false;
+      }
+      btn.innerHTML = '<span class="spin"></span> Abriendo cámara…';
+
+      // Si todavía no llegó el estado desde la base, lo pedimos ahora
+      if (!_faceState) {
+        try {
+          const { data } = await SB.rpc('mi_biometria');
+          _faceState = data && data.enrolado ? { enrolado: true, descriptor: data.descriptor } : { enrolado: false, descriptor: null };
+        } catch (_) { _faceState = { enrolado: false, descriptor: null }; }
+      }
+
+      const esEnrolamiento = !_faceState.enrolado;
+
+      // La 1ª vez: pedir consentimiento ANTES de abrir la cámara
+      if (esEnrolamiento) {
+        const acepto = await _pedirConsentimiento();
+        if (!acepto) {
+          btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+          _notify(false, {
+            title: 'Registro facial necesario',
+            msg: 'Para fichar con reconocimiento facial necesitás aceptar el uso del dato biométrico. Si tenés dudas, hablá con tu encargado.'
+          });
+          return false;
+        }
+      }
+
+      let cap;
+      try {
+        cap = await Facial.capture(esEnrolamiento
+          ? { title: 'Registrá tu cara (1ª vez)', hint: 'Es solo la primera vez', captureLabel: 'Registrar' }
+          : { title: 'Verificá tu identidad', captureLabel: 'Verificar' });
+      } catch (e) {
+        btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+        if (e && e.code === 'cancel') return false;                 // canceló: sin ruido
+        _notify(false, { title: 'No se pudo fichar', msg: (e && e.msg) || 'No pudimos usar la cámara. Probá de nuevo.' });
+        return false;
+      }
+
+      if (esEnrolamiento) {
+        // Guardar el vector facial y continuar directamente con el fichaje
+        btn.innerHTML = '<span class="spin"></span> Guardando tu registro…';
+        const { data, error } = await SB.rpc('guardar_biometria', { p_descriptor: cap.descriptor, p_consent_version: _CONSENT_VER });
+        if (error || !data?.ok) {
+          btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+          _notify(false, { title: 'No se pudo registrar tu cara', msg: (data && data.msg) || 'Probá de nuevo en un momento.' });
+          return false;
+        }
+        _faceState = { enrolado: true, descriptor: cap.descriptor };
+        return true;
+      }
+
+      // Ya estaba enrolado → comparar la selfie nueva contra la guardada
+      const dist = Facial.distance(cap.descriptor, _faceState.descriptor);
+      if (!Facial.match(cap.descriptor, _faceState.descriptor)) {
+        btn.disabled = false; btn.innerHTML = _PIN_SVG + ' Fichar';
+        _notify(false, {
+          title: 'No te reconocimos',
+          msg: 'La cara no coincide con la registrada. Buscá buena luz, sacate lentes de sol/barbijo y reintentá.'
+        });
+        return false;
+      }
+      return true;
+    }
+
     async function doFichar() {
       const btn = document.getElementById('btnFichar');
       if (!navigator.geolocation) { _notify(false, { title: 'No se pudo fichar', msg: 'Tu teléfono no permite acceder a la ubicación. Activá el GPS y probá de nuevo.' }); return; }
+
+      // Verificación facial ANTES del GPS
+      const caraOk = await _puertaFacial(btn);
+      if (!caraOk) return;
       btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Afinando GPS…';
 
       let pos;
