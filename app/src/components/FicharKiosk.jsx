@@ -1,5 +1,6 @@
-// Modo "kiosco": cuando el empleado entra por el QR (/fichar?sede=...), ve SOLO
-// la pantalla de Fichar, sin barra lateral ni el resto de las opciones.
+// Modo "kiosco": cuando el empleado entra por el QR (/fichar?sede=...), ve la
+// pantalla de Fichar enfocada, con un acceso a su panel (avisos/solicitudes).
+import { Link } from 'react-router-dom'
 import { useSession } from '../lib/session.jsx'
 import { Icon } from './icons.jsx'
 import Fichar from '../pages/Fichar.jsx'
@@ -14,6 +15,11 @@ export default function FicharKiosk() {
       </header>
       <main className="kiosk-body">
         <Fichar />
+        <div style={{ textAlign: 'center', marginTop: 20 }}>
+          <Link to="/" className="btn btn-ghost" style={{ textDecoration: 'none' }}>
+            <Icon.Bell /> Ver mis avisos y solicitudes
+          </Link>
+        </div>
       </main>
     </div>
   )
