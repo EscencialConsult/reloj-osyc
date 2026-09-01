@@ -1,0 +1,12 @@
+# Configuración de Netlify para el sistema React (carpeta app/).
+# Con esto, al conectar el repo Netlify compila y publica solo la app nueva.
+[build]
+  base = "app"
+  command = "npm run build"
+  publish = "dist"
+
+# SPA: cualquier ruta cae en index.html (ya reforzado por app/public/_redirects)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
