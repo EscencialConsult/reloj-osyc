@@ -64,7 +64,12 @@ export default function Avisos() {
               </div>
               <span className="muted">{fechaCorta(av.created_at)}</span>
             </div>
-            {esAdmin && <div className="muted" style={{ marginTop: 4 }}>Para: {paraLabel(av)}</div>}
+            {esAdmin && (
+              <div className="row" style={{ marginTop: 4, gap: 10, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
+                <span className="muted">Para: {paraLabel(av)}</span>
+                <Recibos avisoId={av.id} />
+              </div>
+            )}
             <div style={{ marginTop: 8, color: 'var(--tinta-2)', fontSize: 14, whiteSpace: 'pre-wrap', maxHeight: open ? 'none' : 40, overflow: 'hidden' }}>
               {av.cuerpo}
             </div>
@@ -73,6 +78,49 @@ export default function Avisos() {
         )
       })}
     </div>
+  )
+}
+
+function Recibos({ avisoId }) {
+  const [abierto, setAbierto] = useState(false)
+  const [data, setData] = useState(null)
+  const [cargando, setCargando] = useState(false)
+
+  async function toggle() {
+    const nuevo = !abierto
+    setAbierto(nuevo)
+    if (nuevo && !data) {
+      setCargando(true)
+      const { data: r } = await supabase.rpc('avisos_recibos', { p_aviso_id: avisoId })
+      setData(r && r.ok ? r : { total: 0, leidos: [] })
+      setCargando(false)
+    }
+  }
+  const n = data ? (data.leidos?.length || 0) : null
+
+  return (
+    <>
+      <button className="linklike" onClick={toggle}>
+        {abierto ? 'Ocultar recibos' : (data ? `Recibido por ${n}/${data.total}` : 'Ver recibos')}
+      </button>
+      {abierto && (
+        <div style={{ flexBasis: '100%', marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
+          {cargando ? <span className="muted">Cargando…</span>
+            : !data || data.leidos.length === 0 ? <span className="muted">Todavía nadie lo recibió.</span>
+              : (
+                <>
+                  <div className="muted" style={{ marginBottom: 4 }}>Recibido por {n} de {data.total}:</div>
+                  {data.leidos.map((l, i) => (
+                    <div key={i} className="row between" style={{ fontSize: 13, padding: '2px 0' }}>
+                      <span>{l.nombre}</span>
+                      <span className="muted" style={{ fontSize: 11 }}>{new Date(l.leido_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  ))}
+                </>
+              )}
+        </div>
+      )}
+    </>
   )
 }
 

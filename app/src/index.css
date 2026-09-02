@@ -106,12 +106,19 @@ textarea.inp { min-height: 90px; resize: vertical; }
   color: var(--azul); border-radius: 11px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
 .campana-btn svg { width: 20px; height: 20px; }
 .campana-badge { position: absolute; top: 4px; right: 4px; }
-.campana-panel { position: absolute; top: 50px; right: 0; width: min(340px, 90vw); background: #fff;
+.campana-panel { position: absolute; top: 50px; right: 0; width: 340px; max-width: 92vw; background: #fff;
   border: 1px solid var(--linea); border-radius: 14px; box-shadow: 0 16px 44px rgba(30, 47, 69, .2); z-index: 70; overflow: hidden; }
-.campana-item { display: block; width: 100%; text-align: left; border: none; border-bottom: 1px solid var(--linea);
-  padding: 10px 14px; cursor: pointer; font-family: inherit; color: inherit; }
+@media (max-width: 560px) {
+  .campana-panel { position: fixed; top: 62px; left: 8px; right: 8px; width: auto; max-width: none; }
+}
+.campana-item { border-bottom: 1px solid var(--linea); padding: 10px 14px; display: block; }
 .campana-item:last-child { border-bottom: none; }
-.campana-item:hover { background: rgba(44, 110, 180, .04) !important; }
+.campana-txt { flex: 1; min-width: 0; text-align: left; background: none; border: none; cursor: pointer; font-family: inherit; color: inherit; padding: 0; }
+.campana-cuerpo { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.campana-ok { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--linea);
+  background: #fff; color: var(--ok); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.campana-ok:hover { background: rgba(22, 163, 74, .1); border-color: rgba(22, 163, 74, .4); }
+.campana-ok svg { width: 16px; height: 16px; }
 
 /* ── Tablero de Inicio ── */
 .dash-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
