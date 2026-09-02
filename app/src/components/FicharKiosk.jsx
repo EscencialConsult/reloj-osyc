@@ -3,6 +3,7 @@
 import { Link } from 'react-router-dom'
 import { useSession } from '../lib/session.jsx'
 import { Icon } from './icons.jsx'
+import Campana from './Campana.jsx'
 import Fichar from '../pages/Fichar.jsx'
 
 export default function FicharKiosk() {
@@ -11,7 +12,10 @@ export default function FicharKiosk() {
     <div className="kiosk">
       <header className="kiosk-bar">
         <div className="brand">OS<b>YC</b></div>
-        <button className="btn btn-ghost btn-sm" onClick={logout}><Icon.Logout /> Salir</button>
+        <div className="row" style={{ gap: 8 }}>
+          <Campana />
+          <button className="btn btn-ghost btn-sm" onClick={logout}><Icon.Logout /> Salir</button>
+        </div>
       </header>
       <main className="kiosk-body">
         <Fichar />

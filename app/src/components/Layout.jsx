@@ -4,6 +4,7 @@ import { useSession } from '../lib/session.jsx'
 import { supabase } from '../lib/supabase'
 import { Icon } from './icons.jsx'
 import { NAV } from './nav.js'
+import Campana from './Campana.jsx'
 
 export default function Layout({ children }) {
   const { esAdmin, logout } = useSession()
@@ -48,9 +49,12 @@ export default function Layout({ children }) {
       {/* Columna de contenido */}
       <div className="content">
         <header className="topbar">
-          <button className="hamb" onClick={() => setMenu(true)} aria-label="Menú"><Icon.Menu /></button>
-          <div className="brand">OS<b>YC</b></div>
-          <button className="btn btn-ghost btn-sm" onClick={logout} style={{ marginLeft: 'auto' }}><Icon.Logout /> Salir</button>
+          <button className="hamb only-mobile" onClick={() => setMenu(true)} aria-label="Menú"><Icon.Menu /></button>
+          <div className="brand only-mobile">OS<b>YC</b></div>
+          <div className="row" style={{ marginLeft: 'auto', gap: 8 }}>
+            <Campana />
+            <button className="btn btn-ghost btn-sm only-mobile" onClick={logout}><Icon.Logout /> Salir</button>
+          </div>
         </header>
         <main className="content-inner">{children}</main>
       </div>
