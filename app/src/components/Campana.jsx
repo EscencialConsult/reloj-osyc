@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { Icon } from './icons.jsx'
+import PushToggle from './PushToggle.jsx'
 
 function haceCuanto(iso) {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000)
@@ -123,6 +124,7 @@ export default function Campana() {
                 </div>
               ))}
           </div>
+          <PushToggle />
         </div>
       )}
     </div>
