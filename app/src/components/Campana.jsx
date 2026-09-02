@@ -67,14 +67,12 @@ export default function Campana() {
 
   const noLeidas = items.filter(n => !n.leido).length
 
-  // Marca la notificación como leída y, si viene de un aviso, deja el acuse de recibo
+  // Marca la notificación como leída (el acuse de recibo del aviso se registra
+  // al ABRIR el aviso y confirmar, no acá).
   async function marcarLeida(n) {
     if (!n.leido) {
       setItems(prev => prev.map(x => x.id === n.id ? { ...x, leido: true } : x))
       await supabase.from('notificaciones').update({ leido: true }).eq('id', n.id)
-      if (n.origen_tabla === 'avisos' && n.origen_id) {
-        await supabase.from('avisos_lecturas').upsert({ aviso_id: n.origen_id, user_id: uid }, { onConflict: 'aviso_id,user_id' })
-      }
     }
   }
 
@@ -89,9 +87,6 @@ export default function Campana() {
     if (!noLe.length) return
     setItems(prev => prev.map(x => ({ ...x, leido: true })))
     await supabase.from('notificaciones').update({ leido: true }).in('id', noLe.map(n => n.id))
-    // acuse de recibo de los avisos incluidos
-    const avisoIds = noLe.filter(n => n.origen_tabla === 'avisos' && n.origen_id).map(n => n.origen_id)
-    for (const aid of avisoIds) await supabase.from('avisos_lecturas').upsert({ aviso_id: aid, user_id: uid }, { onConflict: 'aviso_id,user_id' })
   }
 
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSession } from '../lib/session.jsx'
-import { pushSoportado, estaActivo, activarPush, desactivarPush } from '../lib/push'
+import { pushSoportado, estaActivo, activarPush } from '../lib/push'
 
 export default function PushToggle() {
   const { session } = useSession()
@@ -22,10 +22,6 @@ export default function PushToggle() {
     catch (e) { alert(e.message) }
     finally { setBusy(false) }
   }
-  async function desactivar() {
-    setBusy(true)
-    try { await desactivarPush(); setEstado('inactivo') } finally { setBusy(false) }
-  }
 
   if (estado === 'cargando') return null
   const wrap = { padding: '10px 14px', borderTop: '1px solid var(--linea)' }
@@ -35,7 +31,7 @@ export default function PushToggle() {
   return (
     <div style={wrap}>
       {estado === 'activo'
-        ? <button className="linklike" onClick={desactivar} disabled={busy}>Desactivar alertas en este dispositivo</button>
+        ? <div className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ok)', fontWeight: 700 }}>✓ Alertas activas en este dispositivo</div>
         : <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={activar} disabled={busy}>
             {busy ? 'Activando…' : '🔔 Activar alertas en este celular'}
           </button>}

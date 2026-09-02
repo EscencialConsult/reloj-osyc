@@ -19,7 +19,8 @@ export default function Avisos() {
   const { session, esAdmin, nombre } = useSession()
   const [avisos, setAvisos] = useState([])
   const [leidos, setLeidos] = useState(new Set())
-  const [abierto, setAbierto] = useState(null)
+  const [abiertos, setAbiertos] = useState(new Set())   // avisos con el cuerpo visible
+  const [confirmando, setConfirmando] = useState(null)  // aviso a confirmar (empleado)
   const [cargando, setCargando] = useState(true)
 
   const cargar = useCallback(async () => {
@@ -35,12 +36,23 @@ export default function Avisos() {
 
   useEffect(() => { cargar() }, [cargar])
 
-  async function abrir(av) {
-    setAbierto(abierto === av.id ? null : av.id)
-    if (!leidos.has(av.id)) {
-      setLeidos(prev => new Set(prev).add(av.id))
-      await supabase.from('avisos_lecturas').upsert({ aviso_id: av.id, user_id: session.user.id }, { onConflict: 'aviso_id,user_id' })
-    }
+  function toggleAbierto(id) {
+    setAbiertos(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
+  }
+
+  // Click en el aviso: el admin (o ya leído) solo despliega; el empleado con
+  // aviso sin leer pasa por el cartel de confirmación.
+  function clickAviso(av) {
+    if (esAdmin || leidos.has(av.id)) toggleAbierto(av.id)
+    else setConfirmando(av)
+  }
+
+  // El empleado confirma → queda registrado como RECIBIDO y se abre el aviso
+  async function confirmarRecepcion(av) {
+    setLeidos(prev => new Set(prev).add(av.id))
+    setAbiertos(prev => new Set(prev).add(av.id))
+    setConfirmando(null)
+    await supabase.from('avisos_lecturas').upsert({ aviso_id: av.id, user_id: session.user.id }, { onConflict: 'aviso_id,user_id' })
   }
 
   if (cargando) return <div className="center-screen" style={{ minHeight: 200 }}><div className="spin" /></div>
@@ -54,9 +66,10 @@ export default function Avisos() {
 
       {avisos.map(av => {
         const noLeido = !leidos.has(av.id)
-        const open = abierto === av.id
+        const abierto = abiertos.has(av.id)
+        const pedirConfirm = noLeido && !esAdmin   // empleado: no muestra el cuerpo hasta confirmar
         return (
-          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => abrir(av)}>
+          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => clickAviso(av)}>
             <div className="between">
               <div className="row">
                 {noLeido && <span className="dot" />}
@@ -70,13 +83,32 @@ export default function Avisos() {
                 <Recibos avisoId={av.id} />
               </div>
             )}
-            <div style={{ marginTop: 8, color: 'var(--tinta-2)', fontSize: 14, whiteSpace: 'pre-wrap', maxHeight: open ? 'none' : 40, overflow: 'hidden' }}>
-              {av.cuerpo}
-            </div>
-            {av.autor_nombre && open && <div className="muted" style={{ marginTop: 8 }}>— {av.autor_nombre}</div>}
+            {pedirConfirm ? (
+              <div className="muted" style={{ marginTop: 8, color: 'var(--azul)', fontWeight: 700 }}>📩 Tocá para leer y confirmar recepción</div>
+            ) : (
+              <>
+                <div style={{ marginTop: 8, color: 'var(--tinta-2)', fontSize: 14, whiteSpace: 'pre-wrap', maxHeight: abierto ? 'none' : 40, overflow: 'hidden' }}>
+                  {av.cuerpo}
+                </div>
+                {av.autor_nombre && abierto && <div className="muted" style={{ marginTop: 8 }}>— {av.autor_nombre}</div>}
+              </>
+            )}
           </div>
         )
       })}
+
+      {/* Cartel de confirmación de apertura (empleado) */}
+      {confirmando && (
+        <div className="consent-ov" onClick={e => { if (e.target === e.currentTarget) setConfirmando(null) }}>
+          <div className="card stack" style={{ maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 40 }}>📩</div>
+            <b style={{ fontSize: 17 }}>{confirmando.titulo}</b>
+            <p className="muted">Al abrir este aviso, queda registrado que lo <b>recibiste</b>. ¿Querés abrirlo ahora?</p>
+            <button className="btn btn-primary" onClick={() => confirmarRecepcion(confirmando)}>Abrir y confirmar recepción</button>
+            <button className="linklike" onClick={() => setConfirmando(null)}>Ahora no</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
