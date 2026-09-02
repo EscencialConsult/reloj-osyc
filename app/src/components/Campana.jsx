@@ -48,15 +48,32 @@ export default function Campana() {
 
   useEffect(() => { cargar() }, [cargar])
 
+  // Tiempo real (mejor esfuerzo)
   useEffect(() => {
     if (!uid) return
+    try { if (session?.access_token) supabase.realtime.setAuth(session.access_token) } catch (_) {}
     const ch = supabase.channel('notif-' + uid)
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notificaciones', filter: `user_id=eq.${uid}` },
         payload => { setItems(prev => [payload.new, ...prev].slice(0, 20)); alertar() })
       .subscribe()
     return () => { supabase.removeChannel(ch) }
-  }, [uid])
+  }, [uid, session?.access_token])
+
+  // Red de seguridad: refrescar al volver a la pestaña y cada 1 min
+  // (así, si el tiempo real no conecta, igual se actualiza sin recargar la página)
+  useEffect(() => {
+    if (!uid) return
+    const onVis = () => { if (document.visibilityState === 'visible') cargar() }
+    document.addEventListener('visibilitychange', onVis)
+    window.addEventListener('focus', onVis)
+    const iv = setInterval(cargar, 60000)
+    return () => {
+      document.removeEventListener('visibilitychange', onVis)
+      window.removeEventListener('focus', onVis)
+      clearInterval(iv)
+    }
+  }, [uid, cargar])
 
   useEffect(() => {
     if (!abierto) return
