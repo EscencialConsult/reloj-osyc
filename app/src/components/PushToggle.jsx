@@ -33,7 +33,7 @@ export default function PushToggle() {
       {estado === 'activo'
         ? <div className="muted" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--ok)', fontWeight: 700 }}>✓ Alertas activas en este dispositivo</div>
         : <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={activar} disabled={busy}>
-            {busy ? 'Activando…' : '🔔 Activar alertas en este celular'}
+            {busy ? 'Activando…' : '🔔 Activar alertas en este dispositivo'}
           </button>}
     </div>
   )

@@ -16,7 +16,7 @@ function paraLabel(av) {
 }
 
 export default function Avisos() {
-  const { session, esAdmin, nombre } = useSession()
+  const { session, esAdmin, nombre, usaAreas } = useSession()
   const [avisos, setAvisos] = useState([])
   const [leidos, setLeidos] = useState(new Set())
   const [abiertos, setAbiertos] = useState(new Set())   // avisos con el cuerpo visible
@@ -114,13 +114,15 @@ export default function Avisos() {
           </div>
           {esAdmin && (
             <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
-              <div className="grow" style={{ minWidth: 140 }}>
-                <label className="lbl">Área</label>
-                <select className="inp" value={fArea} onChange={e => setFArea(e.target.value)}>
-                  <option value="">Todas</option>
-                  {areas.map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
-              </div>
+              {usaAreas && (
+                <div className="grow" style={{ minWidth: 140 }}>
+                  <label className="lbl">Área</label>
+                  <select className="inp" value={fArea} onChange={e => setFArea(e.target.value)}>
+                    <option value="">Todas</option>
+                    {areas.map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                </div>
+              )}
               <div className="grow" style={{ minWidth: 140 }}>
                 <label className="lbl">Enviado a (persona)</label>
                 <select className="inp" value={fUser} onChange={e => setFUser(e.target.value)}>
@@ -230,7 +232,7 @@ function Recibos({ avisoId }) {
 }
 
 function NuevoAviso({ nombre, onCreado }) {
-  const { session } = useSession()
+  const { session, usaAreas } = useSession()
   const [abierto, setAbierto] = useState(false)
   const [titulo, setTitulo] = useState('')
   const [cuerpo, setCuerpo] = useState('')
@@ -293,7 +295,7 @@ function NuevoAviso({ nombre, onCreado }) {
         <label className="lbl">¿A quién se lo enviás?</label>
         <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
           <button className={'btn btn-sm ' + (modo === 'todos' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('todos')}>Todos</button>
-          <button className={'btn btn-sm ' + (modo === 'area' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('area')}>Un área</button>
+          {usaAreas && <button className={'btn btn-sm ' + (modo === 'area' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('area')}>Un área</button>}
           <button className={'btn btn-sm ' + (modo === 'personas' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('personas')}>Personas</button>
         </div>
       </div>

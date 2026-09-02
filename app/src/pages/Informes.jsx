@@ -33,7 +33,7 @@ function extraPorPersona(rows) {
 }
 
 export default function Informes() {
-  const { esAdmin } = useSession()
+  const { esAdmin, usaAreas } = useSession()
   const [per, setPer] = useState('semana')
   const [area, setArea] = useState('')
   const [persona, setPersona] = useState('')
@@ -128,13 +128,15 @@ export default function Informes() {
               {PERIODOS.map(p => <option key={p.v} value={p.v}>{p.t}</option>)}
             </select>
           </div>
-          <div className="grow" style={{ minWidth: 120 }}>
-            <label className="lbl">Área</label>
-            <select className="inp" value={area} onChange={e => setArea(e.target.value)}>
-              <option value="">Todas</option>
-              {areasUsar.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </div>
+          {usaAreas && (
+            <div className="grow" style={{ minWidth: 120 }}>
+              <label className="lbl">Área</label>
+              <select className="inp" value={area} onChange={e => setArea(e.target.value)}>
+                <option value="">Todas</option>
+                {areasUsar.map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+          )}
           <div className="grow" style={{ minWidth: 120 }}>
             <label className="lbl">Persona</label>
             <input className="inp" value={persona} onChange={e => setPersona(e.target.value)} placeholder="Nombre…" />
@@ -163,11 +165,13 @@ export default function Informes() {
               <KPI n={kpis.conExtra || '—'} t="Con extra" />
             </div>
 
-            {/* Gráficos */}
-            <div className="mod-grid">
-              <div className="card"><b style={{ fontSize: 13 }}>Registros por área</b><div style={{ height: 220 }}><Doughnut data={dataArea} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: gris, font: { size: 11 }, boxWidth: 12 } } } }} /></div></div>
-              <div className="card"><b style={{ fontSize: 13 }}>% Puntualidad por área</b><div style={{ height: 220 }}><Bar data={dataPunt} options={{ responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, ticks: { color: gris }, grid: { color: grid } }, x: { ticks: { color: gris }, grid: { display: false } } }, plugins: { legend: { display: false } } }} /></div></div>
-            </div>
+            {/* Gráficos por área (solo si la empresa usa áreas) */}
+            {usaAreas && (
+              <div className="mod-grid">
+                <div className="card"><b style={{ fontSize: 13 }}>Registros por área</b><div style={{ height: 220 }}><Doughnut data={dataArea} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: gris, font: { size: 11 }, boxWidth: 12 } } } }} /></div></div>
+                <div className="card"><b style={{ fontSize: 13 }}>% Puntualidad por área</b><div style={{ height: 220 }}><Bar data={dataPunt} options={{ responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100, ticks: { color: gris }, grid: { color: grid } }, x: { ticks: { color: gris }, grid: { display: false } } }, plugins: { legend: { display: false } } }} /></div></div>
+              </div>
+            )}
             <div className="card"><b style={{ fontSize: 13 }}>Registros por día</b><div style={{ height: 200 }}><Line data={dataDia} options={{ responsive: true, maintainAspectRatio: false, scales: { y: { ticks: { color: gris, stepSize: 1 }, grid: { color: grid } }, x: { ticks: { color: gris, maxTicksLimit: 8 }, grid: { display: false } } }, plugins: { legend: { display: false } } }} /></div></div>
 
             {/* Tops */}

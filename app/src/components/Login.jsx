@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSession } from '../lib/session.jsx'
 
 export default function Login() {
-  const { login } = useSession()
+  const { login, usaLideres } = useSession()
   const [email, setEmail] = useState('')
   const [dni, setDni] = useState('')
   const [err, setErr] = useState('')
@@ -41,7 +41,7 @@ export default function Login() {
         <button className="btn btn-primary" disabled={cargando}>
           {cargando ? <span className="spin" style={{ width: 18, height: 18, borderTopColor: '#fff', borderColor: 'rgba(255,255,255,.4)' }} /> : 'Ingresar →'}
         </button>
-        <Link to="/lider" className="muted" style={{ textAlign: 'center', fontSize: 13 }}>Soy líder · cargar horarios →</Link>
+        {usaLideres && <Link to="/lider" className="muted" style={{ textAlign: 'center', fontSize: 13 }}>Soy líder · cargar horarios →</Link>}
       </form>
     </div>
   )

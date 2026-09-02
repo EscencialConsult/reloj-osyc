@@ -9,7 +9,7 @@ import { Icon } from '../components/icons.jsx'
 const PAGE = 100
 
 export default function Registros() {
-  const { esAdmin, nombre } = useSession()
+  const { esAdmin, nombre, usaAreas } = useSession()
   const [per, setPer] = useState('semana')
   const [area, setArea] = useState('')
   const [busq, setBusq] = useState('')
@@ -107,13 +107,15 @@ export default function Registros() {
               {PERIODOS.map(p => <option key={p.v} value={p.v}>{p.t}</option>)}
             </select>
           </div>
-          <div className="grow" style={{ minWidth: 130 }}>
-            <label className="lbl">Área</label>
-            <select className="inp" value={area} onChange={e => setArea(e.target.value)}>
-              <option value="">Todas</option>
-              {areas.map(a => <option key={a} value={a}>{a}</option>)}
-            </select>
-          </div>
+          {usaAreas && (
+            <div className="grow" style={{ minWidth: 130 }}>
+              <label className="lbl">Área</label>
+              <select className="inp" value={area} onChange={e => setArea(e.target.value)}>
+                <option value="">Todas</option>
+                {areas.map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+            </div>
+          )}
         </div>
         {per === 'custom' && (
           <div className="row" style={{ gap: 10 }}>
