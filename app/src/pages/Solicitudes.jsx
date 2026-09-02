@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
@@ -22,6 +22,14 @@ export default function Solicitudes() {
   const [cargando, setCargando] = useState(true)
   const [nueva, setNueva] = useState(false)
 
+  // Filtros
+  const [verFiltros, setVerFiltros] = useState(false)
+  const [fEstado, setFEstado] = useState('')
+  const [fTipo, setFTipo] = useState('')
+  const [fTexto, setFTexto] = useState('')
+  const [fDesde, setFDesde] = useState('')
+  const [fHasta, setFHasta] = useState('')
+
   const cargar = useCallback(async () => {
     setCargando(true)
     let q = supabase.from('solicitudes')
@@ -35,16 +43,65 @@ export default function Solicitudes() {
 
   useEffect(() => { cargar() }, [cargar])
 
+  const filtrados = useMemo(() => items.filter(s => {
+    if (fEstado && s.estado !== fEstado) return false
+    if (fTipo && s.tipo !== fTipo) return false
+    if (fTexto) {
+      const t = fTexto.toLowerCase()
+      if (!(`${s.personal?.nombre || ''} ${s.motivo || ''}`.toLowerCase().includes(t))) return false
+    }
+    const fecha = (s.created_at || '').slice(0, 10)
+    if (fDesde && fecha < fDesde) return false
+    if (fHasta && fecha > fHasta) return false
+    return true
+  }), [items, fEstado, fTipo, fTexto, fDesde, fHasta])
+
+  const hayFiltro = fEstado || fTipo || fTexto || fDesde || fHasta
+  function limpiar() { setFEstado(''); setFTipo(''); setFTexto(''); setFDesde(''); setFHasta('') }
+
   return (
     <div className="stack">
       <div className="between">
         <h2 style={{ fontSize: 18 }}>Solicitudes</h2>
-        <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}>
-          <Icon.Plus /> Nueva
-        </button>
+        <div className="row" style={{ gap: 6 }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => setVerFiltros(v => !v)}><Icon.Search /> Buscar {hayFiltro ? '(filtrado)' : ''}</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}><Icon.Plus /> Nueva</button>
+        </div>
       </div>
 
       {nueva && <NuevaSolicitud onCreada={() => { setNueva(false); cargar() }} />}
+
+      {verFiltros && (
+        <div className="card stack">
+          <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
+            <div className="grow" style={{ minWidth: 130 }}>
+              <label className="lbl">Estado</label>
+              <select className="inp" value={fEstado} onChange={e => setFEstado(e.target.value)}>
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="aprobado">Aprobado</option>
+                <option value="rechazado">Rechazado</option>
+              </select>
+            </div>
+            <div className="grow" style={{ minWidth: 130 }}>
+              <label className="lbl">Tipo</label>
+              <select className="inp" value={fTipo} onChange={e => setFTipo(e.target.value)}>
+                <option value="">Todos</option>
+                {TIPOS.map(t => <option key={t.v} value={t.v}>{t.t}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="lbl">Buscar (persona o motivo)</label>
+            <input className="inp" value={fTexto} onChange={e => setFTexto(e.target.value)} placeholder="Nombre o motivo…" />
+          </div>
+          <div className="row" style={{ gap: 10 }}>
+            <div className="grow"><label className="lbl">Desde</label><input className="inp" type="date" value={fDesde} onChange={e => setFDesde(e.target.value)} /></div>
+            <div className="grow"><label className="lbl">Hasta</label><input className="inp" type="date" value={fHasta} onChange={e => setFHasta(e.target.value)} /></div>
+          </div>
+          {hayFiltro && <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start' }} onClick={limpiar}>Limpiar filtros</button>}
+        </div>
+      )}
 
       {esAdmin && (
         <div className="row">
@@ -55,7 +112,8 @@ export default function Solicitudes() {
 
       {cargando ? <div className="center-screen" style={{ minHeight: 160 }}><div className="spin" /></div>
         : items.length === 0 ? <div className="empty">No hay solicitudes.</div>
-          : items.map(s => (
+          : filtrados.length === 0 ? <div className="empty">Ninguna solicitud coincide con la búsqueda.</div>
+          : filtrados.map(s => (
             <Link key={s.id} to={`/solicitudes/${s.id}`} className="card between" style={{ color: 'inherit' }}>
               <div>
                 <div className="row">
