@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getAreas } from '../lib/config'
@@ -23,6 +23,16 @@ export default function Avisos() {
   const [confirmando, setConfirmando] = useState(null)  // aviso a confirmar (empleado)
   const [cargando, setCargando] = useState(true)
 
+  // Filtros (buscador)
+  const [verFiltros, setVerFiltros] = useState(false)
+  const [fTexto, setFTexto] = useState('')
+  const [fDesde, setFDesde] = useState('')
+  const [fHasta, setFHasta] = useState('')
+  const [fArea, setFArea] = useState('')
+  const [fUser, setFUser] = useState('')
+  const [areas, setAreas] = useState([])
+  const [empleados, setEmpleados] = useState([])
+
   const cargar = useCallback(async () => {
     setCargando(true)
     const [{ data: av }, { data: le }] = await Promise.all([
@@ -35,6 +45,30 @@ export default function Avisos() {
   }, [session.user.id])
 
   useEffect(() => { cargar() }, [cargar])
+
+  // Datos para los filtros (solo admin usa área/usuario)
+  useEffect(() => {
+    if (!esAdmin) return
+    getAreas().then(setAreas)
+    supabase.from('personal').select('user_id,nombre').eq('activo', true).not('user_id', 'is', null).order('nombre')
+      .then(({ data }) => setEmpleados(data || []))
+  }, [esAdmin])
+
+  const avisosFiltrados = useMemo(() => avisos.filter(av => {
+    if (fTexto) {
+      const t = fTexto.toLowerCase()
+      if (!(`${av.titulo} ${av.cuerpo || ''}`.toLowerCase().includes(t))) return false
+    }
+    const fecha = (av.created_at || '').slice(0, 10)
+    if (fDesde && fecha < fDesde) return false
+    if (fHasta && fecha > fHasta) return false
+    if (fArea && av.area !== fArea) return false
+    if (fUser && !(av.destinatarios || []).includes(fUser)) return false
+    return true
+  }), [avisos, fTexto, fDesde, fHasta, fArea, fUser])
+
+  const hayFiltro = fTexto || fDesde || fHasta || fArea || fUser
+  function limpiar() { setFTexto(''); setFDesde(''); setFHasta(''); setFArea(''); setFUser('') }
 
   function toggleAbierto(id) {
     setAbiertos(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n })
@@ -61,11 +95,50 @@ export default function Avisos() {
     <div className="stack">
       {esAdmin && <NuevoAviso nombre={nombre} onCreado={cargar} />}
 
-      <h2 style={{ fontSize: 18 }}>Avisos</h2>
-      {avisos.length === 0 && <div className="empty">Todavía no hay avisos.</div>}
+      <div className="between">
+        <h2 style={{ fontSize: 18 }}>Avisos</h2>
+        <button className="btn btn-ghost btn-sm" onClick={() => setVerFiltros(v => !v)}>
+          <Icon.Search /> Buscar {hayFiltro ? '(filtrado)' : ''}
+        </button>
+      </div>
 
-      {avisos.map(av => {
-        const noLeido = !leidos.has(av.id)
+      {verFiltros && (
+        <div className="card stack">
+          <div>
+            <label className="lbl">Buscar texto</label>
+            <input className="inp" value={fTexto} onChange={e => setFTexto(e.target.value)} placeholder="Título o mensaje…" />
+          </div>
+          <div className="row" style={{ gap: 10 }}>
+            <div className="grow"><label className="lbl">Desde</label><input className="inp" type="date" value={fDesde} onChange={e => setFDesde(e.target.value)} /></div>
+            <div className="grow"><label className="lbl">Hasta</label><input className="inp" type="date" value={fHasta} onChange={e => setFHasta(e.target.value)} /></div>
+          </div>
+          {esAdmin && (
+            <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
+              <div className="grow" style={{ minWidth: 140 }}>
+                <label className="lbl">Área</label>
+                <select className="inp" value={fArea} onChange={e => setFArea(e.target.value)}>
+                  <option value="">Todas</option>
+                  {areas.map(a => <option key={a} value={a}>{a}</option>)}
+                </select>
+              </div>
+              <div className="grow" style={{ minWidth: 140 }}>
+                <label className="lbl">Enviado a (persona)</label>
+                <select className="inp" value={fUser} onChange={e => setFUser(e.target.value)}>
+                  <option value="">Cualquiera</option>
+                  {empleados.map(e => <option key={e.user_id} value={e.user_id}>{e.nombre}</option>)}
+                </select>
+              </div>
+            </div>
+          )}
+          {hayFiltro && <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start' }} onClick={limpiar}>Limpiar filtros</button>}
+        </div>
+      )}
+
+      {avisos.length === 0 && <div className="empty">Todavía no hay avisos.</div>}
+      {avisos.length > 0 && avisosFiltrados.length === 0 && <div className="empty">Ningún aviso coincide con la búsqueda.</div>}
+
+      {avisosFiltrados.map(av => {
+        const noLeido = !esAdmin && !leidos.has(av.id)
         const abierto = abiertos.has(av.id)
         const pedirConfirm = noLeido && !esAdmin   // empleado: no muestra el cuerpo hasta confirmar
         return (
