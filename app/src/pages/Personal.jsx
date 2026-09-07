@@ -6,10 +6,14 @@ import { areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
 import { Icon } from '../components/icons.jsx'
 
-// Parser CSV mínimo (soporta comillas y comas dentro de comillas)
+// Parser CSV mínimo: detecta separador (coma o punto y coma, típico de Excel en
+// español), soporta comillas y saca el BOM inicial.
 function parseCSV(text) {
+  text = String(text).replace(/^﻿/, '').replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  const nl = text.indexOf('\n')
+  const primera = nl >= 0 ? text.slice(0, nl) : text
+  const delim = (primera.split(';').length > primera.split(',').length) ? ';' : ','
   const out = []; let i = 0, field = '', row = [], inQ = false
-  text = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
   while (i < text.length) {
     const c = text[i]
     if (inQ) {
@@ -17,7 +21,7 @@ function parseCSV(text) {
       else field += c
     } else {
       if (c === '"') inQ = true
-      else if (c === ',') { row.push(field); field = '' }
+      else if (c === delim) { row.push(field); field = '' }
       else if (c === '\n') { row.push(field); out.push(row); row = []; field = '' }
       else field += c
     }
