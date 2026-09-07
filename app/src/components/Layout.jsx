@@ -32,7 +32,10 @@ export default function Layout({ children }) {
     <div className="shell">
       {/* Barra lateral (fija en desktop, drawer en celular) */}
       <aside className={'sidebar' + (menu ? ' open' : '')}>
-        <div className="sidebar-brand">OS<b>YC</b> · Gestión</div>
+        <div className="sidebar-brand">
+          <img src="/logo.png" alt="OSYC" style={{ width: '100%', maxWidth: 155, display: 'block' }} />
+          <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--tinta-2)', letterSpacing: '.05em' }}>GESTIÓN</span>
+        </div>
         <nav className="sidebar-nav">
           {items.map(n => {
             const Ic = n.icon
@@ -56,7 +59,7 @@ export default function Layout({ children }) {
       <div className="content">
         <header className="topbar">
           <button className="hamb only-mobile" onClick={() => setMenu(true)} aria-label="Menú"><Icon.Menu /></button>
-          <div className="brand only-mobile">OS<b>YC</b></div>
+          <img className="only-mobile" src="/logo.png" alt="OSYC" style={{ height: 26 }} />
           <div className="row" style={{ marginLeft: 'auto', gap: 8 }}>
             <Campana />
             <button className="btn btn-ghost btn-sm only-mobile" onClick={logout}><Icon.Logout /> Salir</button>

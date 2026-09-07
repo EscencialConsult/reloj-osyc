@@ -11,7 +11,7 @@ export default function FicharKiosk() {
   return (
     <div className="kiosk">
       <header className="kiosk-bar">
-        <div className="brand">OS<b>YC</b></div>
+        <img src="/logo.png" alt="OSYC" style={{ height: 28 }} />
         <div className="row" style={{ gap: 8 }}>
           <Campana />
           <button className="btn btn-ghost btn-sm" onClick={logout}><Icon.Logout /> Salir</button>

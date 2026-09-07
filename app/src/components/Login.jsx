@@ -24,8 +24,8 @@ export default function Login() {
     <div className="center-screen">
       <form className="card stack" style={{ width: '100%', maxWidth: 380 }} onSubmit={submit}>
         <div style={{ textAlign: 'center' }}>
-          <div className="brand" style={{ fontSize: 24 }}>OS<b>YC</b></div>
-          <p className="muted" style={{ marginTop: 4 }}>Ingresá con tu email y contraseña</p>
+          <img src="/logo.png" alt="OSYC" style={{ maxWidth: '100%', maxHeight: 64, height: 'auto', margin: '4px auto 0', display: 'block' }} />
+          <p className="muted" style={{ marginTop: 8 }}>Ingresá con tu email y contraseña</p>
         </div>
         <div>
           <label className="lbl">Email</label>

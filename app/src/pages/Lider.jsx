@@ -56,8 +56,8 @@ function LiderLogin({ onLogin }) {
     <div className="center-screen">
       <form className="card stack" style={{ width: '100%', maxWidth: 380 }} onSubmit={entrar}>
         <div style={{ textAlign: 'center' }}>
-          <div className="brand" style={{ fontSize: 22 }}>OS<b>YC</b> · Líder</div>
-          <p className="muted" style={{ marginTop: 4 }}>Carga de horarios de tu área</p>
+          <img src="/logo.png" alt="OSYC" style={{ maxWidth: '100%', maxHeight: 56, height: 'auto', display: 'block', margin: '0 auto' }} />
+          <p className="muted" style={{ marginTop: 8 }}>Líder · Carga de horarios de tu área</p>
         </div>
         <div><label className="lbl">Usuario</label><input className="inp" value={u} onChange={e => setU(e.target.value)} placeholder="Tu usuario" /></div>
         <div><label className="lbl">Contraseña</label><input className="inp" type="password" value={p} onChange={e => setP(e.target.value)} /></div>
@@ -154,7 +154,7 @@ function PanelLider({ sess, area, onCambiarArea, onSalir }) {
     <div style={{ minHeight: '100%' }}>
       <header className="appbar">
         <div className="inner">
-          <div className="brand">OS<b>YC</b> · Líder</div>
+          <span className="row" style={{ gap: 8, alignItems: 'center' }}><img src="/logo.png" alt="OSYC" style={{ height: 24 }} /> <b style={{ color: 'var(--tinta-2)', fontWeight: 800 }}>Líder</b></span>
           <div className="row" style={{ gap: 8 }}>
             <span className="badge pendiente">{area}</span>
             {sess.areas.length > 1 && <button className="btn btn-ghost btn-sm" onClick={onCambiarArea}>Cambiar área</button>}

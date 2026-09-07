@@ -32,9 +32,11 @@ export default function App() {
   if (location.pathname.startsWith('/lider')) return <Suspense fallback={<Cargando />}><Lider /></Suspense>
   if (!session) return <Login />
 
-  // Modo kiosco: si entró por el QR de una sucursal (/fichar?sede=...), solo ve Fichar
+  // Modo kiosco: si entró por el QR de una sucursal, solo ve Fichar.
+  // Se acepta /fichar y /fichar.html (para que los QR viejos ya impresos sigan sirviendo).
   const sedeQR = new URLSearchParams(location.search).get('sede')
-  if (location.pathname === '/fichar' && sedeQR) return <Suspense fallback={<Cargando />}><FicharKiosk /></Suspense>
+  const esRutaFichar = location.pathname === '/fichar' || location.pathname === '/fichar.html'
+  if (esRutaFichar && sedeQR) return <Suspense fallback={<Cargando />}><FicharKiosk /></Suspense>
 
   return (
     <Layout>
@@ -42,6 +44,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/fichar" element={<Fichar />} />
+          <Route path="/fichar.html" element={<Fichar />} />
           <Route path="/avisos" element={<Avisos />} />
           <Route path="/solicitudes" element={<Solicitudes />} />
           <Route path="/solicitudes/:id" element={<SolicitudDetalle />} />
