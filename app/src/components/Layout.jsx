@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { Icon } from './icons.jsx'
 import { NAV } from './nav.js'
 import Campana from './Campana.jsx'
+import CambiarPassword from './CambiarPassword.jsx'
 
 export default function Layout({ children }) {
   const { esAdmin, logout } = useSession()
@@ -12,6 +13,7 @@ export default function Layout({ children }) {
   const [noLeidos, setNoLeidos] = useState(0)
   const [pendientes, setPendientes] = useState(0)   // solicitudes pendientes (admin)
   const [menu, setMenu] = useState(false)   // drawer abierto en celular
+  const [cuenta, setCuenta] = useState(false)   // modal cambiar contraseña
 
   useEffect(() => {
     let vivo = true
@@ -49,6 +51,7 @@ export default function Layout({ children }) {
             )
           })}
         </nav>
+        <button className="side-link" onClick={() => setCuenta(true)}><Icon.Lock /> <span>Cambiar contraseña</span></button>
         <button className="side-link side-salir" onClick={logout}><Icon.Logout /> <span>Salir</span></button>
       </aside>
 
@@ -67,6 +70,8 @@ export default function Layout({ children }) {
         </header>
         <main className="content-inner">{children}</main>
       </div>
+
+      {cuenta && <CambiarPassword onClose={() => setCuenta(false)} />}
     </div>
   )
 }
