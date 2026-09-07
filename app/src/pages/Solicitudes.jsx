@@ -54,6 +54,12 @@ export default function Solicitudes() {
     if (fDesde && fecha < fDesde) return false
     if (fHasta && fecha > fHasta) return false
     return true
+  }).sort((a, b) => {
+    // Pendientes primero; dentro de cada grupo, más nuevas arriba (por fecha)
+    const pa = a.estado === 'pendiente' ? 0 : 1
+    const pb = b.estado === 'pendiente' ? 0 : 1
+    if (pa !== pb) return pa - pb
+    return (b.created_at || '').localeCompare(a.created_at || '')
   }), [items, fEstado, fTipo, fTexto, fDesde, fHasta])
 
   const hayFiltro = fEstado || fTipo || fTexto || fDesde || fHasta
