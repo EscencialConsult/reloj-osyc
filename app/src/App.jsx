@@ -7,18 +7,35 @@ import Layout from './components/Layout.jsx'
 // Cada pantalla se carga SOLO cuando se entra (code-splitting).
 // Así abrir la app / una notificación es rápido y liviano en el celular,
 // y lo pesado (gráficos de Informes, QR de Configuración) no se baja de más.
-const Lider = lazy(() => import('./pages/Lider.jsx'))
-const FicharKiosk = lazy(() => import('./components/FicharKiosk.jsx'))
-const Home = lazy(() => import('./pages/Home.jsx'))
-const Fichar = lazy(() => import('./pages/Fichar.jsx'))
-const Avisos = lazy(() => import('./pages/Avisos.jsx'))
-const Solicitudes = lazy(() => import('./pages/Solicitudes.jsx'))
-const SolicitudDetalle = lazy(() => import('./pages/SolicitudDetalle.jsx'))
-const Registros = lazy(() => import('./pages/Registros.jsx'))
-const Personal = lazy(() => import('./pages/Personal.jsx'))
-const Configuracion = lazy(() => import('./pages/Configuracion.jsx'))
-const Horarios = lazy(() => import('./pages/Horarios.jsx'))
-const Informes = lazy(() => import('./pages/Informes.jsx'))
+//
+// Si falla la carga de un "pedazo" (típico cuando hubo un deploy nuevo y la
+// pestaña estaba abierta con la versión vieja), recargamos la página una vez
+// para traer la versión nueva, en vez de mostrar pantalla en blanco.
+const reintentar = (factory) => lazy(async () => {
+  try { return await factory() }
+  catch (e) {
+    const key = 'osyc-reload-chunk'
+    const ultima = Number(sessionStorage.getItem(key) || '0')
+    if (Date.now() - ultima > 10000) {
+      sessionStorage.setItem(key, String(Date.now()))
+      window.location.reload()
+      return new Promise(() => {})   // no resuelve: la página se está recargando
+    }
+    throw e
+  }
+})
+const Lider = reintentar(() => import('./pages/Lider.jsx'))
+const FicharKiosk = reintentar(() => import('./components/FicharKiosk.jsx'))
+const Home = reintentar(() => import('./pages/Home.jsx'))
+const Fichar = reintentar(() => import('./pages/Fichar.jsx'))
+const Avisos = reintentar(() => import('./pages/Avisos.jsx'))
+const Solicitudes = reintentar(() => import('./pages/Solicitudes.jsx'))
+const SolicitudDetalle = reintentar(() => import('./pages/SolicitudDetalle.jsx'))
+const Registros = reintentar(() => import('./pages/Registros.jsx'))
+const Personal = reintentar(() => import('./pages/Personal.jsx'))
+const Configuracion = reintentar(() => import('./pages/Configuracion.jsx'))
+const Horarios = reintentar(() => import('./pages/Horarios.jsx'))
+const Informes = reintentar(() => import('./pages/Informes.jsx'))
 
 const Cargando = () => <div className="center-screen" style={{ minHeight: 200 }}><div className="spin" /></div>
 
