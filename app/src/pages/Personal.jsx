@@ -105,7 +105,7 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
     const nombre = f.nombre.trim(), rol = f.rol.trim()
     const email = f.email.trim().toLowerCase(), dni = f.dni.trim()
     if (!nombre) { setErr('El nombre es obligatorio'); return }
-    if ((email && !dni) || (!email && dni)) { setErr('Para el acceso a la app cargá email Y DNI'); return }
+    if ((email && !dni) || (!email && dni)) { setErr('Para el acceso a la app cargá email Y contraseña'); return }
     const area = usaAreas ? (f.area || 'GENERAL') : 'GENERAL'
     setGuardando(true)
 
@@ -145,10 +145,10 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
           </div>
         )}
         <div style={{ borderTop: '1px dashed var(--linea)', paddingTop: 12 }}>
-          <span className="muted">Acceso a la app (opcional): email + DNI. El DNI es la contraseña.</span>
+          <span className="muted">Acceso a la app (opcional): email + contraseña.</span>
         </div>
         <div><label className="lbl">Email</label><input className="inp" type="email" value={f.email} onChange={e => set('email', e.target.value)} placeholder="empleado@osyc.com" /></div>
-        <div><label className="lbl">DNI {persona.id ? '(dejar vacío = no cambiar)' : ''}</label><input className="inp" inputMode="numeric" value={f.dni} onChange={e => set('dni', e.target.value)} placeholder="Sin puntos" /></div>
+        <div><label className="lbl">Contraseña {persona.id ? '(dejar vacío = no cambiar)' : ''}</label><input className="inp" value={f.dni} onChange={e => set('dni', e.target.value)} placeholder="Contraseña del empleado" /></div>
         <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
           <input type="checkbox" checked={f.activo} onChange={e => set('activo', e.target.checked)} /> Activo
         </label>

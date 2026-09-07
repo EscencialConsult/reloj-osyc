@@ -12,11 +12,11 @@ export default function Login() {
   async function submit(e) {
     e.preventDefault()
     setErr('')
-    if (!email || !dni) { setErr('Completá email y DNI'); return }
+    if (!email || !dni) { setErr('Completá email y contraseña'); return }
     setCargando(true)
     const { error } = await login(email, dni)
     setCargando(false)
-    if (error) setErr('Email o DNI incorrectos')
+    if (error) setErr('Email o contraseña incorrectos')
     // si sale bien, el contexto detecta la sesión y App muestra la app
   }
 
@@ -25,7 +25,7 @@ export default function Login() {
       <form className="card stack" style={{ width: '100%', maxWidth: 380 }} onSubmit={submit}>
         <div style={{ textAlign: 'center' }}>
           <div className="brand" style={{ fontSize: 24 }}>OS<b>YC</b></div>
-          <p className="muted" style={{ marginTop: 4 }}>Ingresá con tu email y DNI</p>
+          <p className="muted" style={{ marginTop: 4 }}>Ingresá con tu email y contraseña</p>
         </div>
         <div>
           <label className="lbl">Email</label>
@@ -33,9 +33,9 @@ export default function Login() {
             onChange={e => setEmail(e.target.value)} placeholder="tuemail@osyc.com" />
         </div>
         <div>
-          <label className="lbl">DNI</label>
-          <input className="inp" type="password" inputMode="numeric" autoComplete="current-password" value={dni}
-            onChange={e => setDni(e.target.value)} placeholder="Tu DNI (sin puntos)" />
+          <label className="lbl">Contraseña</label>
+          <input className="inp" type="password" autoComplete="current-password" value={dni}
+            onChange={e => setDni(e.target.value)} placeholder="Tu contraseña" />
         </div>
         {err && <div className="err-txt">{err}</div>}
         <button className="btn btn-primary" disabled={cargando}>
