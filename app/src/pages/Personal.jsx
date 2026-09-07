@@ -6,6 +6,28 @@ import { areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
 import { Icon } from '../components/icons.jsx'
 
+// Parser CSV mínimo (soporta comillas y comas dentro de comillas)
+function parseCSV(text) {
+  const out = []; let i = 0, field = '', row = [], inQ = false
+  text = String(text).replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  while (i < text.length) {
+    const c = text[i]
+    if (inQ) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++ } else inQ = false }
+      else field += c
+    } else {
+      if (c === '"') inQ = true
+      else if (c === ',') { row.push(field); field = '' }
+      else if (c === '\n') { row.push(field); out.push(row); row = []; field = '' }
+      else field += c
+    }
+    i++
+  }
+  if (field.length || row.length) { row.push(field); out.push(row) }
+  return out
+}
+const _normH = h => h.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+
 export default function Personal() {
   const { esAdmin, nombre: adminNombre } = useSession()
   const [all, setAll] = useState([])
@@ -13,6 +35,7 @@ export default function Personal() {
   const [usaAreas, setUsaAreas] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [edit, setEdit] = useState(null)   // {persona} o {} para nuevo, null = cerrado
+  const [importar, setImportar] = useState(false)
 
   const cargar = useCallback(async () => {
     setCargando(true)
@@ -46,7 +69,10 @@ export default function Personal() {
           <h2 style={{ fontSize: 18 }}>Personal</h2>
           <span className="muted">{all.length} personas en total</span>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setEdit({})}><Icon.Plus /> Agregar</button>
+        <div className="row" style={{ gap: 6 }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => setImportar(true)}><Icon.Upload /> Importar CSV</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setEdit({})}><Icon.Plus /> Agregar</button>
+        </div>
       </div>
 
       {cargando ? <div className="center-screen" style={{ minHeight: 160 }}><div className="spin" /></div>
@@ -83,6 +109,10 @@ export default function Personal() {
       {edit && (
         <EditarPersona persona={edit} areas={areas} usaAreas={usaAreas} adminNombre={adminNombre}
           onClose={() => setEdit(null)} onGuardado={() => { setEdit(null); cargar() }} />
+      )}
+
+      {importar && (
+        <ImportarCSV usaAreas={usaAreas} onClose={() => setImportar(false)} onImportado={cargar} />
       )}
     </div>
   )
@@ -154,6 +184,113 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
         </label>
         {err && <div className="err-txt">{err}</div>}
         <button className="btn btn-primary" onClick={guardar} disabled={guardando}>{guardando ? 'Guardando…' : (esNuevo ? 'Guardar' : 'Actualizar')}</button>
+      </div>
+    </div>
+  )
+}
+
+// ── Importación masiva por CSV ──────────────────────────────────────────────
+function ImportarCSV({ usaAreas, onClose, onImportado }) {
+  const [filas, setFilas] = useState(null)
+  const [err, setErr] = useState('')
+  const [procesando, setProcesando] = useState(false)
+  const [resultado, setResultado] = useState(null)
+
+  function descargarPlantilla() {
+    const cols = ['Nombre', 'Rol', 'Email', 'Contraseña', ...(usaAreas ? ['Área'] : [])]
+    const ejemplo = ['Juan Pérez', 'Mozo', 'juan@osyc.com', '1234', ...(usaAreas ? ['Barra'] : [])]
+    const csv = '﻿' + [cols.join(','), ejemplo.map(x => `"${x}"`).join(',')].join('\n')
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }))
+    a.download = 'plantilla_personal.csv'; a.click()
+  }
+
+  function onArchivo(e) {
+    setErr(''); setResultado(null); setFilas(null)
+    const file = e.target.files[0]; if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const rows = parseCSV(reader.result)
+      if (rows.length < 2) { setErr('El archivo no tiene filas de datos.'); return }
+      const H = rows[0].map(_normH)
+      const idx = (...names) => H.findIndex(h => names.includes(h))
+      const iN = idx('nombre'), iR = idx('rol', 'rol/puesto', 'puesto'), iE = idx('email', 'correo'),
+        iP = idx('contrasena', 'clave', 'password'), iA = idx('area')
+      if (iN < 0) { setErr('Falta la columna "Nombre" en el CSV.'); return }
+      const data = rows.slice(1)
+        .filter(r => (r[iN] || '').trim())
+        .map(r => ({
+          nombre: (r[iN] || '').trim(),
+          rol: iR >= 0 ? (r[iR] || '').trim() : '',
+          email: iE >= 0 ? (r[iE] || '').trim().toLowerCase() : '',
+          pass: iP >= 0 ? (r[iP] || '').trim() : '',
+          area: iA >= 0 ? (r[iA] || '').trim() : ''
+        }))
+      if (!data.length) { setErr('No se encontraron filas con nombre.'); return }
+      setFilas(data)
+    }
+    reader.readAsText(file)
+  }
+
+  async function importar() {
+    setProcesando(true)
+    let creados = 0; const errores = []
+    for (let k = 0; k < filas.length; k++) {
+      const f = filas[k]
+      try {
+        if ((f.email && !f.pass) || (!f.email && f.pass)) throw new Error('email y contraseña deben ir juntos')
+        const area = usaAreas ? (f.area || 'GENERAL') : 'GENERAL'
+        if (f.email && f.pass) {
+          const { data, error } = await supabase.rpc('crear_empleado', { p_email: f.email, p_dni: f.pass, p_nombre: f.nombre, p_area: area, p_rol: f.rol || null })
+          if (error || !data?.ok) throw new Error(data?.msg || error?.message || 'no se pudo crear')
+        } else {
+          const { error } = await supabase.from('personal').insert({ nombre: f.nombre, rol: f.rol, area, activo: true })
+          if (error) throw new Error(error.message)
+        }
+        creados++
+      } catch (e) { errores.push({ fila: k + 2, nombre: f.nombre, msg: e.message }) }
+    }
+    setProcesando(false)
+    setResultado({ creados, errores })
+    onImportado()
+  }
+
+  return (
+    <div className="consent-ov" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="card stack" style={{ maxWidth: 460, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="between"><b>Importar personal (CSV)</b><button className="btn btn-ghost btn-sm" onClick={onClose}><Icon.X /></button></div>
+
+        {resultado ? (
+          <>
+            <div className="result ok" style={{ marginTop: 0 }}>Creados: <b>{resultado.creados}</b>{resultado.errores.length ? ` · Con error: ${resultado.errores.length}` : ''}</div>
+            {resultado.errores.length > 0 && (
+              <div style={{ maxHeight: 220, overflowY: 'auto', border: '1px solid var(--linea)', borderRadius: 10, padding: '8px 12px' }}>
+                {resultado.errores.map((e, i) => (
+                  <div key={i} style={{ fontSize: 13, padding: '3px 0' }}>Fila {e.fila} ({e.nombre}): <span className="err-txt">{e.msg}</span></div>
+                ))}
+              </div>
+            )}
+            <button className="btn btn-primary" onClick={onClose}>Listo</button>
+          </>
+        ) : (
+          <>
+            <div className="muted">
+              1) Descargá la plantilla, 2) completá las filas, 3) subí el archivo.
+              Columnas: <b>Nombre</b> (obligatorio), Rol, Email, Contraseña{usaAreas ? ', Área' : ''}.
+              El Email + Contraseña son opcionales (solo si esa persona va a entrar a la app).
+            </div>
+            <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start' }} onClick={descargarPlantilla}><Icon.File /> Descargar plantilla</button>
+            <div>
+              <label className="lbl">Archivo CSV</label>
+              <input className="inp" type="file" accept=".csv,text/csv" onChange={onArchivo} />
+            </div>
+            {err && <div className="err-txt">{err}</div>}
+            {filas && <div className="muted">{filas.length} fila(s) listas para importar.</div>}
+            <button className="btn btn-primary" onClick={importar} disabled={!filas || procesando}>
+              {procesando ? 'Importando…' : `Importar ${filas ? filas.length : ''}`}
+            </button>
+          </>
+        )}
       </div>
     </div>
   )
