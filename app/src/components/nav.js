@@ -6,7 +6,7 @@ export const NAV = [
   { to: '/', label: 'Inicio', icon: Icon.Home, end: true },
   { to: '/fichar', label: 'Fichar', icon: Icon.Pin },
   { to: '/avisos', label: 'Avisos', icon: Icon.Bell, badge: 'avisos' },
-  { to: '/solicitudes', label: 'Solicitudes', icon: Icon.Inbox },
+  { to: '/solicitudes', label: 'Solicitudes', icon: Icon.Inbox, badge: 'solicitudes' },
   { to: '/registros', label: 'Registros', icon: Icon.File, admin: true },
   { to: '/personal', label: 'Personal', icon: Icon.Users, admin: true },
   { to: '/horarios', label: 'Horarios', icon: Icon.Calendar, admin: true },

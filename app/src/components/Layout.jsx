@@ -10,13 +10,18 @@ export default function Layout({ children }) {
   const { esAdmin, logout } = useSession()
   const location = useLocation()
   const [noLeidos, setNoLeidos] = useState(0)
+  const [pendientes, setPendientes] = useState(0)   // solicitudes pendientes (admin)
   const [menu, setMenu] = useState(false)   // drawer abierto en celular
 
   useEffect(() => {
     let vivo = true
     supabase.rpc('avisos_no_leidos').then(({ data }) => { if (vivo) setNoLeidos(data || 0) })
+    if (esAdmin) {
+      supabase.from('solicitudes').select('id', { count: 'exact', head: true }).eq('estado', 'pendiente')
+        .then(({ count }) => { if (vivo) setPendientes(count || 0) })
+    }
     return () => { vivo = false }
-  }, [location.pathname])
+  }, [location.pathname, esAdmin])
 
   // Cerrar el menú al navegar (celular)
   useEffect(() => { setMenu(false) }, [location.pathname])
@@ -36,6 +41,7 @@ export default function Layout({ children }) {
                 <Ic />
                 <span>{n.label}</span>
                 {n.badge === 'avisos' && noLeidos > 0 && <span className="pill-count" style={{ marginLeft: 'auto' }}>{noLeidos}</span>}
+                {n.badge === 'solicitudes' && pendientes > 0 && <span className="pill-count" style={{ marginLeft: 'auto' }}>{pendientes}</span>}
               </NavLink>
             )
           })}
