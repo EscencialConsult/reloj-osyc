@@ -1,8 +1,6 @@
 // src/lib/push.js — activar/desactivar notificaciones push (Web Push)
 import { supabase } from './supabase'
-
-// Clave PÚBLICA VAPID (la privada va SOLO en los secrets de la Edge Function).
-const VAPID_PUBLIC = 'BPzqOcIRrdhP_nrJnSCsUTbVnE9-jo6zXGKp5VJTKDUaieJnIuvSLXnzArv31Kja-ahbZab1q69u41vCv1qLmAQ'
+import { VAPID_PUBLIC } from '../config.js'
 
 export const pushSoportado = () =>
   'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window
