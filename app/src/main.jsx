@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { SessionProvider } from './lib/session.jsx'
 import App from './App.jsx'
+import SWNavListener from './components/SWNavListener.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 import './index.css'
 
 // Service worker para notificaciones push (Fase 2)
@@ -15,7 +17,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     {/* App integral en la raíz '/' */}
     <BrowserRouter>
       <SessionProvider>
-        <App />
+        <SWNavListener />
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </SessionProvider>
     </BrowserRouter>
   </React.StrictMode>

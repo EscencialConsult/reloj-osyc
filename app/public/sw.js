@@ -21,12 +21,18 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
   const url = (event.notification.data && event.notification.data.url) || '/'
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
-      for (const c of list) {
-        if ('focus' in c) { try { c.navigate(url) } catch (_) {} return c.focus() }
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+    // Si la app ya está abierta: la enfocamos y le pedimos navegar POR DENTRO
+    // (sin recargar toda la página, que es lo que trababa el celular).
+    for (const c of list) {
+      if ('focus' in c) {
+        await c.focus()
+        c.postMessage({ type: 'navigate', url })
+        return
       }
-      if (self.clients.openWindow) return self.clients.openWindow(url)
-    })
-  )
+    }
+    // Si no había ninguna ventana abierta, abrimos una nueva.
+    if (self.clients.openWindow) return self.clients.openWindow(url)
+  })())
 })
