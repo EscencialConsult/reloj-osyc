@@ -182,6 +182,9 @@ export default function Informes() {
 
             {/* Tabla por persona */}
             <TablaPersonas rows={filtrados} areas={areas} />
+
+            {/* Detalle por día: planificado vs. real */}
+            <DetalleRegistros rows={filtrados} />
           </>
         )}
     </div>
@@ -262,6 +265,72 @@ function TopBox({ titulo, modo, setModo, data, val, sub, color, areas, verMas, s
       {data.length > 5 && (
         <button className="btn btn-ghost btn-sm" onClick={() => setVerMas(v => !v)}>{verMas ? 'Ver menos' : `Ver más (${data.length})`}</button>
       )}
+    </div>
+  )
+}
+
+// Detalle día por día: fecha, horario planificado y el ingreso/salida REALES,
+// con la diferencia (tardanza en la entrada, extra o salida temprana).
+function DetalleRegistros({ rows }) {
+  const [verMas, setVerMas] = useState(false)
+  const data = useMemo(() =>
+    [...rows].sort((a, b) => (b.fecha || '').localeCompare(a.fecha || '') || (a.nombre || '').localeCompare(b.nombre || '')),
+    [rows])
+  if (!data.length) return null
+  const lista = verMas ? data : data.slice(0, 40)
+
+  const planDe = r => {
+    if (ESPECIAL.includes(r.turno)) return r.turno
+    if (!conPlan(r)) return '—'
+    const p = r.turno.split('→')
+    return p[0].trim() + (p[1] ? ' → ' + p[1].trim().slice(0, 5) : '')
+  }
+  const planSalDe = r => { const p = (r.turno || '').split('→'); return p[1] ? p[1].trim().slice(0, 5) : null }
+  // esSalida=false → entrada (tarde=malo). esSalida=true → salida (+extra bien / -antes)
+  const diffTag = (min, esSalida) => {
+    if (min === null || min === undefined) return null
+    if (!esSalida) return min > 0
+      ? <span style={{ color: 'var(--err)', fontWeight: 700 }}> +{min}m</span>
+      : <span style={{ color: 'var(--ok)', fontWeight: 700 }}> ✓</span>
+    if (min > 0) return <span style={{ color: '#3f6aa0', fontWeight: 700 }}> +{min}m</span>
+    if (min < 0) return <span style={{ color: 'var(--err)', fontWeight: 700 }}> {min}m</span>
+    return null
+  }
+
+  return (
+    <div className="card stack">
+      <div className="between">
+        <b style={{ fontSize: 13 }}>Detalle por día (planificado vs. real)</b>
+        <span className="muted" style={{ fontSize: 11 }}>{data.length} registro(s)</span>
+      </div>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="tbl">
+          <thead><tr><th>Fecha</th><th>Persona</th><th>Planificado</th><th>Entrada real</th><th>Salida real</th><th>Hs</th></tr></thead>
+          <tbody>
+            {lista.map((r, i) => {
+              const ent = r.hora_entrada?.slice(0, 5), sal = r.hora_salida?.slice(0, 5)
+              const ent2 = r.hora_entrada2?.slice(0, 5), sal2 = r.hora_salida2?.slice(0, 5)
+              const tard = conPlan(r) ? calcTardVsPlan(planEnt(r), ent) : null
+              const planSal = planSalDe(r)
+              const diffSal = (planSal && sal && /^\d{2}:\d{2}$/.test(planSal)) ? calcTardVsPlan(planSal, sal) : null
+              const h1 = calcHs(ent, sal), h2 = calcHs(ent2, sal2)
+              const hs = (h1 || 0) + (h2 || 0)
+              return (
+                <tr key={r.id || i}>
+                  <td style={{ whiteSpace: 'nowrap' }}>{fmtDate(r.fecha)}</td>
+                  <td style={{ fontWeight: 700 }}>{r.nombre}</td>
+                  <td style={{ fontSize: 12 }}>{planDe(r)}</td>
+                  <td style={{ fontSize: 12 }}>{ent || '—'}{diffTag(tard, false)}{ent2 ? <div className="muted" style={{ fontSize: 11 }}>2º {ent2}</div> : null}</td>
+                  <td style={{ fontSize: 12 }}>{sal || '—'}{diffTag(diffSal, true)}{sal2 ? <div className="muted" style={{ fontSize: 11 }}>2º {sal2}</div> : null}</td>
+                  <td><span className="badge aprobado">{hs > 0 ? fmtHs(hs) : '—'}</span></td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      {data.length > 40 && <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setVerMas(v => !v)}>{verMas ? 'Ver menos' : `Ver todo (${data.length})`}</button>}
+      <div className="muted" style={{ fontSize: 11 }}>Verde ✓ = entró a horario · rojo +Xm = tardanza · azul +Xm = salió más tarde (extra) · rojo −Xm = salió antes.</div>
     </div>
   )
 }
