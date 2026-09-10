@@ -72,11 +72,12 @@ export default function Solicitudes() {
         <h2 style={{ fontSize: 18 }}>Solicitudes</h2>
         <div className="row" style={{ gap: 6 }}>
           <button className="btn btn-ghost btn-sm" onClick={() => setVerFiltros(v => !v)}><Icon.Search /> Buscar {hayFiltro ? '(filtrado)' : ''}</button>
-          <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}><Icon.Plus /> Nueva</button>
+          {/* El admin aprueba solicitudes, no las crea (no tiene a quién pedirle). */}
+          {!esAdmin && <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}><Icon.Plus /> Nueva</button>}
         </div>
       </div>
 
-      {nueva && <NuevaSolicitud onCreada={() => { setNueva(false); cargar() }} />}
+      {!esAdmin && nueva && <NuevaSolicitud onCreada={() => { setNueva(false); cargar() }} />}
 
       {verFiltros && (
         <div className="card stack">

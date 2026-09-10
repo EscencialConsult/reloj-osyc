@@ -156,6 +156,7 @@ export default function Avisos() {
               <div className="row" style={{ marginTop: 4, gap: 10, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
                 <span className="muted">Para: {paraLabel(av)}</span>
                 <Recibos avisoId={av.id} />
+                <RespuestasAdmin avisoId={av.id} />
               </div>
             )}
             {pedirConfirm ? (
@@ -166,6 +167,7 @@ export default function Avisos() {
                   {av.cuerpo}
                 </div>
                 {av.autor_nombre && abierto && <div className="muted" style={{ marginTop: 8 }}>— {av.autor_nombre}</div>}
+                {abierto && !esAdmin && <div onClick={e => e.stopPropagation()}><ResponderAviso avisoId={av.id} /></div>}
               </>
             )}
           </div>
@@ -225,6 +227,79 @@ function Recibos({ avisoId }) {
                   ))}
                 </>
               )}
+        </div>
+      )}
+    </>
+  )
+}
+
+// Empleado: responder un aviso + ver sus propias respuestas
+function ResponderAviso({ avisoId }) {
+  const { session, nombre } = useSession()
+  const [mis, setMis] = useState([])
+  const [texto, setTexto] = useState('')
+  const [enviando, setEnviando] = useState(false)
+
+  const cargar = useCallback(async () => {
+    const { data } = await supabase.from('avisos_respuestas').select('*').eq('aviso_id', avisoId).order('created_at', { ascending: true })
+    setMis(data || [])
+  }, [avisoId])
+  useEffect(() => { cargar() }, [cargar])
+
+  async function enviar() {
+    if (!texto.trim()) return
+    setEnviando(true)
+    const { error } = await supabase.from('avisos_respuestas').insert({ aviso_id: avisoId, user_id: session.user.id, autor_nombre: nombre, cuerpo: texto.trim() })
+    setEnviando(false)
+    if (error) { alert('No se pudo enviar la respuesta'); return }
+    setTexto(''); cargar()
+  }
+
+  return (
+    <div style={{ marginTop: 12, borderTop: '1px dashed var(--linea)', paddingTop: 10 }}>
+      {mis.map(r => (
+        <div key={r.id} style={{ borderLeft: '3px solid var(--azul)', paddingLeft: 10, marginBottom: 6 }}>
+          <div style={{ whiteSpace: 'pre-wrap', fontSize: 14 }}>{r.cuerpo}</div>
+          <div className="muted" style={{ fontSize: 11 }}>{new Date(r.created_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
+      ))}
+      <textarea className="inp" value={texto} onChange={e => setTexto(e.target.value)} placeholder="Responder a este aviso…" style={{ marginTop: 4 }} />
+      <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start', marginTop: 6 }} onClick={enviar} disabled={enviando}>{enviando ? 'Enviando…' : 'Responder'}</button>
+    </div>
+  )
+}
+
+// Admin: ver todas las respuestas de un aviso
+function RespuestasAdmin({ avisoId }) {
+  const [abierto, setAbierto] = useState(false)
+  const [data, setData] = useState(null)
+  const [cargando, setCargando] = useState(false)
+
+  async function toggle() {
+    const nuevo = !abierto
+    setAbierto(nuevo)
+    if (nuevo && !data) {
+      setCargando(true)
+      const { data: r } = await supabase.from('avisos_respuestas').select('*').eq('aviso_id', avisoId).order('created_at', { ascending: true })
+      setData(r || [])
+      setCargando(false)
+    }
+  }
+  const n = data ? data.length : null
+
+  return (
+    <>
+      <button className="linklike" onClick={toggle}>{abierto ? 'Ocultar respuestas' : (data ? `${n} respuesta${n === 1 ? '' : 's'}` : 'Ver respuestas')}</button>
+      {abierto && (
+        <div style={{ flexBasis: '100%', marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
+          {cargando ? <span className="muted">Cargando…</span>
+            : !data || data.length === 0 ? <span className="muted">Todavía nadie respondió.</span>
+              : data.map(r => (
+                <div key={r.id} style={{ padding: '4px 0', borderBottom: '1px solid var(--linea)' }}>
+                  <div className="muted" style={{ fontSize: 11 }}><b style={{ color: 'var(--tinta)' }}>{r.autor_nombre || 'Empleado'}</b> · {new Date(r.created_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+                  <div style={{ whiteSpace: 'pre-wrap', fontSize: 13 }}>{r.cuerpo}</div>
+                </div>
+              ))}
         </div>
       )}
     </>

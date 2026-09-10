@@ -325,8 +325,46 @@ function LiderAvisos({ area }) {
               <div className="between"><b>{a.titulo}</b><span className="muted">{new Date(a.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}</span></div>
               <div style={{ marginTop: 6, color: 'var(--tinta-2)', fontSize: 14, whiteSpace: 'pre-wrap' }}>{a.cuerpo}</div>
               {a.autor_nombre && <div className="muted" style={{ marginTop: 6 }}>— {a.autor_nombre}</div>}
+              <RespuestasAviso avisoId={a.id} />
             </div>
           ))}
+    </div>
+  )
+}
+
+// El líder (autor del aviso) ve las respuestas de su gente
+function RespuestasAviso({ avisoId }) {
+  const [abierto, setAbierto] = useState(false)
+  const [data, setData] = useState(null)
+  const [cargando, setCargando] = useState(false)
+
+  async function toggle() {
+    const nuevo = !abierto
+    setAbierto(nuevo)
+    if (nuevo && !data) {
+      setCargando(true)
+      const { data: r } = await supabase.from('avisos_respuestas').select('*').eq('aviso_id', avisoId).order('created_at', { ascending: true })
+      setData(r || [])
+      setCargando(false)
+    }
+  }
+  const n = data ? data.length : null
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      <button className="linklike" onClick={toggle}>{abierto ? 'Ocultar respuestas' : (data ? `${n} respuesta${n === 1 ? '' : 's'}` : 'Ver respuestas')}</button>
+      {abierto && (
+        <div style={{ marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
+          {cargando ? <span className="muted">Cargando…</span>
+            : !data || data.length === 0 ? <span className="muted">Todavía nadie respondió.</span>
+              : data.map(r => (
+                <div key={r.id} style={{ padding: '4px 0', borderBottom: '1px solid var(--linea)' }}>
+                  <div className="muted" style={{ fontSize: 11 }}><b style={{ color: 'var(--tinta)' }}>{r.autor_nombre || 'Empleado'}</b> · {new Date(r.created_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+                  <div style={{ whiteSpace: 'pre-wrap', fontSize: 13 }}>{r.cuerpo}</div>
+                </div>
+              ))}
+        </div>
+      )}
     </div>
   )
 }
