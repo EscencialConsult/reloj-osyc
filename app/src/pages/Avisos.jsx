@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getAreas } from '../lib/config'
@@ -17,6 +18,7 @@ function paraLabel(av) {
 
 export default function Avisos() {
   const { session, esAdmin, nombre, usaAreas } = useSession()
+  const navigate = useNavigate()
   const [avisos, setAvisos] = useState([])
   const [leidos, setLeidos] = useState(new Set())
   const [abiertos, setAbiertos] = useState(new Set())   // avisos con el cuerpo visible
@@ -144,7 +146,7 @@ export default function Avisos() {
         const abierto = abiertos.has(av.id)
         const pedirConfirm = noLeido && !esAdmin   // empleado: no muestra el cuerpo hasta confirmar
         return (
-          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => clickAviso(av)}>
+          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => esAdmin ? navigate('/avisos/' + av.id) : clickAviso(av)}>
             <div className="between">
               <div className="row">
                 {noLeido && <span className="dot" />}
@@ -153,11 +155,7 @@ export default function Avisos() {
               <span className="muted">{fechaCorta(av.created_at)}</span>
             </div>
             {esAdmin && (
-              <div className="row" style={{ marginTop: 4, gap: 10, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
-                <span className="muted">Para: {paraLabel(av)}</span>
-                <Recibos avisoId={av.id} />
-                <RespuestasAdmin avisoId={av.id} />
-              </div>
+              <div className="muted" style={{ marginTop: 4 }}>Para: {paraLabel(av)} · tocá para ver recibos y respuestas ›</div>
             )}
             {pedirConfirm ? (
               <div className="muted" style={{ marginTop: 8, color: 'var(--azul)', fontWeight: 700 }}>📩 Tocá para leer y confirmar recepción</div>
@@ -187,49 +185,6 @@ export default function Avisos() {
         </div>
       )}
     </div>
-  )
-}
-
-function Recibos({ avisoId }) {
-  const [abierto, setAbierto] = useState(false)
-  const [data, setData] = useState(null)
-  const [cargando, setCargando] = useState(false)
-
-  async function toggle() {
-    const nuevo = !abierto
-    setAbierto(nuevo)
-    if (nuevo && !data) {
-      setCargando(true)
-      const { data: r } = await supabase.rpc('avisos_recibos', { p_aviso_id: avisoId })
-      setData(r && r.ok ? r : { total: 0, leidos: [] })
-      setCargando(false)
-    }
-  }
-  const n = data ? (data.leidos?.length || 0) : null
-
-  return (
-    <>
-      <button className="linklike" onClick={toggle}>
-        {abierto ? 'Ocultar recibos' : (data ? `Recibido por ${n}/${data.total}` : 'Ver recibos')}
-      </button>
-      {abierto && (
-        <div style={{ flexBasis: '100%', marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
-          {cargando ? <span className="muted">Cargando…</span>
-            : !data || data.leidos.length === 0 ? <span className="muted">Todavía nadie lo recibió.</span>
-              : (
-                <>
-                  <div className="muted" style={{ marginBottom: 4 }}>Recibido por {n} de {data.total}:</div>
-                  {data.leidos.map((l, i) => (
-                    <div key={i} className="row between" style={{ fontSize: 13, padding: '2px 0' }}>
-                      <span>{l.nombre}</span>
-                      <span className="muted" style={{ fontSize: 11 }}>{new Date(l.leido_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-        </div>
-      )}
-    </>
   )
 }
 
@@ -266,43 +221,6 @@ function ResponderAviso({ avisoId }) {
       <textarea className="inp" value={texto} onChange={e => setTexto(e.target.value)} placeholder="Responder a este aviso…" style={{ marginTop: 4 }} />
       <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start', marginTop: 6 }} onClick={enviar} disabled={enviando}>{enviando ? 'Enviando…' : 'Responder'}</button>
     </div>
-  )
-}
-
-// Admin: ver todas las respuestas de un aviso
-function RespuestasAdmin({ avisoId }) {
-  const [abierto, setAbierto] = useState(false)
-  const [data, setData] = useState(null)
-  const [cargando, setCargando] = useState(false)
-
-  async function toggle() {
-    const nuevo = !abierto
-    setAbierto(nuevo)
-    if (nuevo && !data) {
-      setCargando(true)
-      const { data: r } = await supabase.from('avisos_respuestas').select('*').eq('aviso_id', avisoId).order('created_at', { ascending: true })
-      setData(r || [])
-      setCargando(false)
-    }
-  }
-  const n = data ? data.length : null
-
-  return (
-    <>
-      <button className="linklike" onClick={toggle}>{abierto ? 'Ocultar respuestas' : (data ? `${n} respuesta${n === 1 ? '' : 's'}` : 'Ver respuestas')}</button>
-      {abierto && (
-        <div style={{ flexBasis: '100%', marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
-          {cargando ? <span className="muted">Cargando…</span>
-            : !data || data.length === 0 ? <span className="muted">Todavía nadie respondió.</span>
-              : data.map(r => (
-                <div key={r.id} style={{ padding: '4px 0', borderBottom: '1px solid var(--linea)' }}>
-                  <div className="muted" style={{ fontSize: 11 }}><b style={{ color: 'var(--tinta)' }}>{r.autor_nombre || 'Empleado'}</b> · {new Date(r.created_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
-                  <div style={{ whiteSpace: 'pre-wrap', fontSize: 13 }}>{r.cuerpo}</div>
-                </div>
-              ))}
-        </div>
-      )}
-    </>
   )
 }
 

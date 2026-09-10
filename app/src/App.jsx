@@ -29,6 +29,7 @@ const FicharKiosk = reintentar(() => import('./components/FicharKiosk.jsx'))
 const Home = reintentar(() => import('./pages/Home.jsx'))
 const Fichar = reintentar(() => import('./pages/Fichar.jsx'))
 const Avisos = reintentar(() => import('./pages/Avisos.jsx'))
+const AvisoDetalle = reintentar(() => import('./pages/AvisoDetalle.jsx'))
 const Solicitudes = reintentar(() => import('./pages/Solicitudes.jsx'))
 const SolicitudDetalle = reintentar(() => import('./pages/SolicitudDetalle.jsx'))
 const Registros = reintentar(() => import('./pages/Registros.jsx'))
@@ -63,6 +64,7 @@ export default function App() {
           <Route path="/fichar" element={<Fichar />} />
           <Route path="/fichar.html" element={<Fichar />} />
           <Route path="/avisos" element={<Avisos />} />
+          <Route path="/avisos/:id" element={<AvisoDetalle />} />
           <Route path="/equipo" element={<Equipo />} />
           <Route path="/solicitudes" element={<Solicitudes />} />
           <Route path="/solicitudes/:id" element={<SolicitudDetalle />} />
