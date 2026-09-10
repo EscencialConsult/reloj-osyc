@@ -68,6 +68,7 @@ export default function SolicitudDetalle() {
           <span className={'badge ' + sol.estado}>{sol.estado}</span>
         </div>
         {sol.personal?.nombre && <div className="muted">Solicitante: {sol.personal.nombre}</div>}
+        {sol.para_lider && <div className="muted" style={{ color: 'var(--azul)' }}>También enviada al líder{sol.area ? ` de ${sol.area}` : ''}.</div>}
         {(sol.desde || sol.hasta) && (
           <div className="muted">Fechas: {sol.desde ? fechaCorta(sol.desde) : '—'}{sol.hasta ? ' → ' + fechaCorta(sol.hasta) : ''}</div>
         )}

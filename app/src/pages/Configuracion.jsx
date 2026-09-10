@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getFeatures, saveFeatures, getAreas, saveAreas, getPlantillas, savePlantillas } from '../lib/config'
+import { listLideres, saveLider, deleteLider, resumenPermisos, PERMISOS_DEFAULT, PERMISO_LABEL } from '../lib/lideres'
 import { bestPosition } from '../lib/geo'
 import { Icon } from '../components/icons.jsx'
 
@@ -78,6 +79,7 @@ export default function Configuracion() {
       </div>
 
       {feats.usa_areas && <Areas areas={areas} setAreas={setAreas} />}
+      {feats.usa_lideres && <Lideres areas={areas} />}
       <Plantillas plantillas={plantillas} setPlantillas={setPlantillas} />
       <Sedes />
     </div>
@@ -123,6 +125,139 @@ function Areas({ areas, setAreas }) {
       </div>
     </div>
   )
+}
+
+function Lideres({ areas }) {
+  const [lista, setLista] = useState(null)
+  const [edit, setEdit] = useState(null)   // {} = nuevo, {..} = editar, null = cerrado
+
+  const cargar = useCallback(async () => { setLista(await listLideres()) }, [])
+  useEffect(() => { cargar() }, [cargar])
+
+  async function borrar(l) {
+    if (!window.confirm(`¿Eliminar al líder "${l.nombre}"? Ya no podrá ingresar.`)) return
+    const { error } = await deleteLider(l.id)
+    if (error) { alert('No se pudo eliminar'); return }
+    cargar()
+  }
+
+  return (
+    <div className="card stack">
+      <div className="between">
+        <b>Líderes</b>
+        <button className="btn btn-primary btn-sm" onClick={() => setEdit({})}><Icon.Plus /> Agregar</button>
+      </div>
+      <div className="muted">Cada líder entra con su usuario y contraseña por «Soy líder». Según los permisos que le des, carga horarios, recibe solicitudes, envía avisos o ve informes de su(s) área(s).</div>
+
+      {lista === null ? <div className="muted">Cargando…</div>
+        : lista.length === 0 ? <div className="muted">Todavía no hay líderes.</div>
+          : lista.map(l => (
+            <div key={l.id} className="between" style={{ border: '1px solid var(--linea)', borderRadius: 9, padding: '10px 12px', gap: 8 }}>
+              <div style={{ minWidth: 0 }}>
+                <div><b style={{ fontSize: 13 }}>{l.nombre}</b> <span className="muted">· {l.usuario}</span> {!l.activo && <span style={{ color: 'var(--err)', fontSize: 11 }}>(inactivo)</span>}</div>
+                <div className="muted" style={{ fontSize: 12 }}>{(l.areas || []).join(', ') || 'Sin área asignada'}</div>
+                <div className="muted" style={{ fontSize: 11 }}>Permisos: {resumenPermisos(l.permisos)}</div>
+              </div>
+              <div className="row" style={{ gap: 4 }}>
+                <button className="btn btn-ghost btn-sm" style={{ padding: '4px 8px' }} onClick={() => setEdit(l)}>✎</button>
+                <button className="btn btn-err btn-sm" style={{ padding: '4px 8px' }} onClick={() => borrar(l)}>✕</button>
+              </div>
+            </div>
+          ))}
+
+      {edit && <LiderForm lider={edit} areas={areas} onClose={() => setEdit(null)} onGuardado={() => { setEdit(null); cargar() }} />}
+    </div>
+  )
+}
+
+function LiderForm({ lider, areas, onClose, onGuardado }) {
+  const esNuevo = !lider.id
+  const [f, setF] = useState({
+    nombre: lider.nombre || '',
+    usuario: lider.usuario || '',
+    password: '',                                   // vacío = mantener / usar el usuario
+    areas: Array.isArray(lider.areas) ? lider.areas : [],
+    activo: lider.id ? !!lider.activo : true,
+    permisos: { ...PERMISOS_DEFAULT, ...(lider.permisos || {}) },
+  })
+  const [guardando, setGuardando] = useState(false)
+  const [err, setErr] = useState('')
+  const set = (k, v) => setF(p => ({ ...p, [k]: v }))
+  const toggleArea = (a) => setF(p => ({ ...p, areas: p.areas.includes(a) ? p.areas.filter(x => x !== a) : [...p.areas, a] }))
+  const togglePerm = (k) => setF(p => ({ ...p, permisos: { ...p.permisos, [k]: !p.permisos[k] } }))
+
+  async function guardar() {
+    setErr('')
+    if (!f.nombre.trim()) { setErr('Poné el nombre del líder'); return }
+    if (!f.usuario.trim()) { setErr('Poné un usuario'); return }
+    if (f.areas.length === 0) { setErr('Elegí al menos un área a cargo'); return }
+    setGuardando(true)
+    const payload = { ...f }
+    if (lider.id) payload.id = lider.id
+    // Si estamos editando y no escribieron contraseña nueva, no la pisamos
+    if (lider.id && !f.password.trim()) delete payload.password
+    const { error } = await saveLider(payload)
+    setGuardando(false)
+    if (error) {
+      setErr(/duplicate|unique/i.test(error.message) ? 'Ya existe un líder con ese usuario' : 'No se pudo guardar: ' + error.message)
+      return
+    }
+    onGuardado()
+  }
+
+  return (
+    <div className="consent-ov" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
+      <div className="card stack" style={{ maxWidth: 440, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="between"><b>{esNuevo ? 'Nuevo líder' : 'Editar líder'}</b><button className="btn btn-ghost btn-sm" onClick={onClose}><Icon.X /></button></div>
+
+        <div><label className="lbl">Nombre</label><input className="inp" value={f.nombre} onChange={e => set('nombre', e.target.value)} placeholder="ej: María López" /></div>
+        <div><label className="lbl">Usuario</label><input className="inp" value={f.usuario} onChange={e => set('usuario', e.target.value)} placeholder="ej: mlopez" /></div>
+        <div>
+          <label className="lbl">Contraseña {!esNuevo && <span className="muted">(dejar vacío = no cambiar)</span>}</label>
+          <input className="inp" value={f.password} onChange={e => set('password', e.target.value)} placeholder={esNuevo ? 'Si la dejás vacía, usa el usuario' : '••••••'} />
+        </div>
+
+        <div>
+          <label className="lbl">Área(s) a cargo</label>
+          {areas.length === 0 ? <div className="muted">No hay áreas cargadas. Creá áreas más arriba primero.</div>
+            : (
+              <div style={{ border: '1px solid var(--linea)', borderRadius: 10, maxHeight: 160, overflowY: 'auto' }}>
+                {areas.map(a => (
+                  <label key={a} className="row" style={{ gap: 10, padding: '8px 12px', borderBottom: '1px solid var(--linea)', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={f.areas.includes(a)} onChange={() => toggleArea(a)} />
+                    <span>{a}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+        </div>
+
+        <div>
+          <label className="lbl">Permisos (qué ve en su panel)</label>
+          <div style={{ border: '1px solid var(--linea)', borderRadius: 10 }}>
+            {Object.keys(PERMISO_LABEL).map(k => (
+              <label key={k} className="between" style={{ padding: '9px 12px', borderBottom: '1px solid var(--linea)', cursor: 'pointer' }}>
+                <span>{PERMISO_LABEL[k]} <span className="muted" style={{ fontSize: 11 }}>{PERMISO_HINT[k]}</span></span>
+                <input type="checkbox" checked={!!f.permisos[k]} onChange={() => togglePerm(k)} />
+              </label>
+            ))}
+          </div>
+        </div>
+
+        <label className="row" style={{ gap: 8, cursor: 'pointer' }}><input type="checkbox" checked={f.activo} onChange={e => set('activo', e.target.checked)} /> Activo</label>
+
+        {err && <div className="err-txt">{err}</div>}
+        <button className="btn btn-primary" onClick={guardar} disabled={guardando}>{guardando ? 'Guardando…' : 'Guardar líder'}</button>
+      </div>
+    </div>
+  )
+}
+
+const PERMISO_HINT = {
+  horarios: '· cargar/modificar horarios de su área',
+  solicitudes: '· recibir y responder solicitudes',
+  avisos: '· enviar avisos a su área',
+  informes: '· ver informes de su área',
 }
 
 function Plantillas({ plantillas, setPlantillas }) {

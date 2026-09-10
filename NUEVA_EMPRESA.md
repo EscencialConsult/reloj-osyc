@@ -32,6 +32,7 @@ Los arreglos futuros se pasan con: `git checkout <empresa> && git merge main`.
 10. `sql/fase13_notif_solicitud_nueva.sql`
 11. `sql/fase10_push_trigger.sql`  ← **editar primero**: poné la URL del proyecto nuevo
     (`https://<REF>.supabase.co/functions/v1/enviar-push`) y su **anon key** en el header.
+12. `sql/fase14_lideres_permisos.sql`  (permisos de líderes + ruteo de solicitudes al líder)
 
 ## 4) Configurar la app (en la rama de la empresa)
 Editá **`app/src/config.js`**:
