@@ -9,6 +9,7 @@ import { useSession } from '../lib/session.jsx'
 import { PERIODOS, getDateRange, fmtDate, today } from '../lib/fechas'
 import { calcHs, fmtHs, calcTardVsPlan, calcHsExtra, areaColor } from '../lib/calculos'
 import { getAreas } from '../lib/config'
+import { Icon } from '../components/icons.jsx'
 
 ChartJS.register(ArcElement, BarElement, LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend, Filler)
 
