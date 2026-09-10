@@ -154,12 +154,12 @@ function NuevaSolicitud({ onCreada }) {
   const [lider, setLider] = useState(null)         // { nombre } si su área tiene líder con permiso
   const [paraLider, setParaLider] = useState(false)
 
-  // ¿El área del empleado tiene un líder que reciba solicitudes?
+  // ¿El área del empleado tiene un líder (distinto de mí) que reciba solicitudes?
   useEffect(() => {
     let vivo = true
-    liderDeMiArea(perfil?.area).then(l => { if (vivo) setLider(l) })
+    liderDeMiArea(perfil?.area, session?.user?.id).then(l => { if (vivo) setLider(l) })
     return () => { vivo = false }
-  }, [perfil?.area])
+  }, [perfil?.area, session?.user?.id])
 
   async function enviar() {
     setErr('')
