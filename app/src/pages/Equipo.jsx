@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { getLunes, getDomingo, today, PERIODOS, getDateRange, fmtDate } from '../lib/fechas'
-import { fmtHs, areaColor, calcHs, calcTardVsPlan, calcHsExtra } from '../lib/calculos'
+import { useSession } from '../lib/session.jsx'
+import { getLunes, getDomingo, today, PERIODOS, getDateRange } from '../lib/fechas'
+import { fmtHs, calcHs, calcTardVsPlan, calcHsExtra } from '../lib/calculos'
 import { logActividad, esFueraDeTerm } from '../lib/audit'
 import { DIAS, DIAS_SEM, calcTotRow, filaDesdeGuardado, filaAGuardar, dd, diasArr } from '../lib/horarios'
+import { liderSolicitudes, liderResolver, liderComentar, liderCrearAviso, liderAvisos } from '../lib/lideres'
 import { PersonCard, sincronizarRegistros } from './Horarios.jsx'
-import { PERMISOS_DEFAULT, liderSolicitudes, liderResolver, liderComentar, liderCrearAviso, liderAvisos } from '../lib/lideres'
 import { tipoLabel, fechaCorta } from './Solicitudes.jsx'
 import { Icon } from '../components/icons.jsx'
-
-const LS_KEY = 'osyc_lider_sess'
 
 // ¿Estamos dentro de la ventana de carga? Sin config → editable (abierto).
 function dentroDeVentana(cfg) {
@@ -22,75 +20,11 @@ function dentroDeVentana(cfg) {
   return (ahora.getHours() + ahora.getMinutes() / 60) < c.hasta
 }
 
-export default function Lider() {
-  const [sess, setSess] = useState(() => { try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null') } catch { return null } })
-  const [area, setArea] = useState(() => localStorage.getItem(LS_KEY + '_area') || '')
+export default function Equipo() {
+  const { esLider, liderAreas, liderPermisos, nombre } = useSession()
+  const [area, setArea] = useState(liderAreas[0] || '')
 
-  function login(l) {
-    setSess(l); localStorage.setItem(LS_KEY, JSON.stringify(l))
-    if (l.areas?.length === 1) elegirArea(l.areas[0])
-    else { setArea(''); localStorage.removeItem(LS_KEY + '_area') }
-  }
-  function elegirArea(a) { setArea(a); localStorage.setItem(LS_KEY + '_area', a) }
-  function salir() { setSess(null); setArea(''); localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_KEY + '_area') }
-
-  if (!sess) return <LiderLogin onLogin={login} />
-  if (!area) return <SelectorArea sess={sess} onElegir={elegirArea} onSalir={salir} />
-  return <PanelLider sess={sess} area={area} onCambiarArea={() => setArea('')} onSalir={salir} />
-}
-
-function LiderLogin({ onLogin }) {
-  const [u, setU] = useState(''); const [p, setP] = useState('')
-  const [err, setErr] = useState(''); const [cargando, setCargando] = useState(false)
-
-  async function entrar(e) {
-    e.preventDefault(); setErr(''); setCargando(true)
-    const usuario = u.trim().toUpperCase(), pass = p.trim().toUpperCase()
-    const { data } = await supabase.from('lideres').select('*').eq('activo', true)
-    const l = (data || []).find(x => (x.usuario || '').toUpperCase() === usuario)
-    const passOk = l && (pass === (l.password || '').toUpperCase() || pass === usuario)
-    setCargando(false)
-    if (!l || !passOk) { setErr('Usuario o contraseña incorrectos'); return }
-    onLogin({
-      usuario: l.usuario, nombre: l.nombre, areas: l.areas || [],
-      password: l.password || l.usuario,
-      permisos: { ...PERMISOS_DEFAULT, ...(l.permisos || {}) }
-    })
-  }
-
-  return (
-    <div className="center-screen">
-      <form className="card stack" style={{ width: '100%', maxWidth: 380 }} onSubmit={entrar}>
-        <div style={{ textAlign: 'center' }}>
-          <img src="/logo.png" alt="OSYC" style={{ maxWidth: '100%', maxHeight: 56, height: 'auto', display: 'block', margin: '0 auto' }} />
-          <p className="muted" style={{ marginTop: 8 }}>Líder · Panel de tu área</p>
-        </div>
-        <div><label className="lbl">Usuario</label><input className="inp" value={u} onChange={e => setU(e.target.value)} placeholder="Tu usuario" /></div>
-        <div><label className="lbl">Contraseña</label><input className="inp" type="password" value={p} onChange={e => setP(e.target.value)} /></div>
-        {err && <div className="err-txt">{err}</div>}
-        <button className="btn btn-primary" disabled={cargando}>{cargando ? 'Ingresando…' : 'Ingresar →'}</button>
-        <Link to="/" className="muted" style={{ textAlign: 'center', fontSize: 13 }}>← Volver al inicio</Link>
-      </form>
-    </div>
-  )
-}
-
-function SelectorArea({ sess, onElegir, onSalir }) {
-  return (
-    <div className="center-screen">
-      <div className="card stack" style={{ width: '100%', maxWidth: 420 }}>
-        <div className="between"><b>Hola, {sess.nombre}</b><button className="btn btn-ghost btn-sm" onClick={onSalir}>Salir</button></div>
-        <p className="muted">Elegí el área que vas a gestionar:</p>
-        {sess.areas.map(a => (
-          <button key={a} className="btn btn-ghost" style={{ justifyContent: 'flex-start', color: areaColor(a, sess.areas), borderLeft: `3px solid ${areaColor(a, sess.areas)}` }} onClick={() => onElegir(a)}>{a}</button>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function PanelLider({ sess, area, onCambiarArea, onSalir }) {
-  const permisos = { ...PERMISOS_DEFAULT, ...(sess.permisos || {}) }
+  const permisos = { horarios: true, solicitudes: false, avisos: false, informes: false, ...(liderPermisos || {}) }
   const secciones = [
     permisos.horarios && { k: 'horarios', t: 'Horarios' },
     permisos.solicitudes && { k: 'solicitudes', t: 'Solicitudes' },
@@ -99,44 +33,44 @@ function PanelLider({ sess, area, onCambiarArea, onSalir }) {
   ].filter(Boolean)
   const [sec, setSec] = useState(secciones[0]?.k || null)
 
+  if (!esLider) return <div className="empty">Esta sección es solo para líderes.</div>
+  if (!area) return <div className="empty">No tenés áreas asignadas. Pedile al administrador que te asigne al menos una.</div>
+
   return (
-    <div style={{ minHeight: '100%' }}>
-      <header className="appbar">
-        <div className="inner">
-          <span className="row" style={{ gap: 8, alignItems: 'center' }}><img src="/logo.png" alt="OSYC" style={{ height: 24 }} /> <b style={{ color: 'var(--tinta-2)', fontWeight: 800 }}>Líder</b></span>
-          <div className="row" style={{ gap: 8 }}>
-            <span className="badge pendiente">{area}</span>
-            {sess.areas.length > 1 && <button className="btn btn-ghost btn-sm" onClick={onCambiarArea}>Cambiar área</button>}
-            <button className="btn btn-ghost btn-sm" onClick={onSalir}><Icon.Logout /> Salir</button>
-          </div>
+    <div className="stack">
+      <div className="between">
+        <div>
+          <h2 style={{ fontSize: 18 }}>Mi equipo</h2>
+          <span className="muted">Área: <b style={{ color: 'var(--azul)' }}>{area}</b></span>
         </div>
-      </header>
-
-      <main className="wrap stack">
-        <p className="muted">Hola, <b style={{ color: 'var(--tinta)' }}>{sess.nombre}</b> · área <b>{area}</b></p>
-
-        {secciones.length > 1 && (
-          <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
-            {secciones.map(s => (
-              <button key={s.k} className={'btn btn-sm ' + (sec === s.k ? 'btn-primary' : 'btn-ghost')} onClick={() => setSec(s.k)}>{s.t}</button>
-            ))}
-          </div>
+        {liderAreas.length > 1 && (
+          <select className="inp" style={{ maxWidth: 200 }} value={area} onChange={e => setArea(e.target.value)}>
+            {liderAreas.map(a => <option key={a} value={a}>{a}</option>)}
+          </select>
         )}
+      </div>
 
-        {secciones.length === 0 && <div className="empty">Tu usuario no tiene permisos habilitados. Pedile al administrador que te asigne alguno.</div>}
-        {sec === 'horarios' && <LiderHorarios sess={sess} area={area} />}
-        {sec === 'solicitudes' && <LiderSolicitudes sess={sess} area={area} />}
-        {sec === 'avisos' && <LiderAvisos sess={sess} area={area} />}
-        {sec === 'informes' && <LiderInformes area={area} />}
-      </main>
+      {secciones.length > 1 && (
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
+          {secciones.map(s => (
+            <button key={s.k} className={'btn btn-sm ' + (sec === s.k ? 'btn-primary' : 'btn-ghost')} onClick={() => setSec(s.k)}>{s.t}</button>
+          ))}
+        </div>
+      )}
+
+      {secciones.length === 0 && <div className="empty">Tu usuario no tiene permisos de líder habilitados. Pedile al administrador que te asigne alguno.</div>}
+      {sec === 'horarios' && <LiderHorarios nombre={nombre} area={area} />}
+      {sec === 'solicitudes' && <LiderSolicitudes area={area} />}
+      {sec === 'avisos' && <LiderAvisos area={area} />}
+      {sec === 'informes' && <LiderInformes area={area} />}
     </div>
   )
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  HORARIOS (lo de siempre)
+//  HORARIOS
 // ═══════════════════════════════════════════════════════════════════════════
-function LiderHorarios({ sess, area }) {
+function LiderHorarios({ nombre, area }) {
   const [offSem, setOffSem] = useState(1)   // por defecto: semana siguiente
   const semViendo = getLunes(today(), offSem)
   const [editRows, setEditRows] = useState(null)
@@ -145,6 +79,7 @@ function LiderHorarios({ sess, area }) {
   const [ventanaCfg, setVentanaCfg] = useState(null)
   const [ventanaLista, setVentanaLista] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState(null)     // { tipo: 'ok'|'err', txt }
   const fechas = diasArr(semViendo)
 
   useEffect(() => {
@@ -185,19 +120,19 @@ function LiderHorarios({ sess, area }) {
   }
 
   async function guardar() {
-    setSaving(true)
+    setSaving(true); setMsg(null)
     const horarios = editRows.map(filaAGuardar)
     const payload = { semana_desde: semViendo, semana_hasta: getDomingo(semViendo), area, horarios }
     let error, newId = rowId
     if (rowId) ({ error } = await supabase.from('horarios_semanales').update(payload).eq('id', rowId))
     else { const res = await supabase.from('horarios_semanales').insert(payload).select('id').single(); error = res.error; if (!error) { newId = res.data.id; setRowId(newId) } }
-    if (error) { setSaving(false); alert('Error: ' + error.message); return }
+    if (error) { setSaving(false); setMsg({ tipo: 'err', txt: 'Error: ' + error.message }); return }
     await sincronizarRegistros(area, semViendo, horarios)
-    await logActividad(sess.nombre, 'horario_semanal_guardado', area, null,
+    await logActividad(nombre, 'horario_semanal_guardado', area, null,
       `Horario semanal ${rowId ? 'actualizado' : 'creado'} por líder para ${area} — semana ${semViendo}`,
       { semana: semViendo, personas: editRows.length }, esFueraDeTerm(semViendo), 'lider')
     setSaving(false)
-    alert('✓ Horarios guardados')
+    setMsg({ tipo: 'ok', txt: '✓ Horarios guardados' }); setTimeout(() => setMsg(null), 3000)
   }
 
   const total = (editRows || []).reduce((a, r) => a + calcTotRow(r), 0)
@@ -232,10 +167,11 @@ function LiderHorarios({ sess, area }) {
               {editable ? (
                 <>
                   {editRows.map((r, i) => <PersonCard key={r.nombre} row={r} i={i} fechas={fechas} plantillas={[]} update={update} />)}
+                  {msg && <div className={msg.tipo === 'ok' ? 'result ok' : 'err-txt'} style={{ marginTop: 0 }}>{msg.txt}</div>}
                   <button className="btn btn-primary" onClick={guardar} disabled={saving}>{saving ? 'Guardando…' : 'Guardar horarios'}</button>
                 </>
               ) : (
-                <VistaSoloLectura rows={editRows} fechas={fechas} />
+                <VistaSoloLectura rows={editRows} />
               )}
             </>
           )}
@@ -271,11 +207,11 @@ function VistaSoloLectura({ rows }) {
 // ═══════════════════════════════════════════════════════════════════════════
 //  SOLICITUDES (recibir / responder las de su área)
 // ═══════════════════════════════════════════════════════════════════════════
-function LiderSolicitudes({ sess, area }) {
+function LiderSolicitudes({ area }) {
   const [items, setItems] = useState(null)
-  const [abierta, setAbierta] = useState(null)   // id expandida
+  const [abierta, setAbierta] = useState(null)
 
-  const cargar = useCallback(async () => { setItems(await liderSolicitudes(sess, area)) }, [sess, area])
+  const cargar = useCallback(async () => { setItems(await liderSolicitudes(area)) }, [area])
   useEffect(() => { cargar() }, [cargar])
 
   if (items === null) return <div className="center-screen" style={{ minHeight: 160 }}><div className="spin" /></div>
@@ -284,7 +220,7 @@ function LiderSolicitudes({ sess, area }) {
   return (
     <div className="stack">
       {items.map(s => (
-        <SolicitudCard key={s.id} s={s} sess={sess}
+        <SolicitudCard key={s.id} s={s}
           abierta={abierta === s.id} onToggle={() => setAbierta(a => a === s.id ? null : s.id)}
           onCambio={cargar} />
       ))}
@@ -292,24 +228,27 @@ function LiderSolicitudes({ sess, area }) {
   )
 }
 
-function SolicitudCard({ s, sess, abierta, onToggle, onCambio }) {
+function SolicitudCard({ s, abierta, onToggle, onCambio }) {
   const [texto, setTexto] = useState('')
   const [accion, setAccion] = useState(false)
+  const [msg, setMsg] = useState(null)
+
+  function avisar(tipo, txt) { setMsg({ tipo, txt }); if (tipo === 'ok') setTimeout(() => setMsg(null), 3000) }
 
   async function resolver(estado) {
-    setAccion(true)
-    const r = await liderResolver(sess, s.id, estado, texto.trim() || null)
+    setAccion(true); setMsg(null)
+    const r = await liderResolver(s.id, estado, texto.trim() || null)
     setAccion(false)
-    if (!r?.ok) { alert('No se pudo actualizar: ' + (r?.msg || '')); return }
+    if (!r?.ok) { avisar('err', 'No se pudo actualizar: ' + (r?.msg || '')); return }
     setTexto(''); onCambio()
   }
   async function comentar() {
     if (!texto.trim()) return
-    setAccion(true)
-    const r = await liderComentar(sess, s.id, texto.trim())
+    setAccion(true); setMsg(null)
+    const r = await liderComentar(s.id, texto.trim())
     setAccion(false)
-    if (!r?.ok) { alert('No se pudo comentar: ' + (r?.msg || '')); return }
-    setTexto(''); alert('Comentario enviado ✓')
+    if (!r?.ok) { avisar('err', 'No se pudo comentar: ' + (r?.msg || '')); return }
+    setTexto(''); avisar('ok', 'Comentario enviado ✓')
   }
 
   return (
@@ -329,6 +268,7 @@ function SolicitudCard({ s, sess, abierta, onToggle, onCambio }) {
           {s.tiene_adjunto && <div className="muted" style={{ fontSize: 13 }}><Icon.File style={{ width: 14, height: 14, verticalAlign: '-2px' }} /> Adjunto (visible para la administración)</div>}
 
           <textarea className="inp" value={texto} onChange={e => setTexto(e.target.value)} placeholder="Comentario o motivo de la decisión…" />
+          {msg && <div className={msg.tipo === 'ok' ? 'result ok' : 'err-txt'} style={{ marginTop: 0 }}>{msg.txt}</div>}
           {s.estado === 'pendiente' ? (
             <div className="row" style={{ gap: 8 }}>
               <button className="btn btn-ok grow" onClick={() => resolver('aprobado')} disabled={accion}><Icon.Check /> Aprobar</button>
@@ -347,24 +287,24 @@ function SolicitudCard({ s, sess, abierta, onToggle, onCambio }) {
 // ═══════════════════════════════════════════════════════════════════════════
 //  AVISOS (enviar a su área)
 // ═══════════════════════════════════════════════════════════════════════════
-function LiderAvisos({ sess, area }) {
+function LiderAvisos({ area }) {
   const [titulo, setTitulo] = useState('')
   const [cuerpo, setCuerpo] = useState('')
   const [enviando, setEnviando] = useState(false)
-  const [err, setErr] = useState('')
+  const [msg, setMsg] = useState(null)
   const [lista, setLista] = useState(null)
 
-  const cargar = useCallback(async () => { setLista(await liderAvisos(sess, area)) }, [sess, area])
+  const cargar = useCallback(async () => { setLista(await liderAvisos(area)) }, [area])
   useEffect(() => { cargar() }, [cargar])
 
   async function publicar() {
-    setErr('')
-    if (!titulo.trim() || !cuerpo.trim()) { setErr('Completá título y mensaje'); return }
+    setMsg(null)
+    if (!titulo.trim() || !cuerpo.trim()) { setMsg({ tipo: 'err', txt: 'Completá título y mensaje' }); return }
     setEnviando(true)
-    const r = await liderCrearAviso(sess, area, titulo.trim(), cuerpo.trim())
+    const r = await liderCrearAviso(area, titulo.trim(), cuerpo.trim())
     setEnviando(false)
-    if (!r?.ok) { setErr('No se pudo publicar: ' + (r?.msg || '')); return }
-    setTitulo(''); setCuerpo(''); cargar()
+    if (!r?.ok) { setMsg({ tipo: 'err', txt: 'No se pudo publicar: ' + (r?.msg || '') }); return }
+    setTitulo(''); setCuerpo(''); setMsg({ tipo: 'ok', txt: '✓ Aviso publicado' }); setTimeout(() => setMsg(null), 3000); cargar()
   }
 
   return (
@@ -373,7 +313,7 @@ function LiderAvisos({ sess, area }) {
         <b>Nuevo aviso para {area}</b>
         <div><label className="lbl">Título</label><input className="inp" value={titulo} onChange={e => setTitulo(e.target.value)} placeholder="Ej: Cambio de horario" /></div>
         <div><label className="lbl">Mensaje</label><textarea className="inp" value={cuerpo} onChange={e => setCuerpo(e.target.value)} placeholder="Escribí el aviso…" /></div>
-        {err && <div className="err-txt">{err}</div>}
+        {msg && <div className={msg.tipo === 'ok' ? 'result ok' : 'err-txt'} style={{ marginTop: 0 }}>{msg.txt}</div>}
         <button className="btn btn-primary" onClick={publicar} disabled={enviando}>{enviando ? 'Publicando…' : 'Publicar aviso'}</button>
       </div>
 

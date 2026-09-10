@@ -24,7 +24,7 @@ const reintentar = (factory) => lazy(async () => {
     throw e
   }
 })
-const Lider = reintentar(() => import('./pages/Lider.jsx'))
+const Equipo = reintentar(() => import('./pages/Equipo.jsx'))
 const FicharKiosk = reintentar(() => import('./components/FicharKiosk.jsx'))
 const Home = reintentar(() => import('./pages/Home.jsx'))
 const Fichar = reintentar(() => import('./pages/Fichar.jsx'))
@@ -45,8 +45,8 @@ export default function App() {
 
   if (cargando) return <Cargando />
 
-  // El rol Líder tiene su propio acceso (tabla lideres), fuera del login de empleados/admin
-  if (location.pathname.startsWith('/lider')) return <Suspense fallback={<Cargando />}><Lider /></Suspense>
+  // Compatibilidad: el viejo enlace /lider ahora es una sección más del panel normal
+  if (location.pathname.startsWith('/lider')) return <Navigate to="/equipo" replace />
   if (!session) return <Login />
 
   // Modo kiosco: si entró por el QR de una sucursal, solo ve Fichar.
@@ -63,6 +63,7 @@ export default function App() {
           <Route path="/fichar" element={<Fichar />} />
           <Route path="/fichar.html" element={<Fichar />} />
           <Route path="/avisos" element={<Avisos />} />
+          <Route path="/equipo" element={<Equipo />} />
           <Route path="/solicitudes" element={<Solicitudes />} />
           <Route path="/solicitudes/:id" element={<SolicitudDetalle />} />
           <Route path="/registros" element={<Registros />} />

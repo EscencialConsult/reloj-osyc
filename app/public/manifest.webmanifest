@@ -1,6 +1,6 @@
 {
-  "name": "ONE Gestión",
-  "short_name": "ONE",
+  "name": "ChekApp",
+  "short_name": "ChekApp",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

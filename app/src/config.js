@@ -8,6 +8,11 @@
 // Nombre corto de la empresa (aparece en títulos de pestaña, etc.)
 export const EMPRESA = 'ONE'
 
+// Nombre COMERCIAL del producto (mismo para todas las empresas). Se usa en el
+// texto de consentimiento y en el nombre con el que se instala la app (PWA).
+// La marca visible dentro de la app (logo/color) sigue siendo la de la empresa.
+export const APP_NAME = 'ChekApp'
+
 // Proyecto Supabase de ESTA empresa  (Supabase → Settings → API)
 export const SUPABASE_URL = 'https://xgmhcerbdnspdhyibnxi.supabase.co'
 export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhnbWhjZXJiZG5zcGRoeWlibnhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5OTIzMDQsImV4cCI6MjEwNDU2ODMwNH0.n-Ba6PbJmgmG-qurFuQtbVpTUCgVa4nsBJtwxew7hTA'

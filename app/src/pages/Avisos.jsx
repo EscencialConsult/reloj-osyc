@@ -232,7 +232,7 @@ function Recibos({ avisoId }) {
 }
 
 function NuevoAviso({ nombre, onCreado }) {
-  const { session, usaAreas } = useSession()
+  const { session, usaAreas, usaLideres } = useSession()
   const [abierto, setAbierto] = useState(false)
   const [titulo, setTitulo] = useState('')
   const [cuerpo, setCuerpo] = useState('')
@@ -248,9 +248,11 @@ function NuevoAviso({ nombre, onCreado }) {
   useEffect(() => {
     if (!abierto) return
     getAreas().then(setAreas)
-    supabase.from('personal').select('user_id,nombre,area').eq('activo', true).not('user_id', 'is', null).order('nombre')
+    supabase.from('personal').select('user_id,nombre,area,es_lider').eq('activo', true).not('user_id', 'is', null).order('nombre')
       .then(({ data }) => setEmpleados(data || []))
   }, [abierto])
+
+  const idsLideres = empleados.filter(e => e.es_lider).map(e => e.user_id)
 
   function toggle(uid) { setSel(s => { const n = new Set(s); n.has(uid) ? n.delete(uid) : n.add(uid); return n }) }
 
@@ -259,11 +261,12 @@ function NuevoAviso({ nombre, onCreado }) {
     if (!titulo.trim() || !cuerpo.trim()) { setErr('Completá título y mensaje'); return }
     if (modo === 'area' && !area) { setErr('Elegí un área'); return }
     if (modo === 'personas' && sel.size === 0) { setErr('Elegí al menos una persona'); return }
+    if (modo === 'lideres' && idsLideres.length === 0) { setErr('No hay líderes activos con acceso a la app'); return }
     setGuardando(true)
     const fila = {
       titulo: titulo.trim(), cuerpo: cuerpo.trim(), autor_id: session.user.id, autor_nombre: nombre,
       area: modo === 'area' ? area : null,
-      destinatarios: modo === 'personas' ? [...sel] : null
+      destinatarios: modo === 'personas' ? [...sel] : modo === 'lideres' ? idsLideres : null
     }
     const { error } = await supabase.from('avisos').insert(fila)
     setGuardando(false)
@@ -296,8 +299,10 @@ function NuevoAviso({ nombre, onCreado }) {
         <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
           <button className={'btn btn-sm ' + (modo === 'todos' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('todos')}>Todos</button>
           {usaAreas && <button className={'btn btn-sm ' + (modo === 'area' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('area')}>Un área</button>}
+          {usaLideres && <button className={'btn btn-sm ' + (modo === 'lideres' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('lideres')}>Líderes</button>}
           <button className={'btn btn-sm ' + (modo === 'personas' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('personas')}>Personas</button>
         </div>
+        {modo === 'lideres' && <div className="muted" style={{ marginTop: 6 }}>Se enviará a los <b>{idsLideres.length}</b> líder(es) activos.</div>}
       </div>
 
       {modo === 'area' && (
