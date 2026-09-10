@@ -6,7 +6,7 @@ import {
 import { Doughnut, Bar, Line } from 'react-chartjs-2'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
-import { PERIODOS, getDateRange, fmtDate } from '../lib/fechas'
+import { PERIODOS, getDateRange, fmtDate, today } from '../lib/fechas'
 import { calcHs, fmtHs, calcTardVsPlan, calcHsExtra, areaColor } from '../lib/calculos'
 import { getAreas } from '../lib/config'
 
@@ -271,6 +271,28 @@ function TopBox({ titulo, modo, setModo, data, val, sub, color, areas, verMas, s
 
 // Detalle día por día: fecha, horario planificado y el ingreso/salida REALES,
 // con la diferencia (tardanza en la entrada, extra o salida temprana).
+// Deriva, para un registro, el horario planificado y lo real + diferencias + estado
+function derivarRegistro(r) {
+  const ent = r.hora_entrada?.slice(0, 5) || '', sal = r.hora_salida?.slice(0, 5) || ''
+  const ent2 = r.hora_entrada2?.slice(0, 5) || '', sal2 = r.hora_salida2?.slice(0, 5) || ''
+  const p = (r.turno || '').split('→')
+  const planEntV = conPlan(r) ? p[0].trim() : null
+  const planSalV = p[1] ? p[1].trim().slice(0, 5) : null
+  const plan = ESPECIAL.includes(r.turno) ? r.turno : (conPlan(r) ? planEntV + (planSalV ? ' → ' + planSalV : '') : '—')
+  const tard = conPlan(r) ? calcTardVsPlan(planEntV, ent) : null
+  const diffSal = (planSalV && sal && /^\d{2}:\d{2}$/.test(planSalV)) ? calcTardVsPlan(planSalV, sal) : null
+  const h1 = calcHs(ent, sal), h2 = calcHs(ent2, sal2)
+  const hs = (h1 || 0) + (h2 || 0)
+  // Estado
+  let estado, clase
+  if (ESPECIAL.includes(r.turno)) { estado = r.turno; clase = 'pendiente' }
+  else if (!conPlan(r)) { estado = 'Sin plan'; clase = '' }
+  else if (tard > 0) { estado = 'Tarde'; clase = 'rechazado' }
+  else { estado = 'Puntual'; clase = 'aprobado' }
+  if ((estado === 'Puntual') && diffSal !== null && diffSal < 0) { estado = 'Se fue antes'; clase = 'rechazado' }
+  return { ent, sal, ent2, sal2, plan, tard, diffSal, hs, estado, clase }
+}
+
 function DetalleRegistros({ rows }) {
   const [verMas, setVerMas] = useState(false)
   const data = useMemo(() =>
@@ -279,13 +301,6 @@ function DetalleRegistros({ rows }) {
   if (!data.length) return null
   const lista = verMas ? data : data.slice(0, 40)
 
-  const planDe = r => {
-    if (ESPECIAL.includes(r.turno)) return r.turno
-    if (!conPlan(r)) return '—'
-    const p = r.turno.split('→')
-    return p[0].trim() + (p[1] ? ' → ' + p[1].trim().slice(0, 5) : '')
-  }
-  const planSalDe = r => { const p = (r.turno || '').split('→'); return p[1] ? p[1].trim().slice(0, 5) : null }
   // esSalida=false → entrada (tarde=malo). esSalida=true → salida (+extra bien / -antes)
   const diffTag = (min, esSalida) => {
     if (min === null || min === undefined) return null
@@ -297,32 +312,55 @@ function DetalleRegistros({ rows }) {
     return null
   }
 
+  async function descargar() {
+    const XLSX = await import('xlsx')
+    const filas = data.map(r => {
+      const d = derivarRegistro(r)
+      return {
+        'Fecha': r.fecha || '',
+        'Persona': r.nombre || '',
+        'Área': r.area || '',
+        'Planificado': d.plan,
+        'Entrada real': d.ent,
+        'Tardanza (min)': d.tard ?? '',
+        'Salida real': d.sal,
+        'Dif. salida (min)': d.diffSal ?? '',
+        '2ª entrada': d.ent2,
+        '2ª salida': d.sal2,
+        'Horas': d.hs > 0 ? fmtHs(d.hs) : '',
+        'Estado': d.estado,
+      }
+    })
+    const ws = XLSX.utils.json_to_sheet(filas)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Detalle')
+    XLSX.writeFile(wb, `detalle_asistencia_${today()}.xlsx`)
+  }
+
   return (
     <div className="card stack">
       <div className="between">
         <b style={{ fontSize: 13 }}>Detalle por día (planificado vs. real)</b>
-        <span className="muted" style={{ fontSize: 11 }}>{data.length} registro(s)</span>
+        <div className="row" style={{ gap: 8, alignItems: 'center' }}>
+          <span className="muted" style={{ fontSize: 11 }}>{data.length} registro(s)</span>
+          <button className="btn btn-ghost btn-sm" onClick={descargar}><Icon.File /> Descargar Excel</button>
+        </div>
       </div>
       <div style={{ overflowX: 'auto' }}>
         <table className="tbl">
-          <thead><tr><th>Fecha</th><th>Persona</th><th>Planificado</th><th>Entrada real</th><th>Salida real</th><th>Hs</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Persona</th><th>Planificado</th><th>Entrada real</th><th>Salida real</th><th>Hs</th><th>Estado</th></tr></thead>
           <tbody>
             {lista.map((r, i) => {
-              const ent = r.hora_entrada?.slice(0, 5), sal = r.hora_salida?.slice(0, 5)
-              const ent2 = r.hora_entrada2?.slice(0, 5), sal2 = r.hora_salida2?.slice(0, 5)
-              const tard = conPlan(r) ? calcTardVsPlan(planEnt(r), ent) : null
-              const planSal = planSalDe(r)
-              const diffSal = (planSal && sal && /^\d{2}:\d{2}$/.test(planSal)) ? calcTardVsPlan(planSal, sal) : null
-              const h1 = calcHs(ent, sal), h2 = calcHs(ent2, sal2)
-              const hs = (h1 || 0) + (h2 || 0)
+              const d = derivarRegistro(r)
               return (
                 <tr key={r.id || i}>
                   <td style={{ whiteSpace: 'nowrap' }}>{fmtDate(r.fecha)}</td>
                   <td style={{ fontWeight: 700 }}>{r.nombre}</td>
-                  <td style={{ fontSize: 12 }}>{planDe(r)}</td>
-                  <td style={{ fontSize: 12 }}>{ent || '—'}{diffTag(tard, false)}{ent2 ? <div className="muted" style={{ fontSize: 11 }}>2º {ent2}</div> : null}</td>
-                  <td style={{ fontSize: 12 }}>{sal || '—'}{diffTag(diffSal, true)}{sal2 ? <div className="muted" style={{ fontSize: 11 }}>2º {sal2}</div> : null}</td>
-                  <td><span className="badge aprobado">{hs > 0 ? fmtHs(hs) : '—'}</span></td>
+                  <td style={{ fontSize: 12 }}>{d.plan}</td>
+                  <td style={{ fontSize: 12 }}>{d.ent || '—'}{diffTag(d.tard, false)}{d.ent2 ? <div className="muted" style={{ fontSize: 11 }}>2º {d.ent2}</div> : null}</td>
+                  <td style={{ fontSize: 12 }}>{d.sal || '—'}{diffTag(d.diffSal, true)}{d.sal2 ? <div className="muted" style={{ fontSize: 11 }}>2º {d.sal2}</div> : null}</td>
+                  <td><span className="badge aprobado">{d.hs > 0 ? fmtHs(d.hs) : '—'}</span></td>
+                  <td>{d.clase ? <span className={'badge ' + d.clase}>{d.estado}</span> : <span className="muted" style={{ fontSize: 11 }}>{d.estado}</span>}</td>
                 </tr>
               )
             })}
