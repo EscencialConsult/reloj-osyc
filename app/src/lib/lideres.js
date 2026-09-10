@@ -19,14 +19,16 @@ export function resumenPermisos(permisos) {
 }
 
 // ── EMPLEADO: ¿su área tiene un líder activo que reciba solicitudes? ─────────
-export async function liderDeMiArea(area) {
+// Excluye al propio usuario (si YO soy la líder de mi área, no me la envío a mí mismo).
+export async function liderDeMiArea(area, miUserId = null) {
   if (!area) return null
   const { data } = await supabase.from('personal')
-    .select('nombre,lider_areas,lider_permisos,es_lider,activo')
+    .select('nombre,user_id,lider_areas,lider_permisos,es_lider,activo')
     .eq('es_lider', true).eq('activo', true)
   const l = (data || []).find(x =>
     Array.isArray(x.lider_areas) && x.lider_areas.includes(area) &&
-    (x.lider_permisos?.solicitudes))
+    (x.lider_permisos?.solicitudes) &&
+    x.user_id !== miUserId)
   return l ? { nombre: l.nombre } : null
 }
 
