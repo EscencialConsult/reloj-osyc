@@ -12,25 +12,33 @@ export default function Home() {
   const [stats, setStats] = useState(null)
   const [avisos, setAvisos] = useState([])
   const [pend, setPend] = useState([])
+  const [novedades, setNovedades] = useState([])   // notificaciones sin leer
 
   useEffect(() => {
     let vivo = true
     ;(async () => {
       const hoy = today()
-      const [fichHoy, pendientes, noLeidos, activos, ultAvisos] = await Promise.all([
+      const [fichHoy, pendientes, noLeidos, activos, ultAvisos, nov] = await Promise.all([
         esAdmin ? supabase.from('registros').select('id', { count: 'exact', head: true }).eq('fecha', hoy) : Promise.resolve({ count: null }),
         supabase.from('solicitudes').select('*, personal:personal_id(nombre)').eq('estado', 'pendiente').order('created_at', { ascending: false }),
         supabase.rpc('avisos_no_leidos'),
         esAdmin ? supabase.from('personal').select('id', { count: 'exact', head: true }).eq('activo', true) : Promise.resolve({ count: null }),
-        supabase.from('avisos').select('*').order('created_at', { ascending: false }).limit(4)
+        supabase.from('avisos').select('*').order('created_at', { ascending: false }).limit(4),
+        supabase.from('notificaciones').select('*').eq('leido', false).order('created_at', { ascending: false }).limit(6)
       ])
       if (!vivo) return
       setStats({ fichHoy: fichHoy.count, pendientes: (pendientes.data || []).length, noLeidos: noLeidos.data || 0, activos: activos.count })
       setPend((pendientes.data || []).slice(0, 5))
       setAvisos(ultAvisos.data || [])
+      setNovedades(nov.data || [])
     })()
     return () => { vivo = false }
   }, [esAdmin])
+
+  async function marcarLeida(n) {
+    setNovedades(prev => prev.filter(x => x.id !== n.id))
+    await supabase.from('notificaciones').update({ leido: true }).eq('id', n.id)
+  }
 
   const tiles = esAdmin
     ? [
@@ -52,6 +60,22 @@ export default function Home() {
         <h1 style={{ fontSize: 24 }}>Hola, {nombre}</h1>
         <p className="muted">{esAdmin ? 'Resumen de hoy · Administrador' : 'Bienvenido a tu panel'}</p>
       </div>
+
+      {/* Novedades sin leer (respuestas de avisos, solicitudes, etc.) */}
+      {novedades.length > 0 && (
+        <div className="card stack" style={{ borderColor: 'rgba(44,110,180,.4)', background: 'rgba(44,110,180,.04)' }}>
+          <div className="between"><b>🔔 Sin leer ({novedades.length})</b></div>
+          {novedades.map(n => (
+            <Link key={n.id} to={n.link || '/'} onClick={() => marcarLeida(n)} className="mini-item" style={{ color: 'inherit' }}>
+              <div className="row" style={{ gap: 6 }}>
+                <span className="dot" />
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{n.titulo}</div>
+              </div>
+              {n.cuerpo && <div className="muted" style={{ fontSize: 12 }}>{n.cuerpo}</div>}
+            </Link>
+          ))}
+        </div>
+      )}
 
       {/* Stat tiles */}
       <div className="dash-stats">
