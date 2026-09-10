@@ -41,14 +41,17 @@ Editá **`app/src/config.js`**:
 - `SUPABASE_URL` y `SUPABASE_ANON_KEY` = los del proyecto nuevo (paso 2).
 - `VAPID_PUBLIC` = clave pública VAPID de esta empresa (ver paso 6).
 
-Reemplazá el **logo/ícono** (misma medida, mismos nombres):
-- `app/public/logo.png` (logo horizontal)
-- `app/public/icon-192.png` y `app/public/icon-512.png` (ícono cuadrado)
+Reemplazá el **logo de la empresa** (se ve DENTRO de la app: login, barra lateral):
+- `app/public/logo.png` (logo de la empresa)
+- `app/public/icon-192.png` y `app/public/icon-512.png` (logo cuadrado de la empresa; se usa en el ícono de las notificaciones)
 - `app/public/img/favicon.png`
+- Regenerá `app/public/badge.png` = el logo de la empresa en blanco/transparente (ícono chico del push).
 
-Cambiá 2 textos:
-- `app/index.html` → `<title>` y `apple-mobile-web-app-title`.
-- `app/public/manifest.webmanifest` → `name` y `short_name`.
+**NO toques** `app/public/chekapp-192.png` / `chekapp-512.png`: es el **ícono FIJO de ChekApp** (el espiral) con el que se **instala** la app en el celular. Es el mismo para todas las empresas (identidad del producto). Adentro manda `logo.png` (la empresa).
+
+Cambiá 2 textos (dejá el nombre de instalación en "ChekApp"):
+- `app/index.html` → `<title>` (podés poner la empresa). El `apple-mobile-web-app-title` va **"ChekApp"**.
+- `app/public/manifest.webmanifest` → `name`/`short_name` = **"ChekApp"** (fijo); `theme_color`/`background_color` con el color de la empresa.
 
 ## 5) Publicar en Netlify
 - Nuevo sitio en Netlify → conectar el repo → **Branch to deploy = `<empresa>`**.
