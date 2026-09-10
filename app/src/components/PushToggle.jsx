@@ -7,6 +7,7 @@ export default function PushToggle() {
   const uid = session?.user?.id
   const [estado, setEstado] = useState('cargando')  // no-soportado | denegado | activo | inactivo
   const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
 
   useEffect(() => {
     (async () => {
@@ -17,9 +18,17 @@ export default function PushToggle() {
   }, [])
 
   async function activar() {
-    setBusy(true)
+    setBusy(true); setErr('')
     try { await activarPush(uid); setEstado('activo') }
-    catch (e) { alert(e.message) }
+    catch (e) {
+      const m = String(e?.message || e)
+      // "push service error" = el sistema del celular rechazó la suscripción
+      if (/push service|Registration failed|AbortError/i.test(m)) {
+        setErr('El celular no pudo registrarse para notificaciones. Probá: usar la app instalada (agregar a pantalla de inicio), tener buena conexión, y permitir notificaciones y "actividad en segundo plano" a la app en los ajustes del teléfono. Después reintentá.')
+      } else {
+        setErr(m)
+      }
+    }
     finally { setBusy(false) }
   }
 
@@ -35,6 +44,7 @@ export default function PushToggle() {
         : <button className="btn btn-primary btn-sm" style={{ width: '100%' }} onClick={activar} disabled={busy}>
             {busy ? 'Activando…' : '🔔 Activar alertas en este dispositivo'}
           </button>}
+      {err && <div className="err-txt" style={{ marginTop: 8, fontSize: 12 }}>{err}</div>}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 // Consentimiento biométrico (Ley 25.326). Se muestra la 1ª vez, antes de la cámara.
+import { APP_NAME } from '../config.js'
 export const CONSENT_VER = 'v1'
 
 export default function ConsentModal({ onAceptar, onRechazar }) {
@@ -13,7 +14,7 @@ export default function ConsentModal({ onAceptar, onRechazar }) {
         </div>
         <div className="consent-title">Registro facial para fichar</div>
         <div className="consent-body">
-          <p>Para fichar con reconocimiento facial, <b>OSYC</b> necesita registrar y usar un <b>dato biométrico</b>: un código matemático de tu rostro.</p>
+          <p>Para fichar con reconocimiento facial, <b>{APP_NAME}</b> necesita registrar y usar un <b>dato biométrico</b>: un código matemático de tu rostro.</p>
           <ul>
             <li><b>No se guardan fotos</b>, solo un vector de números del que <b>no se puede reconstruir</b> tu cara.</li>
             <li>Se usa <b>únicamente</b> para verificar tu identidad al fichar entrada/salida.</li>

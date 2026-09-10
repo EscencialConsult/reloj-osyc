@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getAreas } from '../lib/config'
@@ -17,6 +18,7 @@ function paraLabel(av) {
 
 export default function Avisos() {
   const { session, esAdmin, nombre, usaAreas } = useSession()
+  const navigate = useNavigate()
   const [avisos, setAvisos] = useState([])
   const [leidos, setLeidos] = useState(new Set())
   const [abiertos, setAbiertos] = useState(new Set())   // avisos con el cuerpo visible
@@ -144,7 +146,7 @@ export default function Avisos() {
         const abierto = abiertos.has(av.id)
         const pedirConfirm = noLeido && !esAdmin   // empleado: no muestra el cuerpo hasta confirmar
         return (
-          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => clickAviso(av)}>
+          <div key={av.id} className="card" style={{ cursor: 'pointer', borderColor: noLeido ? 'rgba(44,110,180,.4)' : undefined }} onClick={() => esAdmin ? navigate('/avisos/' + av.id) : clickAviso(av)}>
             <div className="between">
               <div className="row">
                 {noLeido && <span className="dot" />}
@@ -153,10 +155,7 @@ export default function Avisos() {
               <span className="muted">{fechaCorta(av.created_at)}</span>
             </div>
             {esAdmin && (
-              <div className="row" style={{ marginTop: 4, gap: 10, flexWrap: 'wrap' }} onClick={e => e.stopPropagation()}>
-                <span className="muted">Para: {paraLabel(av)}</span>
-                <Recibos avisoId={av.id} />
-              </div>
+              <div className="muted" style={{ marginTop: 4 }}>Para: {paraLabel(av)} · tocá para ver recibos y respuestas ›</div>
             )}
             {pedirConfirm ? (
               <div className="muted" style={{ marginTop: 8, color: 'var(--azul)', fontWeight: 700 }}>📩 Tocá para leer y confirmar recepción</div>
@@ -166,6 +165,7 @@ export default function Avisos() {
                   {av.cuerpo}
                 </div>
                 {av.autor_nombre && abierto && <div className="muted" style={{ marginTop: 8 }}>— {av.autor_nombre}</div>}
+                {abierto && !esAdmin && <div onClick={e => e.stopPropagation()}><ResponderAviso avisoId={av.id} /></div>}
               </>
             )}
           </div>
@@ -188,51 +188,58 @@ export default function Avisos() {
   )
 }
 
-function Recibos({ avisoId }) {
-  const [abierto, setAbierto] = useState(false)
-  const [data, setData] = useState(null)
-  const [cargando, setCargando] = useState(false)
+// Empleado: chat de su aviso (su respuesta + lo que responde la administración)
+function ResponderAviso({ avisoId }) {
+  const { session, nombre } = useSession()
+  const yo = session.user.id
+  const [hilo, setHilo] = useState([])
+  const [texto, setTexto] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
-  async function toggle() {
-    const nuevo = !abierto
-    setAbierto(nuevo)
-    if (nuevo && !data) {
-      setCargando(true)
-      const { data: r } = await supabase.rpc('avisos_recibos', { p_aviso_id: avisoId })
-      setData(r && r.ok ? r : { total: 0, leidos: [] })
-      setCargando(false)
-    }
+  const cargar = useCallback(async () => {
+    const { data } = await supabase.from('avisos_respuestas').select('*').eq('aviso_id', avisoId).order('created_at', { ascending: true })
+    setHilo(data || [])
+  }, [avisoId])
+  useEffect(() => { cargar() }, [cargar])
+
+  // En vivo: si la administración me responde, aparece solo
+  useEffect(() => {
+    const ch = supabase.channel('resp-emp-' + avisoId)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'avisos_respuestas', filter: 'aviso_id=eq.' + avisoId }, () => cargar())
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [avisoId, cargar])
+
+  async function enviar() {
+    if (!texto.trim()) return
+    setEnviando(true)
+    const { error } = await supabase.from('avisos_respuestas').insert({ aviso_id: avisoId, user_id: yo, con_user_id: yo, autor_nombre: nombre, cuerpo: texto.trim() })
+    setEnviando(false)
+    if (error) { alert('No se pudo enviar la respuesta'); return }
+    setTexto(''); cargar()
   }
-  const n = data ? (data.leidos?.length || 0) : null
 
   return (
-    <>
-      <button className="linklike" onClick={toggle}>
-        {abierto ? 'Ocultar recibos' : (data ? `Recibido por ${n}/${data.total}` : 'Ver recibos')}
-      </button>
-      {abierto && (
-        <div style={{ flexBasis: '100%', marginTop: 6, padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
-          {cargando ? <span className="muted">Cargando…</span>
-            : !data || data.leidos.length === 0 ? <span className="muted">Todavía nadie lo recibió.</span>
-              : (
-                <>
-                  <div className="muted" style={{ marginBottom: 4 }}>Recibido por {n} de {data.total}:</div>
-                  {data.leidos.map((l, i) => (
-                    <div key={i} className="row between" style={{ fontSize: 13, padding: '2px 0' }}>
-                      <span>{l.nombre}</span>
-                      <span className="muted" style={{ fontSize: 11 }}>{new Date(l.leido_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>
-                  ))}
-                </>
-              )}
-        </div>
-      )}
-    </>
+    <div className="stack" style={{ marginTop: 12, borderTop: '1px dashed var(--linea)', paddingTop: 10, gap: 6 }}>
+      {hilo.map(m => {
+        const mio = m.user_id === yo
+        return (
+          <div key={m.id} style={{ alignSelf: mio ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+            <div style={{ background: mio ? 'rgba(44,74,110,.07)' : 'var(--azul)', color: mio ? 'var(--tinta)' : '#fff', borderRadius: 12, padding: '8px 12px', whiteSpace: 'pre-wrap', fontSize: 14 }}>{m.cuerpo}</div>
+            <div className="muted" style={{ fontSize: 10, textAlign: mio ? 'right' : 'left', marginTop: 2 }}>{mio ? '' : (m.autor_nombre || 'Administración') + ' · '}{new Date(m.created_at).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+        )
+      })}
+      <div className="row" style={{ gap: 8, marginTop: 4 }}>
+        <input className="inp grow" value={texto} onChange={e => setTexto(e.target.value)} placeholder="Responder a este aviso…" onKeyDown={e => e.key === 'Enter' && enviar()} />
+        <button className="btn btn-primary btn-sm" onClick={enviar} disabled={enviando}>{enviando ? '…' : 'Enviar'}</button>
+      </div>
+    </div>
   )
 }
 
 function NuevoAviso({ nombre, onCreado }) {
-  const { session, usaAreas } = useSession()
+  const { session, usaAreas, usaLideres } = useSession()
   const [abierto, setAbierto] = useState(false)
   const [titulo, setTitulo] = useState('')
   const [cuerpo, setCuerpo] = useState('')
@@ -248,9 +255,11 @@ function NuevoAviso({ nombre, onCreado }) {
   useEffect(() => {
     if (!abierto) return
     getAreas().then(setAreas)
-    supabase.from('personal').select('user_id,nombre,area').eq('activo', true).not('user_id', 'is', null).order('nombre')
+    supabase.from('personal').select('user_id,nombre,area,es_lider').eq('activo', true).not('user_id', 'is', null).order('nombre')
       .then(({ data }) => setEmpleados(data || []))
   }, [abierto])
+
+  const idsLideres = empleados.filter(e => e.es_lider).map(e => e.user_id)
 
   function toggle(uid) { setSel(s => { const n = new Set(s); n.has(uid) ? n.delete(uid) : n.add(uid); return n }) }
 
@@ -259,11 +268,12 @@ function NuevoAviso({ nombre, onCreado }) {
     if (!titulo.trim() || !cuerpo.trim()) { setErr('Completá título y mensaje'); return }
     if (modo === 'area' && !area) { setErr('Elegí un área'); return }
     if (modo === 'personas' && sel.size === 0) { setErr('Elegí al menos una persona'); return }
+    if (modo === 'lideres' && idsLideres.length === 0) { setErr('No hay líderes activos con acceso a la app'); return }
     setGuardando(true)
     const fila = {
       titulo: titulo.trim(), cuerpo: cuerpo.trim(), autor_id: session.user.id, autor_nombre: nombre,
       area: modo === 'area' ? area : null,
-      destinatarios: modo === 'personas' ? [...sel] : null
+      destinatarios: modo === 'personas' ? [...sel] : modo === 'lideres' ? idsLideres : null
     }
     const { error } = await supabase.from('avisos').insert(fila)
     setGuardando(false)
@@ -296,8 +306,10 @@ function NuevoAviso({ nombre, onCreado }) {
         <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
           <button className={'btn btn-sm ' + (modo === 'todos' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('todos')}>Todos</button>
           {usaAreas && <button className={'btn btn-sm ' + (modo === 'area' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('area')}>Un área</button>}
+          {usaLideres && <button className={'btn btn-sm ' + (modo === 'lideres' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('lideres')}>Líderes</button>}
           <button className={'btn btn-sm ' + (modo === 'personas' ? 'btn-primary' : 'btn-ghost')} onClick={() => setModo('personas')}>Personas</button>
         </div>
+        {modo === 'lideres' && <div className="muted" style={{ marginTop: 6 }}>Se enviará a los <b>{idsLideres.length}</b> líder(es) activos.</div>}
       </div>
 
       {modo === 'area' && (

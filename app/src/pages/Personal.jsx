@@ -4,6 +4,7 @@ import { useSession } from '../lib/session.jsx'
 import { getFeatures, getAreas } from '../lib/config'
 import { areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
+import { PERMISOS_DEFAULT, PERMISO_LABEL, PERMISO_HINT } from '../lib/lideres'
 import { Icon } from '../components/icons.jsx'
 
 // Normaliza encabezados: minúsculas y sin acentos/ñ (robusto, sin regex de combinantes)
@@ -16,6 +17,7 @@ export default function Personal() {
   const [all, setAll] = useState([])
   const [areas, setAreas] = useState([])
   const [usaAreas, setUsaAreas] = useState(false)
+  const [usaLideres, setUsaLideres] = useState(false)
   const [cargando, setCargando] = useState(true)
   const [edit, setEdit] = useState(null)   // {persona} o {} para nuevo, null = cerrado
   const [importar, setImportar] = useState(false)
@@ -28,6 +30,7 @@ export default function Personal() {
     ])
     setAll(data || [])
     setUsaAreas(!!feats.usa_areas)
+    setUsaLideres(!!feats.usa_lideres)
     setAreas(ar)
     setCargando(false)
   }, [])
@@ -90,7 +93,7 @@ export default function Personal() {
           )}
 
       {edit && (
-        <EditarPersona persona={edit} areas={areas} usaAreas={usaAreas} adminNombre={adminNombre}
+        <EditarPersona persona={edit} areas={areas} usaAreas={usaAreas} usaLideres={usaLideres} adminNombre={adminNombre}
           onClose={() => setEdit(null)} onGuardado={() => { setEdit(null); cargar() }} />
       )}
 
@@ -101,17 +104,22 @@ export default function Personal() {
   )
 }
 
-function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuardado }) {
+function EditarPersona({ persona, areas, usaAreas, usaLideres, adminNombre, onClose, onGuardado }) {
   const esNuevo = !persona.id
   const [f, setF] = useState({
     nombre: persona.nombre || '', rol: persona.rol || '',
     email: persona.email || '', dni: '',
     area: persona.area && persona.area !== 'GENERAL' ? persona.area : '',
-    activo: persona.id ? !!persona.activo : true
+    activo: persona.id ? !!persona.activo : true,
+    es_lider: !!persona.es_lider,
+    lider_areas: Array.isArray(persona.lider_areas) ? persona.lider_areas : [],
+    lider_permisos: { ...PERMISOS_DEFAULT, ...(persona.lider_permisos || {}) },
   })
   const [guardando, setGuardando] = useState(false)
   const [err, setErr] = useState('')
   const set = (k, v) => setF(p => ({ ...p, [k]: v }))
+  const toggleLiderArea = (a) => setF(p => ({ ...p, lider_areas: p.lider_areas.includes(a) ? p.lider_areas.filter(x => x !== a) : [...p.lider_areas, a] }))
+  const togglePerm = (k) => setF(p => ({ ...p, lider_permisos: { ...p.lider_permisos, [k]: !p.lider_permisos[k] } }))
 
   async function guardar() {
     setErr('')
@@ -119,10 +127,18 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
     const email = f.email.trim().toLowerCase(), dni = f.dni.trim()
     if (!nombre) { setErr('El nombre es obligatorio'); return }
     if ((email && !dni) || (!email && dni)) { setErr('Para el acceso a la app cargá email Y contraseña'); return }
+    // Un líder necesita poder ingresar (email+contraseña) y tener área(s) a cargo
+    if (f.es_lider && !persona.user_id && !email) { setErr('Un líder necesita email y contraseña para ingresar.'); return }
+    if (f.es_lider && f.lider_areas.length === 0) { setErr('Elegí al menos un área a cargo para el líder.'); return }
     const area = usaAreas ? (f.area || 'GENERAL') : 'GENERAL'
     setGuardando(true)
 
-    const fila = { nombre, rol, area, activo: f.activo }
+    const fila = {
+      nombre, rol, area, activo: f.activo,
+      es_lider: f.es_lider,
+      lider_areas: f.es_lider ? f.lider_areas : [],
+      lider_permisos: f.lider_permisos,
+    }
     if (email) fila.email = email
     let error
     if (persona.id) ({ error } = await supabase.from('personal').update(fila).eq('id', persona.id))
@@ -144,7 +160,7 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
 
   return (
     <div className="consent-ov" onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div className="card stack" style={{ maxWidth: 420, width: '100%' }}>
+      <div className="card stack" style={{ maxWidth: 420, width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         <div className="between"><b>{esNuevo ? 'Agregar persona' : 'Editar persona'}</b><button className="btn btn-ghost btn-sm" onClick={onClose}><Icon.X /></button></div>
         <div><label className="lbl">Nombre *</label><input className="inp" value={f.nombre} onChange={e => set('nombre', e.target.value)} /></div>
         <div><label className="lbl">Rol / puesto</label><input className="inp" value={f.rol} onChange={e => set('rol', e.target.value)} placeholder="Ej: Mozo, Cajero…" /></div>
@@ -165,6 +181,46 @@ function EditarPersona({ persona, areas, usaAreas, adminNombre, onClose, onGuard
         <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
           <input type="checkbox" checked={f.activo} onChange={e => set('activo', e.target.checked)} /> Activo
         </label>
+
+        {usaLideres && (
+          <div style={{ borderTop: '1px dashed var(--linea)', paddingTop: 12 }} className="stack">
+            <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
+              <input type="checkbox" checked={f.es_lider} onChange={e => set('es_lider', e.target.checked)} />
+              <span><b>Es líder</b> <div className="muted" style={{ fontSize: 12 }}>Además de fichar, gestiona su(s) área(s) según los permisos.</div></span>
+            </label>
+
+            {f.es_lider && (
+              <>
+                <div>
+                  <label className="lbl">Área(s) a cargo</label>
+                  {areas.length === 0 ? <div className="muted">No hay áreas cargadas (Configuración → Áreas).</div>
+                    : (
+                      <div style={{ border: '1px solid var(--linea)', borderRadius: 10, maxHeight: 150, overflowY: 'auto' }}>
+                        {areas.map(a => (
+                          <label key={a} className="row" style={{ gap: 10, padding: '8px 12px', borderBottom: '1px solid var(--linea)', cursor: 'pointer' }}>
+                            <input type="checkbox" checked={f.lider_areas.includes(a)} onChange={() => toggleLiderArea(a)} />
+                            <span>{a}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                </div>
+                <div>
+                  <label className="lbl">Permisos del líder</label>
+                  <div style={{ border: '1px solid var(--linea)', borderRadius: 10 }}>
+                    {Object.keys(PERMISO_LABEL).map(k => (
+                      <label key={k} className="between" style={{ padding: '9px 12px', borderBottom: '1px solid var(--linea)', cursor: 'pointer' }}>
+                        <span>{PERMISO_LABEL[k]} <span className="muted" style={{ fontSize: 11 }}>· {PERMISO_HINT[k]}</span></span>
+                        <input type="checkbox" checked={!!f.lider_permisos[k]} onChange={() => togglePerm(k)} />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {err && <div className="err-txt">{err}</div>}
         <button className="btn btn-primary" onClick={guardar} disabled={guardando}>{guardando ? 'Guardando…' : (esNuevo ? 'Guardar' : 'Actualizar')}</button>
       </div>

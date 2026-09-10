@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
+import { liderDeMiArea } from '../lib/lideres'
 import { Icon } from '../components/icons.jsx'
 
 const TIPOS = [
@@ -71,11 +72,12 @@ export default function Solicitudes() {
         <h2 style={{ fontSize: 18 }}>Solicitudes</h2>
         <div className="row" style={{ gap: 6 }}>
           <button className="btn btn-ghost btn-sm" onClick={() => setVerFiltros(v => !v)}><Icon.Search /> Buscar {hayFiltro ? '(filtrado)' : ''}</button>
-          <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}><Icon.Plus /> Nueva</button>
+          {/* El admin aprueba solicitudes, no las crea (no tiene a quién pedirle). */}
+          {!esAdmin && <button className="btn btn-primary btn-sm" onClick={() => setNueva(v => !v)}><Icon.Plus /> Nueva</button>}
         </div>
       </div>
 
-      {nueva && <NuevaSolicitud onCreada={() => { setNueva(false); cargar() }} />}
+      {!esAdmin && nueva && <NuevaSolicitud onCreada={() => { setNueva(false); cargar() }} />}
 
       {verFiltros && (
         <div className="card stack">
@@ -141,7 +143,7 @@ export default function Solicitudes() {
 }
 
 function NuevaSolicitud({ onCreada }) {
-  const { session } = useSession()
+  const { session, perfil } = useSession()
   const [tipo, setTipo] = useState('licencia')
   const [desde, setDesde] = useState('')
   const [hasta, setHasta] = useState('')
@@ -149,6 +151,15 @@ function NuevaSolicitud({ onCreada }) {
   const [file, setFile] = useState(null)
   const [guardando, setGuardando] = useState(false)
   const [err, setErr] = useState('')
+  const [lider, setLider] = useState(null)         // { nombre } si su área tiene líder con permiso
+  const [paraLider, setParaLider] = useState(false)
+
+  // ¿El área del empleado tiene un líder que reciba solicitudes?
+  useEffect(() => {
+    let vivo = true
+    liderDeMiArea(perfil?.area).then(l => { if (vivo) setLider(l) })
+    return () => { vivo = false }
+  }, [perfil?.area])
 
   async function enviar() {
     setErr('')
@@ -171,7 +182,8 @@ function NuevaSolicitud({ onCreada }) {
       const { error } = await supabase.from('solicitudes').insert({
         user_id: session.user.id, tipo,
         desde: desde || null, hasta: hasta || null,
-        motivo: motivo.trim() || null, adjunto_path
+        motivo: motivo.trim() || null, adjunto_path,
+        para_lider: !!(lider && paraLider)
       })
       if (error) throw error
       onCreada()
@@ -209,6 +221,16 @@ function NuevaSolicitud({ onCreada }) {
         <label className="lbl">Adjunto (certificado/justificativo) — PDF, JPG o PNG</label>
         <input className="inp" type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => setFile(e.target.files[0] || null)} />
       </div>
+
+      {/* La administración siempre la recibe. Si el área tiene líder con permiso,
+          el empleado puede enviársela también a su líder. */}
+      {lider && (
+        <label className="row" style={{ gap: 8, cursor: 'pointer', background: 'rgba(44,74,110,.04)', padding: '10px 12px', borderRadius: 10 }}>
+          <input type="checkbox" checked={paraLider} onChange={e => setParaLider(e.target.checked)} />
+          <span style={{ fontSize: 14 }}>Enviársela también a mi líder (<b>{lider.nombre}</b>)<div className="muted" style={{ fontSize: 12 }}>La administración la recibe siempre.</div></span>
+        </label>
+      )}
+
       {err && <div className="err-txt">{err}</div>}
       <button className="btn btn-primary" onClick={enviar} disabled={guardando}>
         {guardando ? 'Enviando…' : 'Enviar solicitud'}

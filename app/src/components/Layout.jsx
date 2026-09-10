@@ -8,7 +8,7 @@ import Campana from './Campana.jsx'
 import CambiarPassword from './CambiarPassword.jsx'
 
 export default function Layout({ children }) {
-  const { esAdmin, logout } = useSession()
+  const { esAdmin, esLider, logout } = useSession()
   const location = useLocation()
   const [noLeidos, setNoLeidos] = useState(0)
   const [pendientes, setPendientes] = useState(0)   // solicitudes pendientes (admin)
@@ -28,7 +28,7 @@ export default function Layout({ children }) {
   // Cerrar el menú al navegar (celular)
   useEffect(() => { setMenu(false) }, [location.pathname])
 
-  const items = NAV.filter(n => !n.admin || esAdmin)
+  const items = NAV.filter(n => (!n.admin || esAdmin) && (!n.lider || esLider))
 
   return (
     <div className="shell">

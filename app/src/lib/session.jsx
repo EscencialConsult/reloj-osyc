@@ -59,9 +59,15 @@ export function SessionProvider({ children }) {
 
   const nombre = perfil?.nombre || session?.user?.user_metadata?.nombre || session?.user?.email || 'Empleado'
 
+  // Rol de líder (fase15): vive en la fila de `personal` del usuario
+  const esLider = !!perfil?.es_lider
+  const liderAreas = Array.isArray(perfil?.lider_areas) ? perfil.lider_areas : []
+  const liderPermisos = { horarios: true, solicitudes: false, avisos: false, informes: false, ...(perfil?.lider_permisos || {}) }
+
   return (
     <SessionCtx.Provider value={{
       session, perfil, esAdmin, cargando, nombre, login, logout,
+      esLider, liderAreas, liderPermisos,
       usaAreas: !!feats.usa_areas, usaLideres: !!feats.usa_lideres
     }}>
       {children}

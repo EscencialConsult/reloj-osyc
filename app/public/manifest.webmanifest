@@ -1,6 +1,6 @@
 {
-  "name": "OSYC Gestión",
-  "short_name": "OSYC",
+  "name": "ChekApp",
+  "short_name": "ChekApp",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

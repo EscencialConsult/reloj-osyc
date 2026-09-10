@@ -78,6 +78,12 @@ export default function Configuracion() {
       </div>
 
       {feats.usa_areas && <Areas areas={areas} setAreas={setAreas} />}
+      {feats.usa_lideres && (
+        <div className="card" style={{ borderStyle: 'dashed' }}>
+          <b>Líderes</b>
+          <div className="muted" style={{ marginTop: 4 }}>Los líderes se administran desde <b>Personal</b>: editá una persona y activá <b>«Es líder»</b> para asignarle área(s) y permisos.</div>
+        </div>
+      )}
       <Plantillas plantillas={plantillas} setPlantillas={setPlantillas} />
       <Sedes />
     </div>
