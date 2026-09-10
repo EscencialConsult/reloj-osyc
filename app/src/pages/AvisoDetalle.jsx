@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
@@ -14,7 +14,7 @@ const fechaHora = iso => new Date(iso).toLocaleString('es-AR', { day: '2-digit',
 export default function AvisoDetalle() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { esAdmin } = useSession()
+  const { esAdmin, session, nombre } = useSession()
   const [av, setAv] = useState(null)
   const [recibos, setRecibos] = useState(null)   // { total, leidos:[{nombre,leido_at}] }
   const [resp, setResp] = useState([])
@@ -34,13 +34,34 @@ export default function AvisoDetalle() {
   }, [id])
   useEffect(() => { cargar() }, [cargar])
 
+  // Actualización en vivo: cuando entra/cambia una respuesta de este aviso
+  useEffect(() => {
+    const ch = supabase.channel('resp-' + id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'avisos_respuestas', filter: 'aviso_id=eq.' + id }, () => cargar())
+      .subscribe()
+    return () => { supabase.removeChannel(ch) }
+  }, [id, cargar])
+
+  // Agrupar respuestas por persona (hilo)
+  const hilos = useMemo(() => {
+    const by = new Map()
+    for (const r of resp) {
+      const k = r.con_user_id || r.user_id
+      if (!by.has(k)) by.set(k, { ownerId: k, nombre: null, msgs: [] })
+      const h = by.get(k)
+      h.msgs.push(r)
+      if (r.user_id === k && r.autor_nombre) h.nombre = r.autor_nombre   // nombre del dueño del hilo
+    }
+    return [...by.values()].map(h => ({ ...h, nombre: h.nombre || h.msgs[0]?.autor_nombre || 'Empleado' }))
+  }, [resp])
+
   if (cargando) return <div className="center-screen" style={{ minHeight: 200 }}><div className="spin" /></div>
   if (!esAdmin) return <div className="empty">Esta vista es solo para administradores.</div>
   if (!av) return <div className="empty">No se encontró el aviso.</div>
 
   const enviados = recibos?.total || 0
   const recibidos = recibos?.leidos?.length || 0
-  const respondieron = new Set(resp.map(r => r.user_id)).size
+  const respondieron = hilos.filter(h => h.msgs.some(m => m.user_id === h.ownerId)).length
   const pendientes = Math.max(0, enviados - recibidos)
 
   return (
@@ -65,8 +86,8 @@ export default function AvisoDetalle() {
         </div>
         <div className="muted">Para: {paraLabel(av)}{av.autor_nombre ? ` · por ${av.autor_nombre}` : ''}</div>
         <div style={{ whiteSpace: 'pre-wrap', color: 'var(--tinta-2)' }}>{av.cuerpo}</div>
-        <button className="linklike" style={{ alignSelf: 'flex-start' }} onClick={() => setVerRecibos(v => !v)}>
-          {verRecibos ? 'Ocultar quién recibió' : `Ver quién recibió (${recibidos}/${enviados})`}
+        <button className="btn btn-ghost btn-sm" style={{ alignSelf: 'flex-start' }} onClick={() => setVerRecibos(v => !v)}>
+          <Icon.Check /> {verRecibos ? 'Ocultar quiénes recibieron' : `Quiénes recibieron (${recibidos}/${enviados})`}
         </button>
         {verRecibos && (
           <div style={{ padding: '8px 12px', background: 'rgba(44,74,110,.04)', borderRadius: 10 }}>
@@ -81,19 +102,56 @@ export default function AvisoDetalle() {
         )}
       </div>
 
-      {/* Respuestas (tipo chat) */}
-      <div className="stack">
-        <b style={{ fontSize: 14 }}>Respuestas ({resp.length})</b>
-        {resp.length === 0 ? <div className="empty">Todavía nadie respondió este aviso.</div>
-          : resp.map(r => (
-            <div key={r.id} className="card" style={{ padding: '10px 14px' }}>
-              <div className="between">
-                <b style={{ fontSize: 13 }}>{r.autor_nombre || 'Empleado'}</b>
-                <span className="muted" style={{ fontSize: 11 }}>{fechaHora(r.created_at)}</span>
+      {/* Conversaciones (una por persona que respondió) */}
+      <b style={{ fontSize: 14 }}>Respuestas ({hilos.length})</b>
+      {hilos.length === 0 ? <div className="empty">Todavía nadie respondió este aviso.</div>
+        : hilos.map(h => (
+          <Hilo key={h.ownerId} avisoId={id} hilo={h} yo={session.user.id} miNombre={nombre} onEnviado={cargar} />
+        ))}
+    </div>
+  )
+}
+
+// Un hilo = conversación entre una persona y la administración
+function Hilo({ avisoId, hilo, yo, miNombre, onEnviado }) {
+  const [texto, setTexto] = useState('')
+  const [enviando, setEnviando] = useState(false)
+
+  async function responder() {
+    if (!texto.trim()) return
+    setEnviando(true)
+    const { error } = await supabase.from('avisos_respuestas').insert({
+      aviso_id: avisoId, user_id: yo, con_user_id: hilo.ownerId, autor_nombre: miNombre, cuerpo: texto.trim()
+    })
+    setEnviando(false)
+    if (error) { alert('No se pudo enviar: ' + error.message); return }
+    setTexto(''); onEnviado()
+  }
+
+  return (
+    <div className="card stack" style={{ gap: 8 }}>
+      <b style={{ fontSize: 13 }}>{hilo.nombre}</b>
+      <div className="stack" style={{ gap: 6 }}>
+        {hilo.msgs.map(m => {
+          const mio = m.user_id !== hilo.ownerId   // lo escribió la administración/autor
+          return (
+            <div key={m.id} style={{ alignSelf: mio ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+              <div style={{
+                background: mio ? 'var(--azul)' : 'rgba(44,74,110,.07)',
+                color: mio ? '#fff' : 'var(--tinta)',
+                borderRadius: 12, padding: '8px 12px', whiteSpace: 'pre-wrap', fontSize: 14
+              }}>{m.cuerpo}</div>
+              <div className="muted" style={{ fontSize: 10, textAlign: mio ? 'right' : 'left', marginTop: 2 }}>
+                {mio ? (m.autor_nombre || 'Administración') : ''} {fechaHora(m.created_at)}
               </div>
-              <div style={{ whiteSpace: 'pre-wrap', fontSize: 14, marginTop: 3 }}>{r.cuerpo}</div>
             </div>
-          ))}
+          )
+        })}
+      </div>
+      <div className="row" style={{ gap: 8 }}>
+        <input className="inp grow" value={texto} onChange={e => setTexto(e.target.value)}
+          placeholder={`Responder a ${hilo.nombre}…`} onKeyDown={e => e.key === 'Enter' && responder()} />
+        <button className="btn btn-primary btn-sm" onClick={responder} disabled={enviando}>{enviando ? '…' : 'Enviar'}</button>
       </div>
     </div>
   )
