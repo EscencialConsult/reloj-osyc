@@ -9,8 +9,8 @@ self.addEventListener('push', (event) => {
   const title = data.titulo || 'OSYC'
   const options = {
     body: data.cuerpo || '',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
+    icon: '/icon-192.png',          // ícono grande a color (logo de la empresa)
+    badge: '/badge.png',            // ícono chico monocromo (silueta blanca del logo, transparente)
     vibrate: [120, 60, 120],
     data: { url: data.link || '/' },
     tag: data.tag || undefined,
