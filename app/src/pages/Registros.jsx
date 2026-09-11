@@ -5,12 +5,15 @@ import { PERIODOS, getDateRange, fmtDate, today } from '../lib/fechas'
 import { horasTotales, fmtHs, tardanzaDeRegistro, tardBadge, areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
 import { EMPRESA } from '../config.js'
+import { useConfirmar, useAviso } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 
 const PAGE = 100
 
 export default function Registros() {
   const { esAdmin, nombre, usaAreas } = useSession()
+  const confirmar = useConfirmar()
+  const aviso = useAviso()
   const [per, setPer] = useState('semana')
   const [area, setArea] = useState('')
   const [busq, setBusq] = useState('')
@@ -63,9 +66,9 @@ export default function Registros() {
   const visibles = sinPaginar ? filtrados : filtrados.slice((pagina - 1) * PAGE, pagina * PAGE)
 
   async function borrar(r) {
-    if (!window.confirm(`¿Eliminar registro de ${r.nombre} del ${fmtDate(r.fecha)}?`)) return
+    if (!(await confirmar({ titulo: '¿Eliminar registro?', texto: `Se borrará el registro de ${r.nombre} del ${fmtDate(r.fecha)}.`, ok: 'Eliminar' }))) return
     const { error } = await supabase.from('registros').delete().eq('id', r.id)
-    if (error) { alert('Error al eliminar'); return }
+    if (error) { aviso('No se pudo eliminar', 'err'); return }
     await logActividad(nombre, 'registro_eliminado', r.area, r.nombre,
       `Registro del ${r.fecha} eliminado`, { fecha: r.fecha }, r.fecha < today())
     cargar()
@@ -212,6 +215,7 @@ export default function Registros() {
 }
 
 function EditarRegistro({ reg, areas, usuario, onClose, onGuardado }) {
+  const aviso = useAviso()
   const [f, setF] = useState({
     area: reg.area || '', nombre: reg.nombre || '', fecha: reg.fecha || '', turno: reg.turno || '',
     e: reg.hora_entrada?.slice(0, 5) || '', s: reg.hora_salida?.slice(0, 5) || '',
@@ -229,7 +233,7 @@ function EditarRegistro({ reg, areas, usuario, onClose, onGuardado }) {
   }, [f.area])
 
   async function guardar() {
-    if (!f.area || !f.nombre || !f.fecha) { alert('Área, nombre y fecha son obligatorios'); return }
+    if (!f.area || !f.nombre || !f.fecha) { aviso('Área, nombre y fecha son obligatorios', 'err'); return }
     setGuardando(true)
     const { error } = await supabase.from('registros').update({
       area: f.area, nombre: f.nombre, fecha: f.fecha, turno: f.turno || null,
@@ -238,7 +242,7 @@ function EditarRegistro({ reg, areas, usuario, onClose, onGuardado }) {
       observaciones: f.o.trim() || null
     }).eq('id', reg.id)
     setGuardando(false)
-    if (error) { alert('Error al guardar'); return }
+    if (error) { aviso('No se pudo guardar', 'err'); return }
     await logActividad(usuario, 'registro_editado', f.area, f.nombre,
       `Registro del ${f.fecha} editado para ${f.nombre}`,
       { fecha: f.fecha, turno: f.turno, entrada: f.e, salida: f.s }, f.fecha < today())

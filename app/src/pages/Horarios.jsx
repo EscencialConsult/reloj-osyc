@@ -5,6 +5,7 @@ import { getLunes, getDomingo, today } from '../lib/fechas'
 import { fmtHs, areaColor } from '../lib/calculos'
 import { getFeatures, getAreas, getPlantillas } from '../lib/config'
 import { EMPRESA } from '../config.js'
+import { useConfirmar, useAviso } from '../components/ui.jsx'
 import { logActividad, esFueraDeTerm } from '../lib/audit'
 import {
   DIAS, DIA_CORTO, DIAS_SEM, normHora, calcTotRow, flatPersonas,
@@ -180,6 +181,8 @@ function KPI({ n, t }) {
 
 // ── EDITOR de un área/semana ────────────────────────────────────────────────
 function EditorHorario({ area, semViendo, plantillas, adminNombre, inline, onClose, onSaved }) {
+  const confirmar = useConfirmar()
+  const aviso = useAviso()
   const [editRows, setEditRows] = useState(null)
   const [rowId, setRowId] = useState(null)
   const [areaObs, setAreaObs] = useState('')
@@ -232,7 +235,7 @@ function EditorHorario({ area, semViendo, plantillas, adminNombre, inline, onClo
     let error, newId = rowId
     if (rowId) ({ error } = await supabase.from('horarios_semanales').update(payload).eq('id', rowId))
     else { const res = await supabase.from('horarios_semanales').insert(payload).select('id').single(); error = res.error; if (!error) { newId = res.data.id; setRowId(newId) } }
-    if (error) { setSaving(false); alert('Error: ' + error.message); return }
+    if (error) { setSaving(false); aviso('Error: ' + error.message, 'err'); return }
 
     await sincronizarRegistros(area, semViendo, horarios)
     await logActividad(adminNombre, 'horario_semanal_guardado', area, null,
@@ -244,9 +247,9 @@ function EditorHorario({ area, semViendo, plantillas, adminNombre, inline, onClo
 
   async function eliminar() {
     if (!rowId) return
-    if (!window.confirm(`¿Eliminar los horarios de "${area}" para esta semana?`)) return
+    if (!(await confirmar({ titulo: '¿Eliminar los horarios?', texto: `Se borrarán los horarios de "${area}" de esta semana.`, ok: 'Eliminar' }))) return
     const { error } = await supabase.from('horarios_semanales').delete().eq('id', rowId)
-    if (error) { alert('Error'); return }
+    if (error) { aviso('No se pudo eliminar', 'err'); return }
     await logActividad(adminNombre, 'horario_semanal_eliminado', area, null, `Horario semanal eliminado para ${area} — semana ${semViendo}`, { semana: semViendo }, esFueraDeTerm(semViendo))
     onSaved && onSaved()
   }
@@ -287,6 +290,7 @@ function EditorHorario({ area, semViendo, plantillas, adminNombre, inline, onClo
 
 // ── Tarjeta de una persona: quick-fill + grilla de 7 días ───────────────────
 export function PersonCard({ row, i, fechas, plantillas, update }) {
+  const aviso = useAviso()
   const [chips, setChips] = useState(() => new Set([0, 1, 2, 3, 4]))
   const [qe, setQe] = useState(''); const [qs, setQs] = useState('')
   const [tpl, setTpl] = useState('')
@@ -296,16 +300,16 @@ export function PersonCard({ row, i, fechas, plantillas, update }) {
 
   function aplicar() {
     const e = normHora(qe), s = normHora(qs)
-    if (!e) { alert('Ingresá la hora de entrada'); return }
-    if (!chips.size) { alert('Elegí al menos un día'); return }
+    if (!e) { aviso('Ingresá la hora de entrada', 'err'); return }
+    if (!chips.size) { aviso('Elegí al menos un día', 'err'); return }
     const patch = {}
     DIAS.forEach((d, di) => { if (chips.has(di)) { patch[d + '_tipo'] = 'normal'; patch[d + '_e'] = e; patch[d + '_s'] = s; patch[d + '_e2'] = ''; patch[d + '_s2'] = ''; patch[d + '_split'] = false } })
     update(i, patch)
   }
   function aplicarPlantilla() {
     const t = plantillas[parseInt(tpl, 10)]
-    if (!t) { alert('Elegí una plantilla'); return }
-    if (!chips.size) { alert('Elegí al menos un día'); return }
+    if (!t) { aviso('Elegí una plantilla', 'err'); return }
+    if (!chips.size) { aviso('Elegí al menos un día', 'err'); return }
     const patch = {}
     DIAS.forEach((d, di) => {
       if (!chips.has(di)) return
