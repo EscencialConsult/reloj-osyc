@@ -173,6 +173,13 @@ textarea.inp { min-height: 90px; resize: vertical; }
 .result.ok { background: rgba(22, 163, 74, .12); border: 1px solid rgba(22, 163, 74, .35); color: #15803d; }
 .result.err { background: rgba(220, 38, 38, .1); border: 1px solid rgba(220, 38, 38, .32); color: #b91c1c; }
 
+/* Toasts (avisos internos, reemplazan al alert del navegador) */
+.toast-wrap { position: fixed; left: 0; right: 0; bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 1000; pointer-events: none; padding: 0 12px; }
+.toast { pointer-events: auto; max-width: 460px; width: fit-content; padding: 12px 18px; border-radius: 12px; font-weight: 700; font-size: 14px; color: #fff; box-shadow: 0 10px 30px rgba(30,41,59,.25); animation: toastIn .18s ease; }
+.toast-ok { background: #15803d; }
+.toast-err { background: #b91c1c; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
 /* ── Consentimiento biométrico ── */
 .consent-ov { position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(30, 47, 69, .55); backdrop-filter: blur(5px); overflow-y: auto; }
 .consent-card { background: #fff; border-radius: 24px; max-width: 400px; width: 100%; overflow: hidden; text-align: center; padding: 0 24px 24px; box-shadow: 0 26px 64px rgba(30, 47, 69, .3); }

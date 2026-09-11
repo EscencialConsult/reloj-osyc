@@ -5,6 +5,7 @@ import { getFeatures, getAreas } from '../lib/config'
 import { areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
 import { PERMISOS_DEFAULT, PERMISO_LABEL, PERMISO_HINT } from '../lib/lideres'
+import { useAviso } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 
 // Normaliza encabezados: minúsculas y sin acentos/ñ (robusto, sin regex de combinantes)
@@ -14,6 +15,7 @@ const _normH = h => String(h).trim().toLowerCase()
 
 export default function Personal() {
   const { esAdmin, nombre: adminNombre } = useSession()
+  const aviso = useAviso()
   const [all, setAll] = useState([])
   const [areas, setAreas] = useState([])
   const [usaAreas, setUsaAreas] = useState(false)
@@ -44,7 +46,7 @@ export default function Personal() {
     setBorrando(true)
     const { error } = await supabase.from('personal').delete().eq('id', p.id)
     setBorrando(false)
-    if (error) { alert('No se pudo eliminar: ' + error.message); return }
+    if (error) { aviso('No se pudo eliminar: ' + error.message, 'err'); return }
     await logActividad(adminNombre, 'personal_eliminado', p.area, p.nombre,
       `Persona eliminada: ${p.nombre} (${p.rol || 'sin rol'})`, { rol: p.rol, activo: p.activo })
     setAEliminar(null)

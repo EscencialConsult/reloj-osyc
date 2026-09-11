@@ -5,6 +5,7 @@ import { useSession } from '../lib/session.jsx'
 import { getFeatures, saveFeatures, getAreas, saveAreas, getPlantillas, savePlantillas } from '../lib/config'
 import { EMPRESA, COLOR, COLOR_2 } from '../config.js'
 import { bestPosition } from '../lib/geo'
+import { useConfirmar, useAviso, usePedir } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 
 // Normaliza "9", "9.30", "9,30", "9:30" → "09:30"
@@ -92,22 +93,25 @@ export default function Configuracion() {
 }
 
 function Areas({ areas, setAreas }) {
+  const confirmar = useConfirmar()
+  const aviso = useAviso()
+  const pedir = usePedir()
   const [nueva, setNueva] = useState('')
   async function add() {
     const name = nueva.trim(); if (!name) return
-    if (areas.some(a => a.toLowerCase() === name.toLowerCase())) { alert('Esa área ya existe'); return }
+    if (areas.some(a => a.toLowerCase() === name.toLowerCase())) { aviso('Esa área ya existe', 'err'); return }
     const arr = [...areas, name]
     if (await saveAreas(arr)) { setAreas(arr); setNueva('') }
   }
   async function editar(i) {
-    const nuevo = (prompt('Nuevo nombre del área:', areas[i]) || '').trim()
+    const nuevo = ((await pedir({ titulo: 'Editar área', valor: areas[i], ok: 'Guardar' })) || '').trim()
     if (!nuevo || nuevo === areas[i]) return
-    if (areas.some((a, j) => j !== i && a.toLowerCase() === nuevo.toLowerCase())) { alert('Esa área ya existe'); return }
+    if (areas.some((a, j) => j !== i && a.toLowerCase() === nuevo.toLowerCase())) { aviso('Esa área ya existe', 'err'); return }
     const arr = areas.slice(); arr[i] = nuevo
     if (await saveAreas(arr)) setAreas(arr)
   }
   async function borrar(i) {
-    if (!window.confirm(`¿Eliminar el área "${areas[i]}"? El personal que la tenga quedará sin área.`)) return
+    if (!(await confirmar({ titulo: '¿Eliminar el área?', texto: `El personal que tenga "${areas[i]}" quedará sin área.`, ok: 'Eliminar' }))) return
     const arr = areas.slice(); arr.splice(i, 1)
     if (await saveAreas(arr)) setAreas(arr)
   }
@@ -133,18 +137,20 @@ function Areas({ areas, setAreas }) {
 }
 
 function Plantillas({ plantillas, setPlantillas }) {
+  const confirmar = useConfirmar()
+  const aviso = useAviso()
   const [f, setF] = useState({ nombre: '', e: '', s: '', e2: '', s2: '' })
   const set = (k, v) => setF(p => ({ ...p, [k]: v }))
   async function add() {
     const nombre = f.nombre.trim()
     const e = fmtHora(f.e), s = fmtHora(f.s), e2 = fmtHora(f.e2), s2 = fmtHora(f.s2)
-    if (!nombre) { alert('Ponele un nombre a la plantilla'); return }
-    if (!e) { alert('Cargá al menos la entrada del 1er turno'); return }
+    if (!nombre) { aviso('Ponele un nombre a la plantilla', 'err'); return }
+    if (!e) { aviso('Cargá al menos la entrada del 1er turno', 'err'); return }
     const arr = [...plantillas, { nombre, e, s, e2, s2 }]
     if (await savePlantillas(arr)) { setPlantillas(arr); setF({ nombre: '', e: '', s: '', e2: '', s2: '' }) }
   }
   async function borrar(i) {
-    if (!window.confirm(`¿Eliminar la plantilla "${plantillas[i].nombre}"?`)) return
+    if (!(await confirmar({ titulo: '¿Eliminar la plantilla?', texto: `"${plantillas[i].nombre}"`, ok: 'Eliminar' }))) return
     const arr = plantillas.slice(); arr.splice(i, 1)
     if (await savePlantillas(arr)) setPlantillas(arr)
   }
@@ -171,6 +177,8 @@ function Plantillas({ plantillas, setPlantillas }) {
 }
 
 function Sedes() {
+  const confirmar = useConfirmar()
+  const aviso = useAviso()
   const [sedes, setSedes] = useState([])
   const [base, setBase] = useState('')
   const [form, setForm] = useState(null)     // sede en edición/alta
@@ -188,12 +196,12 @@ function Sedes() {
     const v = (base || '').trim().replace(/\/$/, '')
     await supabase.from('configuracion').upsert({ id: 'app_base_url', valor: v })
     setBase(v || window.location.origin)
-    alert('URL guardada ✓')
+    aviso('URL guardada ✓')
   }
   async function borrar(s) {
-    if (!window.confirm(`¿Eliminar la sucursal "${s.nombre}"? Los empleados ya no podrán fichar ahí.`)) return
+    if (!(await confirmar({ titulo: '¿Eliminar la sucursal?', texto: `"${s.nombre}" — los empleados ya no podrán fichar ahí.`, ok: 'Eliminar' }))) return
     const { error } = await supabase.from('sedes').delete().eq('id', s.id)
-    if (error) { alert('No se pudo eliminar'); return }
+    if (error) { aviso('No se pudo eliminar', 'err'); return }
     cargar()
   }
   async function verQR(s) {
@@ -234,6 +242,7 @@ function Sedes() {
 }
 
 function SedeForm({ sede, onClose, onGuardado }) {
+  const aviso = useAviso()
   const esNuevo = !sede.id
   const [f, setF] = useState({
     nombre: sede.nombre || '', direccion: sede.direccion || '',
@@ -262,19 +271,19 @@ function SedeForm({ sede, onClose, onGuardado }) {
     const nombre = f.nombre.trim()
     const lat = parseCoord(f.lat), lng = parseCoord(f.lng)
     const radio = parseInt(f.radio_m, 10), prec = parseInt(f.precision_max, 10)
-    if (!nombre) { alert('Poné un nombre para la sucursal'); return }
+    if (!nombre) { aviso('Poné un nombre para la sucursal', 'err'); return }
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      alert(`Ubicación GPS inválida.\nLatitud: ${f.lat || '—'} (debe estar entre -90 y 90)\nLongitud: ${f.lng || '—'} (debe estar entre -180 y 180)\n\nRevisá que no le falte el punto decimal.`)
+      aviso('Ubicación GPS inválida. Revisá que la latitud y longitud tengan el punto decimal.', 'err')
       return
     }
-    if (isNaN(radio) || radio < 5) { alert('El radio debe ser un número (mínimo 5 m)'); return }
+    if (isNaN(radio) || radio < 5) { aviso('El radio debe ser un número (mínimo 5 m)', 'err'); return }
     setGuardando(true)
     const fila = { nombre, direccion: f.direccion.trim() || null, lat, lng, radio_m: radio, precision_max: (isNaN(prec) || prec < 5) ? 50 : prec, activo: f.activo }
     let error
     if (sede.id) ({ error } = await supabase.from('sedes').update(fila).eq('id', sede.id))
     else ({ error } = await supabase.from('sedes').insert(fila))
     setGuardando(false)
-    if (error) { alert('No se pudo guardar: ' + error.message); return }
+    if (error) { aviso('No se pudo guardar: ' + error.message, 'err'); return }
     onGuardado()
   }
 

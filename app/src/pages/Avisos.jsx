@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getAreas } from '../lib/config'
+import { useAviso } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 
 function fechaCorta(iso) {
@@ -191,6 +192,7 @@ export default function Avisos() {
 // Empleado: chat de su aviso (su respuesta + lo que responde la administración)
 function ResponderAviso({ avisoId }) {
   const { session, nombre } = useSession()
+  const aviso = useAviso()
   const yo = session.user.id
   const [hilo, setHilo] = useState([])
   const [texto, setTexto] = useState('')
@@ -215,7 +217,7 @@ function ResponderAviso({ avisoId }) {
     setEnviando(true)
     const { error } = await supabase.from('avisos_respuestas').insert({ aviso_id: avisoId, user_id: yo, con_user_id: yo, autor_nombre: nombre, cuerpo: texto.trim() })
     setEnviando(false)
-    if (error) { alert('No se pudo enviar la respuesta'); return }
+    if (error) { aviso('No se pudo enviar la respuesta', 'err'); return }
     setTexto(''); cargar()
   }
 

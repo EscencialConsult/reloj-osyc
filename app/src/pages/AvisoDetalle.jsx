@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
+import { useAviso } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 
 function paraLabel(av) {
@@ -114,6 +115,7 @@ export default function AvisoDetalle() {
 
 // Un hilo = conversación entre una persona y la administración
 function Hilo({ avisoId, hilo, yo, miNombre, onEnviado }) {
+  const aviso = useAviso()
   const [texto, setTexto] = useState('')
   const [enviando, setEnviando] = useState(false)
 
@@ -124,7 +126,7 @@ function Hilo({ avisoId, hilo, yo, miNombre, onEnviado }) {
       aviso_id: avisoId, user_id: yo, con_user_id: hilo.ownerId, autor_nombre: miNombre, cuerpo: texto.trim()
     })
     setEnviando(false)
-    if (error) { alert('No se pudo enviar: ' + error.message); return }
+    if (error) { aviso('No se pudo enviar: ' + error.message, 'err'); return }
     setTexto(''); onEnviado()
   }
 

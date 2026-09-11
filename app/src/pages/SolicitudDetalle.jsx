@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
+import { useAviso } from '../components/ui.jsx'
 import { Icon } from '../components/icons.jsx'
 import { tipoLabel, fechaCorta } from './Solicitudes.jsx'
 
@@ -9,6 +10,7 @@ export default function SolicitudDetalle() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { session, esAdmin, nombre } = useSession()
+  const aviso = useAviso()
   const [sol, setSol] = useState(null)
   const [coments, setComents] = useState([])
   const [cargando, setCargando] = useState(true)
@@ -27,7 +29,7 @@ export default function SolicitudDetalle() {
 
   async function verAdjunto() {
     const { data, error } = await supabase.storage.from('justificativos').createSignedUrl(sol.adjunto_path, 60)
-    if (error) { alert('No se pudo abrir el adjunto'); return }
+    if (error) { aviso('No se pudo abrir el adjunto', 'err'); return }
     window.open(data.signedUrl, '_blank')
   }
 
@@ -38,7 +40,7 @@ export default function SolicitudDetalle() {
     const { error } = await supabase.from('solicitud_comentarios').insert({
       solicitud_id: id, user_id: session.user.id, autor_nombre: nombre, cuerpo
     })
-    if (error) { alert('No se pudo comentar: ' + error.message); setTexto(cuerpo); return }
+    if (error) { aviso('No se pudo comentar: ' + error.message, 'err'); setTexto(cuerpo); return }
     cargar()
   }
 
@@ -48,7 +50,7 @@ export default function SolicitudDetalle() {
       p_id: id, p_estado: estado, p_comentario: texto.trim() || null
     })
     setAccion(false)
-    if (error || !data?.ok) { alert('No se pudo actualizar: ' + (data?.msg || error?.message || '')); return }
+    if (error || !data?.ok) { aviso('No se pudo actualizar: ' + (data?.msg || error?.message || ''), 'err'); return }
     setTexto('')
     cargar()
   }
