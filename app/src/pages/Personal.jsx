@@ -21,6 +21,8 @@ export default function Personal() {
   const [cargando, setCargando] = useState(true)
   const [edit, setEdit] = useState(null)   // {persona} o {} para nuevo, null = cerrado
   const [importar, setImportar] = useState(false)
+  const [aEliminar, setAEliminar] = useState(null)   // persona a eliminar (modal de confirmación)
+  const [borrando, setBorrando] = useState(false)
 
   const cargar = useCallback(async () => {
     setCargando(true)
@@ -37,12 +39,15 @@ export default function Personal() {
 
   useEffect(() => { cargar() }, [cargar])
 
-  async function borrar(p) {
-    if (!window.confirm(`¿Eliminar a ${p.nombre}?`)) return
+  async function confirmarEliminar() {
+    const p = aEliminar; if (!p) return
+    setBorrando(true)
     const { error } = await supabase.from('personal').delete().eq('id', p.id)
-    if (error) { alert('Error al eliminar'); return }
+    setBorrando(false)
+    if (error) { alert('No se pudo eliminar: ' + error.message); return }
     await logActividad(adminNombre, 'personal_eliminado', p.area, p.nombre,
       `Persona eliminada: ${p.nombre} (${p.rol || 'sin rol'})`, { rol: p.rol, activo: p.activo })
+    setAEliminar(null)
     cargar()
   }
 
@@ -82,7 +87,7 @@ export default function Personal() {
                       <td>
                         <div className="row" style={{ gap: 4 }}>
                           <button className="btn btn-ghost btn-sm" style={{ padding: '4px 8px' }} onClick={() => setEdit(p)} title="Editar">✎</button>
-                          <button className="btn btn-err btn-sm" style={{ padding: '4px 8px' }} onClick={() => borrar(p)} title="Eliminar">✕</button>
+                          <button className="btn btn-err btn-sm" style={{ padding: '4px 8px' }} onClick={() => setAEliminar(p)} title="Eliminar">✕</button>
                         </div>
                       </td>
                     </tr>
@@ -99,6 +104,20 @@ export default function Personal() {
 
       {importar && (
         <ImportarCSV usaAreas={usaAreas} onClose={() => setImportar(false)} onImportado={cargar} />
+      )}
+
+      {aEliminar && (
+        <div className="consent-ov" onClick={e => { if (e.target === e.currentTarget && !borrando) setAEliminar(null) }}>
+          <div className="card stack" style={{ maxWidth: 380, textAlign: 'center' }}>
+            <div style={{ fontSize: 34 }}>🗑️</div>
+            <b style={{ fontSize: 17 }}>¿Eliminar a {aEliminar.nombre}?</b>
+            <p className="muted">Se borrará del sistema junto con su acceso. Esta acción no se puede deshacer.</p>
+            <div className="row" style={{ gap: 8 }}>
+              <button className="btn btn-ghost grow" onClick={() => setAEliminar(null)} disabled={borrando}>Cancelar</button>
+              <button className="btn btn-err grow" onClick={confirmarEliminar} disabled={borrando}>{borrando ? 'Eliminando…' : 'Eliminar'}</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
