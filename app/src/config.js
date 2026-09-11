@@ -19,7 +19,7 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
-export const VAPID_PUBLIC = 'BPzqOcIRrdhP_nrJnSCsUTbVnE9-jo6zXGKp5VJTKDUaieJnIuvSLXnzArv31Kja-ahbZab1q69u41vCv1qLmAQ'
+export const VAPID_PUBLIC = 'BIeDw4GW64EBTsT4N4oujSryJ-h_IEUpvFL-IfG6XoklYOdx-vhOW53FZGNYnCCP-jgo67qQfXC8QGmrAvhDlfI'
 
 // Color de marca de ESTA empresa (para personalizar el reloj por empresa).
 //   COLOR   = principal (botones, links, barra activa)

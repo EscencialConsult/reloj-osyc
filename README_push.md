@@ -1,52 +1,53 @@
-# Fase 2 — Notificaciones push · GUÍA FÁCIL (solo con clicks, sin terminal)
+# Notificaciones push — Guía de configuración (segura)
 
-Ya está todo el código. Faltan 4 cosas en el **panel web de Supabase**. Seguí en orden.
+> IMPORTANTE (seguridad): **ninguna clave privada ni secreto va en el repo.**
+> La clave **pública** VAPID sí va en `app/src/config.js` (es pública por diseño).
+> La clave **privada** VAPID y el `WEBHOOK_SECRET` van **solo** en los secretos de
+> Supabase. Si alguna vez estuvieron en un archivo, hay que **rotarlas**.
 
-Las 2 claves VAPID ya están generadas:
-- **Pública** (ya está en el código, no la tocás): `BPzqOcIRrdhP_nrJnSCsUTbVnE9-jo6zXGKp5VJTKDUaieJnIuvSLXnzArv31Kja-ahbZab1q69u41vCv1qLmAQ`
-- **Privada** (la pegás en el paso 2): `Hlv83tkx1IeXdJgDNrRYW3gJH2dgxN24G5XI3TkG5sc`
+Todo el código ya está. Faltan unos pasos en el **panel de Supabase** de la empresa.
 
----
+## Paso 0 — SQL base
+Correr `sql/fase9_push.sql` (tabla `push_subscriptions`).
 
-## ✅ Paso 0 — SQL (ya lo hiciste)
-`sql/fase9_push.sql` → Run. Listo.
+## Paso 1 — Generar las claves VAPID (propias de cada empresa)
+Generá un par de claves nuevo. Opciones:
+- `npx web-push generate-vapid-keys`, o
+- desde una consola Node (P-256), o cualquier generador VAPID confiable.
 
-## Paso 1 — Crear la función en Supabase (desde el navegador)
-1. En Supabase, menú izquierdo → **Edge Functions**.
-2. Botón **Deploy a new function** → elegí la opción **"Via editor"** (editar en el navegador).
-3. Nombre: **`enviar-push`**
-4. **Borrá** el código de ejemplo y **pegá TODO** el contenido del archivo
-   `supabase/functions/enviar-push/index.ts` (de este proyecto).
-5. Si ves una opción **"Verify JWT"** / "Enforce JWT" → **DESACTIVALA** (off).
-6. **Deploy**.
+Guardá la **pública** para el paso 3 y la **privada** para el paso 2. **No las pegues en ningún archivo del repo.**
 
-## Paso 2 — Cargar las claves (secrets)
-1. En **Edge Functions** → pestaña **Secrets** (o Project Settings → Edge Functions → Secrets).
-2. Agregá estos 3 (nombre = valor):
-   - `VAPID_PUBLIC` = `BPzqOcIRrdhP_nrJnSCsUTbVnE9-jo6zXGKp5VJTKDUaieJnIuvSLXnzArv31Kja-ahbZab1q69u41vCv1qLmAQ`
-   - `VAPID_PRIVATE` = `Hlv83tkx1IeXdJgDNrRYW3gJH2dgxN24G5XI3TkG5sc`
-   - `VAPID_SUBJECT` = `mailto:gestion@osyc.com`  (poné tu email)
-3. Guardar.
+## Paso 2 — Desplegar la Edge Function + secretos
+1. Supabase → **Edge Functions** → desplegar `enviar-push` (contenido de
+   `supabase/functions/enviar-push/index.ts`). Podés dejar **Verify JWT off**:
+   la función ahora **exige un secreto compartido** (`WEBHOOK_SECRET`) y **rechaza**
+   cualquier llamada sin él.
+2. En **Secrets** cargá:
+   - `VAPID_PUBLIC` = tu clave pública nueva
+   - `VAPID_PRIVATE` = tu clave privada nueva  (¡solo acá!)
+   - `VAPID_SUBJECT` = `mailto:tu-email@empresa.com`
+   - `WEBHOOK_SECRET` = un texto **largo y aleatorio** (ej. 32+ caracteres)
 
-## Paso 3 — Conectar el disparador (con SQL, más fácil)
-Supabase movió la opción "Webhooks" del panel. En vez de buscarla, corré un SQL:
-1. **SQL Editor → New query**.
-2. Pegá TODO el contenido de `sql/fase10_push_trigger.sql`.
-3. **Run**.
+## Paso 3 — Config de la app + disparador seguro
+1. Poné la **clave pública** en `app/src/config.js` (`VAPID_PUBLIC`).
+2. Correr `sql/fase19_push_seguro.sql` (crea la tabla privada `app_secrets` y el
+   trigger que llama a la función mandando el secreto).
+3. Cargar los valores en `app_secrets` **una sola vez** (esto **no se commitea**):
+   ```sql
+   insert into public.app_secrets (clave, valor) values
+     ('push_url',       'https://<REF>.supabase.co/functions/v1/enviar-push'),
+     ('push_anon',      '<ANON KEY del proyecto>'),
+     ('webhook_secret', '<EL MISMO WEBHOOK_SECRET del paso 2>')
+   on conflict (clave) do update set valor = excluded.valor;
+   ```
 
-Eso crea un trigger que llama a la función `enviar-push` cada vez que se crea una
-notificación (hace lo mismo que el webhook).
+## Paso 4 — Probar
+Como empleado, activar alertas (campana). Cerrar la app. Generar un aviso/solicitud.
+Debe llegar la notificación. Si no llega, revisar en Supabase:
+`select id, status_code, content, created from net._http_response order by created desc limit 10;`
 
-## Paso 4 — Subir el front y probar
-1. Subís los cambios del código (git add/commit/push a `react-rrhh`); Netlify redepliega solo.
-2. En el celular, entrás como empleado → tocás la **campana** → **"Activar alertas en este celular"** → **Permitir**.
-3. **Cerrás la app.**
-4. Desde admin, publicás un aviso para esa persona.
-5. Llega la **notificación al celular** con la app cerrada. 🎉
-
----
-
-### Notas
-- **Android:** anda directo. **iPhone (iOS 16.4+):** el empleado primero debe **"Agregar a pantalla de inicio"** y abrir desde ese ícono; recién ahí iOS deja activar el push.
-- **Íconos (opcional):** subí `icon-192.png` y `icon-512.png` a `app/public/` para que la notificación y la app instalada tengan logo. Sin ellos anda igual.
-- **¿No querés usar el editor web?** Se puede por terminal con `npx supabase functions deploy enviar-push --no-verify-jwt`, pero el editor web es más simple.
+## Rotación (si un secreto se filtró)
+1. Generar nuevas claves VAPID → actualizar `config.js` (pública) y el secret
+   `VAPID_PRIVATE` (privada). Los dispositivos deben **volver a activar** las alertas.
+2. Cambiar `WEBHOOK_SECRET` (secret de la función) y el valor en `app_secrets`.
+3. Nunca dejar los valores viejos en archivos ni en el historial.

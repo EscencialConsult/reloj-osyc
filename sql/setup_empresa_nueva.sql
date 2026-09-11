@@ -495,11 +495,12 @@ create policy fichajes_select_admin on public.fichajes
 -- (Podés volver a correr todo el archivo: si el admin ya existe, actualiza su
 --  contraseña.)
 
-select public.crear_admin(
-  'admin@empresanueva.com',   -- ⚠ CAMBIAR: email del administrador
-  'CambiarEstaClave123',      -- ⚠ CAMBIAR: contraseña del administrador
-  'Administrador'             -- nombre visible (opcional)
-);
+-- ⚠ Descomentá y CAMBIÁ los valores. NO dejes esta línea con valores reales en el repo.
+-- select public.crear_admin(
+--   'admin@empresa.com',        -- email del administrador
+--   'UNA_CONTRASEÑA_FUERTE',    -- contraseña (fuerte, única)
+--   'Administrador'             -- nombre visible (opcional)
+-- );
 
 -- ============================================================================
 -- LISTO. Verificación rápida (opcional):
