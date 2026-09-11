@@ -4,6 +4,7 @@ import { useSession } from '../lib/session.jsx'
 import { getLunes, getDomingo, today } from '../lib/fechas'
 import { fmtHs, areaColor } from '../lib/calculos'
 import { getFeatures, getAreas, getPlantillas } from '../lib/config'
+import { EMPRESA } from '../config.js'
 import { logActividad, esFueraDeTerm } from '../lib/audit'
 import {
   DIAS, DIA_CORTO, DIAS_SEM, normHora, calcTotRow, flatPersonas,
@@ -66,7 +67,7 @@ export default function Horarios() {
     })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }))
-    a.download = `OSYC_horarios_${semViendo}.csv`; a.click()
+    a.download = `${EMPRESA}_horarios_${semViendo}.csv`; a.click()
   }
 
   function descargarImagen() {
@@ -85,7 +86,7 @@ export default function Horarios() {
     const ctx = canvas.getContext('2d'); ctx.scale(scale, scale)
     ctx.fillStyle = '#f4f7fb'; ctx.fillRect(0, 0, totalW, totalH)
     ctx.fillStyle = '#1e2f45'; ctx.font = 'bold 14px "Segoe UI",sans-serif'
-    ctx.fillText(`OSYC · Semana ${dd(semViendo)} al ${dd(getDomingo(semViendo))}`, pad, pad + 14)
+    ctx.fillText(`${EMPRESA} · Semana ${dd(semViendo)} al ${dd(getDomingo(semViendo))}`, pad, pad + 14)
     const hY = pad + headH
     const cols = [{ lbl: 'ÁREA', x: pad }, { lbl: 'NOMBRE', x: pad + col0 }, ...DLAN.map((d, i) => ({ lbl: d, x: pad + col0 + col1 + colW * i })), { lbl: 'HS', x: pad + col0 + col1 + colW * 7 }, { lbl: 'OBS', x: pad + col0 + col1 + colW * 7 + colHs }]
     ctx.fillStyle = 'rgba(44,74,110,.06)'; ctx.fillRect(pad, hY - rowH + 6, totalW - pad * 2, rowH)
@@ -101,7 +102,7 @@ export default function Horarios() {
       ctx.fillStyle = '#2c6eb4'; ctx.font = 'bold 11px "Segoe UI",sans-serif'; ctx.fillText(row.hs, pad + col0 + col1 + colW * 7 + 7, y + rowH * .62)
       if (row.obs) { ctx.fillStyle = 'rgba(30,47,69,.5)'; ctx.font = '10px "Segoe UI",sans-serif'; ctx.fillText(row.obs.length > 18 ? row.obs.slice(0, 18) + '…' : row.obs, pad + col0 + col1 + colW * 7 + colHs + 7, y + rowH * .62) }
     })
-    const a = document.createElement('a'); a.download = `OSYC_horarios_${semViendo}.png`; a.href = canvas.toDataURL('image/png'); a.click()
+    const a = document.createElement('a'); a.download = `${EMPRESA}_horarios_${semViendo}.png`; a.href = canvas.toDataURL('image/png'); a.click()
   }
 
   if (!esAdmin) return <div className="empty">Esta sección es solo para administradores.</div>

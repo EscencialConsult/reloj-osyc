@@ -176,7 +176,7 @@ function EditarPersona({ persona, areas, usaAreas, usaLideres, adminNombre, onCl
         <div style={{ borderTop: '1px dashed var(--linea)', paddingTop: 12 }}>
           <span className="muted">Acceso a la app (opcional): email + contraseña.</span>
         </div>
-        <div><label className="lbl">Email</label><input className="inp" type="email" value={f.email} onChange={e => set('email', e.target.value)} placeholder="empleado@osyc.com" /></div>
+        <div><label className="lbl">Email</label><input className="inp" type="email" value={f.email} onChange={e => set('email', e.target.value)} placeholder="empleado@gmail.com" /></div>
         <div><label className="lbl">Contraseña {persona.id ? '(dejar vacío = no cambiar)' : ''}</label><input className="inp" value={f.dni} onChange={e => set('dni', e.target.value)} placeholder="Contraseña del empleado" /></div>
         <label className="row" style={{ gap: 8, cursor: 'pointer' }}>
           <input type="checkbox" checked={f.activo} onChange={e => set('activo', e.target.checked)} /> Activo
@@ -237,7 +237,7 @@ function ImportarCSV({ usaAreas, onClose, onImportado }) {
 
   function descargarPlantilla() {
     const cols = ['Nombre', 'Rol', 'Email', 'Contraseña', ...(usaAreas ? ['Área'] : [])]
-    const ejemplo = ['Juan Pérez', 'Mozo', 'juan@osyc.com', '1234', ...(usaAreas ? ['Barra'] : [])]
+    const ejemplo = ['Juan Pérez', 'Mozo', 'juan@gmail.com', '1234', ...(usaAreas ? ['Barra'] : [])]
     const csv = '﻿' + [cols.join(','), ejemplo.map(x => `"${x}"`).join(',')].join('\n')
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }))

@@ -1,5 +1,5 @@
 // ============================================================================
-// js/facial.js — Reconocimiento facial en el navegador (OSYC) — Fase 1 (MVP)
+// js/facial.js — Reconocimiento facial en el navegador (ChekApp) — Fase 1 (MVP)
 // ----------------------------------------------------------------------------
 // Usa face-api.js para convertir una cara en un "descriptor" (vector de 128
 // números). No sube fotos: solo el vector. La comparación se hace acá, en el

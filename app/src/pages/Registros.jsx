@@ -4,6 +4,7 @@ import { useSession } from '../lib/session.jsx'
 import { PERIODOS, getDateRange, fmtDate, today } from '../lib/fechas'
 import { horasTotales, fmtHs, tardanzaDeRegistro, tardBadge, areaColor } from '../lib/calculos'
 import { logActividad } from '../lib/audit'
+import { EMPRESA } from '../config.js'
 import { Icon } from '../components/icons.jsx'
 
 const PAGE = 100
@@ -85,7 +86,7 @@ export default function Registros() {
     })
     const a = document.createElement('a')
     a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' }))
-    a.download = `OSYC_registros_${today()}.csv`
+    a.download = `${EMPRESA}_registros_${today()}.csv`
     a.click()
   }
 

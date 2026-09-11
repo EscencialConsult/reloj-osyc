@@ -1,12 +1,12 @@
-// sw.js — Service Worker de OSYC para notificaciones push
+// sw.js — Service Worker de ChekApp para notificaciones push
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()))
 
 self.addEventListener('push', (event) => {
   let data = {}
   try { data = event.data ? event.data.json() : {} }
-  catch (_) { data = { titulo: 'OSYC', cuerpo: event.data ? event.data.text() : '' } }
-  const title = data.titulo || 'OSYC'
+  catch (_) { data = { titulo: 'ChekApp', cuerpo: event.data ? event.data.text() : '' } }
+  const title = data.titulo || 'ChekApp'
   const options = {
     body: data.cuerpo || '',
     icon: '/icon-192.png',          // ícono grande a color (logo de la empresa)
