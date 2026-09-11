@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 import { supabase } from '../lib/supabase'
 import { useSession } from '../lib/session.jsx'
 import { getFeatures, saveFeatures, getAreas, saveAreas, getPlantillas, savePlantillas } from '../lib/config'
+import { EMPRESA, COLOR, COLOR_2 } from '../config.js'
 import { bestPosition } from '../lib/geo'
 import { Icon } from '../components/icons.jsx'
 
@@ -310,17 +311,17 @@ function SedeForm({ sede, onClose, onGuardado }) {
 function QRModal({ qr, onClose }) {
   function imprimir() {
     const w = window.open('', '_blank')
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>QR ${qr.nombre} — OSYC</title>
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>QR ${qr.nombre} — ${EMPRESA}</title>
 <style>@page{size:A4 portrait;margin:0}*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 body{font-family:'Segoe UI',system-ui,sans-serif}.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18mm 14mm;background:radial-gradient(circle at 50% 0%,#f8fafc,#eef3f9)}
-.card{background:#fff;border-radius:30px;max-width:560px;width:100%;overflow:hidden;box-shadow:0 26px 64px rgba(44,74,110,.18)}.strip{height:11px;background:linear-gradient(90deg,#2c6eb4,#5a97d4,#3f6aa0)}
-.body{padding:32px 46px 36px;text-align:center}.brand{font-size:22px;font-weight:800;color:#2c6eb4}.sede{font-size:36px;font-weight:800;color:#1e2f45;margin:16px 0 4px}
-.sub{font-size:11px;color:#4a7fb5;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:26px}.frame{display:inline-block;padding:16px;border:3px solid #2c6eb4;border-radius:24px}
-.frame img{width:288px;height:288px;display:block}.cta{font-size:26px;font-weight:800;color:#1e2f45;margin-top:26px}.foot{margin-top:28px;padding-top:16px;border-top:1px dashed #cddef0;font-size:11px;color:#6b7f99;letter-spacing:.1em;font-weight:600}</style></head><body>
+.card{background:#fff;border-radius:30px;max-width:560px;width:100%;overflow:hidden;box-shadow:0 26px 64px rgba(30,41,59,.16)}.strip{height:11px;background:linear-gradient(90deg,${COLOR},${COLOR_2},${COLOR})}
+.body{padding:32px 46px 36px;text-align:center}.brand{font-size:22px;font-weight:800;color:${COLOR}}.sede{font-size:36px;font-weight:800;color:#1e2f45;margin:16px 0 4px}
+.sub{font-size:11px;color:${COLOR};letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:26px}.frame{display:inline-block;padding:16px;border:3px solid ${COLOR};border-radius:24px}
+.frame img{width:288px;height:288px;display:block}.cta{font-size:26px;font-weight:800;color:#1e2f45;margin-top:26px}.foot{margin-top:28px;padding-top:16px;border-top:1px dashed #d5dbe6;font-size:11px;color:#6b7f99;letter-spacing:.1em;font-weight:600}</style></head><body>
 <div class="page"><div class="card"><div class="strip"></div><div class="body">
-<div class="brand">OSYC</div><div class="sede">${qr.nombre}</div><div class="sub">Fichaje de ingreso y salida</div>
+<div class="brand">${EMPRESA}</div><div class="sede">${qr.nombre}</div><div class="sub">Fichaje de ingreso y salida</div>
 <div class="frame"><img src="${qr.dataUrl}"/></div><div class="cta">Escaneá para fichar</div>
-<div class="foot">OSYC · SISTEMA DE FICHAJE</div></div></div></div></body></html>`)
+<div class="foot">${EMPRESA} · SISTEMA DE FICHAJE</div></div></div></div></body></html>`)
     w.document.close(); w.focus(); setTimeout(() => { try { w.print() } catch (_) {} }, 500)
   }
   return (

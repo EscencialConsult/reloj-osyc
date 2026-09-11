@@ -2,6 +2,7 @@
 // pantalla de Fichar enfocada, con un acceso a su panel (avisos/solicitudes).
 import { Link } from 'react-router-dom'
 import { useSession } from '../lib/session.jsx'
+import { EMPRESA } from '../config.js'
 import { Icon } from './icons.jsx'
 import Campana from './Campana.jsx'
 import Fichar from '../pages/Fichar.jsx'
@@ -11,7 +12,7 @@ export default function FicharKiosk() {
   return (
     <div className="kiosk">
       <header className="kiosk-bar">
-        <img src="/logo.png" alt="OSYC" style={{ height: 28 }} />
+        <img src="/logo.png" alt={EMPRESA} style={{ height: 28 }} />
         <div className="row" style={{ gap: 8 }}>
           <Campana />
           <button className="btn btn-ghost btn-sm" onClick={logout}><Icon.Logout /> Salir</button>

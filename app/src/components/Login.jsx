@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useSession } from '../lib/session.jsx'
+import { EMPRESA } from '../config.js'
 
 export default function Login() {
   const { login } = useSession()
@@ -23,13 +24,13 @@ export default function Login() {
     <div className="center-screen">
       <form className="card stack" style={{ width: '100%', maxWidth: 380 }} onSubmit={submit}>
         <div style={{ textAlign: 'center' }}>
-          <img src="/logo.png" alt="OSYC" style={{ maxWidth: '100%', maxHeight: 64, height: 'auto', margin: '4px auto 0', display: 'block' }} />
+          <img src="/logo.png" alt={EMPRESA} style={{ maxWidth: '100%', maxHeight: 64, height: 'auto', margin: '4px auto 0', display: 'block' }} />
           <p className="muted" style={{ marginTop: 8 }}>Ingresá con tu email y contraseña</p>
         </div>
         <div>
           <label className="lbl">Email</label>
           <input className="inp" type="email" autoComplete="username" value={email}
-            onChange={e => setEmail(e.target.value)} placeholder="tuemail@osyc.com" />
+            onChange={e => setEmail(e.target.value)} placeholder="tuemail@gmail.com" />
         </div>
         <div>
           <label className="lbl">Contraseña</label>

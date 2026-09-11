@@ -14,7 +14,7 @@ import Layout from './components/Layout.jsx'
 const reintentar = (factory) => lazy(async () => {
   try { return await factory() }
   catch (e) {
-    const key = 'osyc-reload-chunk'
+    const key = 'chekapp-reload-chunk'
     const ultima = Number(sessionStorage.getItem(key) || '0')
     if (Date.now() - ultima > 10000) {
       sessionStorage.setItem(key, String(Date.now()))

@@ -4,6 +4,7 @@ import { useSession } from '../lib/session.jsx'
 import { supabase } from '../lib/supabase'
 import { Icon } from './icons.jsx'
 import { NAV } from './nav.js'
+import { EMPRESA } from '../config.js'
 import Campana from './Campana.jsx'
 import CambiarPassword from './CambiarPassword.jsx'
 
@@ -35,7 +36,7 @@ export default function Layout({ children }) {
       {/* Barra lateral (fija en desktop, drawer en celular) */}
       <aside className={'sidebar' + (menu ? ' open' : '')}>
         <div className="sidebar-brand">
-          <img src="/logo.png" alt="OSYC" style={{ width: '100%', maxWidth: 155, display: 'block' }} />
+          <img src="/logo.png" alt={EMPRESA} style={{ width: '100%', maxWidth: 155, display: 'block' }} />
           <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--tinta-2)', letterSpacing: '.05em' }}>GESTIÓN</span>
         </div>
         <nav className="sidebar-nav">
@@ -62,7 +63,7 @@ export default function Layout({ children }) {
       <div className="content">
         <header className="topbar">
           <button className="hamb only-mobile" onClick={() => setMenu(true)} aria-label="Menú"><Icon.Menu /></button>
-          <img className="only-mobile" src="/logo.png" alt="OSYC" style={{ height: 26 }} />
+          <img className="only-mobile" src="/logo.png" alt={EMPRESA} style={{ height: 26 }} />
           <div className="row" style={{ marginLeft: 'auto', gap: 8 }}>
             <Campana />
             <button className="btn btn-ghost btn-sm only-mobile" onClick={logout}><Icon.Logout /> Salir</button>
