@@ -125,7 +125,8 @@ create policy fichajes_select_admin on public.fichajes
   for select using (public.es_admin());
 
 -- ============================================================================
--- BOOTSTRAP: crear el administrador (correr esta línea 1 vez).
+-- BOOTSTRAP: crear el administrador (correr esta línea 1 vez, con TUS datos).
+-- ⚠️ NO commitear esta línea con valores reales. Usá una contraseña fuerte.
 -- Después, TODO se maneja desde el panel; no hace falta volver al SQL Editor.
 -- ============================================================================
-select public.crear_admin('runasgestion@gmail.com', 'Gerardo001', 'Runas Admin');
+-- select public.crear_admin('TU_EMAIL', 'UNA_CONTRASEÑA_FUERTE', 'Nombre del Admin');

@@ -22,9 +22,14 @@ webpush.setVapidDetails(
 )
 
 Deno.serve(async (req) => {
-  // Verificación opcional por secreto compartido
+  // Seguridad: SIEMPRE se exige el secreto compartido. Si no está configurado,
+  // la función NO envía nada (falla cerrada). Así nadie puede disparar push
+  // conociendo un user_id sin el secreto.
   const secret = Deno.env.get('WEBHOOK_SECRET')
-  if (secret && req.headers.get('x-osyc-secret') !== secret) {
+  if (!secret) {
+    return new Response('config incompleta: falta WEBHOOK_SECRET', { status: 503 })
+  }
+  if (req.headers.get('x-webhook-secret') !== secret) {
     return new Response('no autorizado', { status: 401 })
   }
 
