@@ -50,6 +50,18 @@ begin
       'msg','Iniciá sesión para fichar.');
   end if;
 
+  -- 1.5) Validar coordenadas y precisión declaradas (evita saltear la geocerca
+  --      mandando coordenadas nulas/fuera de rango directamente al RPC).
+  if p_lat is null or p_lng is null
+     or p_lat < -90 or p_lat > 90 or p_lng < -180 or p_lng > 180 then
+    return jsonb_build_object('ok',false,'error','ubicacion_invalida',
+      'msg','No pudimos leer tu ubicación. Activá el GPS y probá de nuevo.');
+  end if;
+  if p_accuracy is null or p_accuracy < 0 then
+    return jsonb_build_object('ok',false,'error','precision_invalida',
+      'msg','No se pudo verificar la precisión del GPS. Probá en un lugar más abierto.');
+  end if;
+
   -- 2) ¿Empleado válido y activo?
   select * into v_p from public.personal where user_id = v_uid and activo = true limit 1;
   if not found then
