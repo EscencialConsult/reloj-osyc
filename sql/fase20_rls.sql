@@ -155,6 +155,15 @@ revoke all on public.lideres from anon, authenticated;
 -- (sin políticas → inaccesible; las funciones del servidor no la usan)
 
 
+-- ═════════════════════════════════════════════════════════════════════════════
+--  ADMINS  (solo se administra por funciones SECURITY DEFINER: crear_admin /
+--           es_admin lee vía definer). Sin acceso directo desde la API → nadie
+--           puede agregarse/editarse como admin. (Cierra la vía admin de H-02.)
+-- ═════════════════════════════════════════════════════════════════════════════
+alter table public.admins enable row level security;
+revoke all on public.admins from anon, authenticated;
+
+
 -- ============================================================================
 -- Verificación rápida (opcional): RLS activo en todas
 --   select relname, relrowsecurity from pg_class

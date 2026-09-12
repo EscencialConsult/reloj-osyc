@@ -20,20 +20,27 @@ Los arreglos futuros se pasan con: `git checkout <empresa> && git merge main`.
 
 ## 3) Correr los SQL en la base nueva (SQL Editor → Run, EN ESTE ORDEN)
 1. `sql/setup_empresa_nueva.sql`  ← base completa (tablas, fichar, admin, permisos)
-   - Al final del archivo, **cambiá el email y contraseña del admin** antes de correrlo.
-2. `sql/fase4_biometria.sql`
-3. `sql/fase5_avisos_solicitudes.sql`
-4. `sql/fase6_avisos_destinatarios.sql`
-5. `sql/fase7_notificaciones.sql`
-6. `sql/fase8_recibos.sql`
-7. `sql/fase9_push.sql`
-8. `sql/fase11_notif_texto.sql`
-9. `sql/fase12_avisos_admin.sql`
-10. `sql/fase13_notif_solicitud_nueva.sql`
-11. `sql/fase10_push_trigger.sql`  ← **editar primero**: poné la URL del proyecto nuevo
-    (`https://<REF>.supabase.co/functions/v1/enviar-push`) y su **anon key** en el header.
-12. `sql/fase15_lider_como_persona.sql`  (rol de líder sobre la persona + ruteo de solicitudes)
-    · Reemplaza a `fase14` (líder ya NO es tabla aparte). Si ya corriste fase14, correr fase15 igual encima.
+   - Al final del archivo, **descomentá y cambiá el email y contraseña del admin** antes de correrlo. NO dejar valores por defecto.
+2. `sql/fase2_fichar.sql`  (fichar con validación de GPS — H-04)
+3. `sql/fase4_biometria.sql`
+4. `sql/fase5_avisos_solicitudes.sql`
+5. `sql/fase6_avisos_destinatarios.sql`
+6. `sql/fase7_notificaciones.sql`
+7. `sql/fase8_recibos.sql`
+8. `sql/fase9_push.sql`
+9. `sql/fase11_notif_texto.sql`
+10. `sql/fase12_avisos_admin.sql`
+11. `sql/fase13_notif_solicitud_nueva.sql`
+12. `sql/fase15_lider_como_persona.sql`  (rol de líder; reemplaza a `fase14`)
+13. `sql/fase16_avisos_respuestas.sql`
+14. `sql/fase17_avisos_chat.sql`
+15. `sql/fase18_aviso_lider_notifica_admin.sql`
+16. `sql/fase19_push_seguro.sql`  (push seguro; **reemplaza a `fase10`** — después cargá `app_secrets`, ver `README_push.md`)
+17. `sql/fase22_verificar_rostro.sql`  (verificación facial del lado del servidor)
+18. `sql/fase20_rls.sql`  ← **ÚLTIMO Y OBLIGATORIO (seguridad): activa RLS por rol. NO omitir.**
+
+> ⚠️ **`sql/fix_permisos_403.sql` es LEGACY: APAGA la seguridad (RLS). No correrlo.** Solo existe como rollback de emergencia. Si alguna vez lo corrés, volvé a correr `fase20_rls.sql` después.
+> ⚠️ `fase10_push_trigger.sql` quedó reemplazado por `fase19_push_seguro.sql` — no correr `fase10`.
 
 ## 4) Configurar la app (en la rama de la empresa)
 Editá **`app/src/config.js`**:
