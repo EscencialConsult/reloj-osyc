@@ -1,7 +1,7 @@
-// js/auth.js
-const ADMIN_USERS = {
-    "runasgestion@gmail.com": { pass: "Gerardo001", role: "ADMIN_GENERAL" }
-};
+// js/auth.js — LEGACY: backup del sistema HTML viejo. NO se usa ni se deploya.
+// Se retiraron las credenciales en texto plano (hallazgo de seguridad H-05).
+// El sistema actual usa Supabase Auth (no autenticación del lado del cliente).
+const ADMIN_USERS = {};
 
 const SESSION_KEY = 'one_admin_session';
 
