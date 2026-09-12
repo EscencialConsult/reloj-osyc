@@ -31,7 +31,10 @@ declare
   v_uid    uuid := auth.uid();
   v_stored jsonb;
   v_dist   double precision;
-  v_umbral constant double precision := 0.5;   -- mismo umbral que facial.js
+  -- Umbral de coincidencia (distancia euclídea). MÁS BAJO = MÁS ESTRICTO.
+  -- 0.5 = permisivo · 0.45 = estricto (recomendado) · 0.40 = muy estricto.
+  -- Si rechaza a gente legítima, subilo; si deja pasar caras parciales, bajalo.
+  v_umbral constant double precision := 0.45;
 begin
   if v_uid is null then
     return jsonb_build_object('ok', false, 'enrolado', false, 'msg', 'No autenticado');
