@@ -18,17 +18,15 @@ export default function Fichar() {
   const [ocupado, setOcupado] = useState(false)
   const [result, setResult] = useState(null)     // { ok, msg }
   const [consent, setConsent] = useState(null)    // { resolve } cuando hay que pedirlo
-  const faceState = useRef(null)                  // { enrolado, descriptor }
+  const faceState = useRef(null)                  // { enrolado }
 
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 1000)
-    // precargar biometría + estado de enrolamiento
+    // precargar biometría + estado de enrolamiento (el vector NO se trae al cliente)
     cargarFacial().then(F => F.ready()).catch(() => {})
     supabase.rpc('mi_biometria').then(({ data }) => {
-      faceState.current = data && data.enrolado
-        ? { enrolado: true, descriptor: data.descriptor }
-        : { enrolado: false, descriptor: null }
-    }).catch(() => { faceState.current = { enrolado: false, descriptor: null } })
+      faceState.current = { enrolado: !!(data && data.enrolado) }
+    }).catch(() => { faceState.current = { enrolado: false } })
     return () => clearInterval(t)
   }, [])
 
@@ -51,8 +49,8 @@ export default function Fichar() {
     if (!faceState.current) {
       try {
         const { data } = await supabase.rpc('mi_biometria')
-        faceState.current = data && data.enrolado ? { enrolado: true, descriptor: data.descriptor } : { enrolado: false, descriptor: null }
-      } catch { faceState.current = { enrolado: false, descriptor: null } }
+        faceState.current = { enrolado: !!(data && data.enrolado) }
+      } catch { faceState.current = { enrolado: false } }
     }
 
     const esEnrol = !faceState.current.enrolado
@@ -75,11 +73,14 @@ export default function Fichar() {
       setEstado('Guardando tu registro…')
       const { data, error } = await supabase.rpc('guardar_biometria', { p_descriptor: cap.descriptor, p_consent_version: CONSENT_VER })
       if (error || !data?.ok) { setResult({ ok: false, msg: (data && data.msg) || 'No se pudo registrar tu cara.' }); return false }
-      faceState.current = { enrolado: true, descriptor: cap.descriptor }
+      faceState.current = { enrolado: true }
       return true
     }
 
-    if (!F.match(cap.descriptor, faceState.current.descriptor)) {
+    // Verificación en el SERVIDOR (el vector guardado nunca se trae al celular)
+    setEstado('Verificando tu identidad…')
+    const { data: v, error: ve } = await supabase.rpc('verificar_rostro', { p_descriptor: cap.descriptor })
+    if (ve || !v?.ok) {
       setResult({ ok: false, msg: 'No te reconocimos. Buscá buena luz, sacate lentes/barbijo y reintentá.' })
       return false
     }
