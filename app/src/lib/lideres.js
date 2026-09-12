@@ -18,18 +18,12 @@ export function resumenPermisos(permisos) {
   return on.length ? on.join(' · ') : 'Sin permisos'
 }
 
-// ── EMPLEADO: ¿su área tiene un líder activo que reciba solicitudes? ─────────
-// Excluye al propio usuario (si YO soy la líder de mi área, no me la envío a mí mismo).
-export async function liderDeMiArea(area, miUserId = null) {
-  if (!area) return null
-  const { data } = await supabase.from('personal')
-    .select('nombre,user_id,lider_areas,lider_permisos,es_lider,activo')
-    .eq('es_lider', true).eq('activo', true)
-  const l = (data || []).find(x =>
-    Array.isArray(x.lider_areas) && x.lider_areas.includes(area) &&
-    (x.lider_permisos?.solicitudes) &&
-    x.user_id !== miUserId)
-  return l ? { nombre: l.nombre } : null
+// ── EMPLEADO: ¿su área tiene un líder (distinto de mí) que reciba solicitudes? ─
+// Pasa por una función segura del servidor (no lee `personal` directo, para que
+// funcione con RLS activo). Devuelve { nombre } o null.
+export async function liderDeMiArea() {
+  const { data } = await supabase.rpc('mi_lider_de_solicitudes')
+  return data || null
 }
 
 // ── AVISOS: user_ids de todos los líderes (para el destino "Líderes") ────────
