@@ -157,9 +157,9 @@ function NuevaSolicitud({ onCreada }) {
   // ¿El área del empleado tiene un líder (distinto de mí) que reciba solicitudes?
   useEffect(() => {
     let vivo = true
-    liderDeMiArea(perfil?.area, session?.user?.id).then(l => { if (vivo) setLider(l) })
+    liderDeMiArea().then(l => { if (vivo) setLider(l) })
     return () => { vivo = false }
-  }, [perfil?.area, session?.user?.id])
+  }, [perfil?.id])
 
   async function enviar() {
     setErr('')
