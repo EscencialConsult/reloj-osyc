@@ -16,8 +16,8 @@ export const APP_NAME = 'ChekApp'
 // Proyecto Supabase de ESTA empresa  (Supabase → Settings → API)
 // ⚠️ DEMO NUEVA: crear un proyecto Supabase PROPIO y pegar acá su URL y anon key.
 //    NO reutilizar los de ONE ni OSYC (compartiría su base de producción).
-export const SUPABASE_URL = 'PEGAR_URL_DEL_NUEVO_SUPABASE'
-export const SUPABASE_ANON_KEY = 'PEGAR_ANON_KEY_DEL_NUEVO_SUPABASE'
+export const SUPABASE_URL = 'https://pdtkjevsbweyafjaqhdy.supabase.co'
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBkdGtqZXZzYndleWFmamFxaGR5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA0MDk5NzYsImV4cCI6MjEwNTk4NTk3Nn0.UMpaSkTm_FHGBd7VQk8Rj9LNakXY6pkOET9tzvKrIB4'
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
