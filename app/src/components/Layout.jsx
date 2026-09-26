@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useSession } from '../lib/session.jsx'
 import { supabase } from '../lib/supabase'
 import { Icon } from './icons.jsx'
@@ -11,6 +11,12 @@ import CambiarPassword from './CambiarPassword.jsx'
 export default function Layout({ children }) {
   const { esAdmin, esLider, logout } = useSession()
   const location = useLocation()
+  const navigate = useNavigate()
+
+  // Al salir, reseteamos la URL a la raíz. Si no, la ruta queda "pegada"
+  // (ej. /configuracion) y el próximo usuario que entre cae en una sección
+  // que quizás no le corresponde ("solo para administradores").
+  const salir = () => { navigate('/', { replace: true }); logout() }
   const [noLeidos, setNoLeidos] = useState(0)
   const [pendientes, setPendientes] = useState(0)   // solicitudes pendientes (admin)
   const [menu, setMenu] = useState(false)   // drawer abierto en celular
@@ -53,7 +59,7 @@ export default function Layout({ children }) {
           })}
         </nav>
         <button className="side-link" onClick={() => setCuenta(true)}><Icon.Lock /> <span>Cambiar contraseña</span></button>
-        <button className="side-link side-salir" onClick={logout}><Icon.Logout /> <span>Salir</span></button>
+        <button className="side-link side-salir" onClick={salir}><Icon.Logout /> <span>Salir</span></button>
       </aside>
 
       {/* Fondo oscuro al abrir el drawer en celular */}
@@ -66,7 +72,7 @@ export default function Layout({ children }) {
           <img className="only-mobile" src="/logo.png" alt={EMPRESA} style={{ height: 26 }} />
           <div className="row" style={{ marginLeft: 'auto', gap: 8 }}>
             <Campana />
-            <button className="btn btn-ghost btn-sm only-mobile" onClick={logout}><Icon.Logout /> Salir</button>
+            <button className="btn btn-ghost btn-sm only-mobile" onClick={salir}><Icon.Logout /> Salir</button>
           </div>
         </header>
         <main className="content-inner">{children}</main>
