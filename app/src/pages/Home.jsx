@@ -8,7 +8,7 @@ import { Icon } from '../components/icons.jsx'
 import { tipoLabel } from './Solicitudes.jsx'
 
 export default function Home() {
-  const { nombre, esAdmin } = useSession()
+  const { nombre, esAdmin, esLider } = useSession()
   const [stats, setStats] = useState(null)
   const [avisos, setAvisos] = useState([])
   const [pend, setPend] = useState([])
@@ -52,7 +52,7 @@ export default function Home() {
       { n: stats?.noLeidos ?? '—', t: 'Avisos sin leer', to: '/avisos', icon: Icon.Bell },
     ]
 
-  const accesos = NAV.filter(n => n.to !== '/' && (!n.admin || esAdmin))
+  const accesos = NAV.filter(n => n.to !== '/' && (!n.admin || esAdmin) && (!n.lider || esLider))
 
   return (
     <div className="stack" style={{ gap: 18 }}>
