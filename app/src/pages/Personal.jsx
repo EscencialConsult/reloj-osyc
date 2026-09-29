@@ -147,7 +147,12 @@ function EditarPersona({ persona, areas, usaAreas, usaLideres, adminNombre, onCl
     const nombre = f.nombre.trim(), rol = f.rol.trim()
     const email = f.email.trim().toLowerCase(), dni = f.dni.trim()
     if (!nombre) { setErr('El nombre es obligatorio'); return }
-    if ((email && !dni) || (!email && dni)) { setErr('Para el acceso a la app cargá email Y contraseña'); return }
+    // Email + contraseña se exigen juntos SOLO para crear un acceso nuevo.
+    // Si la persona ya tiene login (persona.user_id), contraseña vacía = "no cambiar"
+    // (así se puede editar/desactivar sin volver a escribir la contraseña).
+    const yaTieneAcceso = !!persona.user_id
+    if (!email && dni) { setErr('Para el acceso a la app cargá email Y contraseña'); return }
+    if (email && !dni && !yaTieneAcceso) { setErr('Para el acceso a la app cargá email Y contraseña'); return }
     // Un líder necesita poder ingresar (email+contraseña) y tener área(s) a cargo
     if (f.es_lider && !persona.user_id && !email) { setErr('Un líder necesita email y contraseña para ingresar.'); return }
     if (f.es_lider && f.lider_areas.length === 0) { setErr('Elegí al menos un área a cargo para el líder.'); return }
