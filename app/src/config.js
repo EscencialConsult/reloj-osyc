@@ -16,8 +16,8 @@ export const APP_NAME = 'ChekApp'
 // Proyecto Supabase de ESTA empresa  (Supabase → Settings → API)
 // ⚠️ EMPRESA NUEVA: crear un proyecto Supabase PROPIO y pegar acá su URL y anon key.
 //    NO reutilizar los de OSYC/ONE (compartiría su base de producción).
-export const SUPABASE_URL = 'PEGAR_URL_DEL_NUEVO_SUPABASE'
-export const SUPABASE_ANON_KEY = 'PEGAR_ANON_KEY_DEL_NUEVO_SUPABASE'
+export const SUPABASE_URL = 'https://xxuffygpjqvktismwjfq.supabase.co'
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4dWZmeWdwanF2a3Rpc213amZxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwOTMyNjYsImV4cCI6MjEwNzY2OTI2Nn0.CABV93RawB83cVyRE6q8wku4wxIfMn8zfF88v8pu2AU'
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
@@ -27,5 +27,6 @@ export const VAPID_PUBLIC = 'PEGAR_VAPID_PUBLIC_DE_ESTA_EMPRESA'
 // Color de marca de ESTA empresa (para personalizar el reloj por empresa).
 //   COLOR   = principal (botones, links, barra activa)
 //   COLOR_2 = variante más clara (degradés de botones/logo)
-export const COLOR = '#2c6eb4'
-export const COLOR_2 = '#5a97d4'
+// Paleta OSPA: azul #4871ac (principal) · verde #72ae55 · verde claro #cfdcb5 · dorado #ebb23c
+export const COLOR = '#4871ac'
+export const COLOR_2 = '#6d97d0'
