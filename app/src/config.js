@@ -6,7 +6,7 @@
 // ============================================================================
 
 // Nombre corto de la empresa (aparece en títulos de pestaña, etc.)
-export const EMPRESA = 'OSYC'
+export const EMPRESA = 'OSPA'
 
 // Nombre COMERCIAL del producto (mismo para todas las empresas). Se usa en el
 // texto de consentimiento y en el nombre con el que se instala la app (PWA).
@@ -14,12 +14,15 @@ export const EMPRESA = 'OSYC'
 export const APP_NAME = 'ChekApp'
 
 // Proyecto Supabase de ESTA empresa  (Supabase → Settings → API)
-export const SUPABASE_URL = 'https://zbaqcbadqefaggpbylfn.supabase.co'
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpiYXFjYmFkcWVmYWdncGJ5bGZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc4MzcxOTAsImV4cCI6MjEwMzQxMzE5MH0.oW92ZOpWcPAeK037DUS5BMFhh0c0XLSCTbVN7Fa108M'
+// ⚠️ EMPRESA NUEVA: crear un proyecto Supabase PROPIO y pegar acá su URL y anon key.
+//    NO reutilizar los de OSYC/ONE (compartiría su base de producción).
+export const SUPABASE_URL = 'PEGAR_URL_DEL_NUEVO_SUPABASE'
+export const SUPABASE_ANON_KEY = 'PEGAR_ANON_KEY_DEL_NUEVO_SUPABASE'
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
-export const VAPID_PUBLIC = 'BIeDw4GW64EBTsT4N4oujSryJ-h_IEUpvFL-IfG6XoklYOdx-vhOW53FZGNYnCCP-jgo67qQfXC8QGmrAvhDlfI'
+// Generar con: npx web-push generate-vapid-keys  (ver README_push.md)
+export const VAPID_PUBLIC = 'PEGAR_VAPID_PUBLIC_DE_ESTA_EMPRESA'
 
 // Color de marca de ESTA empresa (para personalizar el reloj por empresa).
 //   COLOR   = principal (botones, links, barra activa)
