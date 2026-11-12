@@ -16,8 +16,10 @@ export const APP_NAME = 'ChekApp'
 // Proyecto Supabase de ESTA empresa  (Supabase → Settings → API)
 // ⚠️ EMPRESA NUEVA: crear un proyecto Supabase PROPIO y pegar acá su URL y anon key.
 //    NO reutilizar los de OSYC/ONE (compartiría su base de producción).
-export const SUPABASE_URL = 'PEGAR_URL_DEL_NUEVO_SUPABASE'
-export const SUPABASE_ANON_KEY = 'PEGAR_ANON_KEY_DEL_NUEVO_SUPABASE'
+export const SUPABASE_URL = 'https://ugwhofpxxmezmnvvxceq.supabase.co'
+// ⚠️ FALTA: pegar acá la "Publishable key" completa (Settings → API Keys → Publishable key).
+//    Supabase reemplazó la vieja "anon key" por esta; cumple la misma función (clave pública).
+export const SUPABASE_ANON_KEY = 'PEGAR_PUBLISHABLE_KEY_COMPLETA'
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
@@ -27,5 +29,6 @@ export const VAPID_PUBLIC = 'PEGAR_VAPID_PUBLIC_DE_ESTA_EMPRESA'
 // Color de marca de ESTA empresa (para personalizar el reloj por empresa).
 //   COLOR   = principal (botones, links, barra activa)
 //   COLOR_2 = variante más clara (degradés de botones/logo)
-export const COLOR = '#2c6eb4'
-export const COLOR_2 = '#5a97d4'
+// Marca Turquito: rojo (círculo del logo con la "T" blanca), color exacto del logo
+export const COLOR = '#fd2e2f'
+export const COLOR_2 = '#fe7778'
