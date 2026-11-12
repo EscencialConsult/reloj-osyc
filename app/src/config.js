@@ -17,9 +17,8 @@ export const APP_NAME = 'ChekApp'
 // ⚠️ EMPRESA NUEVA: crear un proyecto Supabase PROPIO y pegar acá su URL y anon key.
 //    NO reutilizar los de OSYC/ONE (compartiría su base de producción).
 export const SUPABASE_URL = 'https://ugwhofpxxmezmnvvxceq.supabase.co'
-// ⚠️ FALTA: pegar acá la "Publishable key" completa (Settings → API Keys → Publishable key).
-//    Supabase reemplazó la vieja "anon key" por esta; cumple la misma función (clave pública).
-export const SUPABASE_ANON_KEY = 'PEGAR_PUBLISHABLE_KEY_COMPLETA'
+// Publishable key (reemplaza a la vieja "anon key" en el nuevo sistema de Supabase).
+export const SUPABASE_ANON_KEY = 'sb_publishable_Kvl5FbduAetcleF8Ubb_Tw_7EZObFfs'
 
 // Clave PÚBLICA VAPID para las notificaciones push de ESTA empresa.
 // (La privada va SOLO como secret en la Edge Function de Supabase.)
